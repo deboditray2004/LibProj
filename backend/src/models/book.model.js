@@ -19,6 +19,7 @@ const bookSchema= new Schema({
         {
             type:String,
             trim:true,
+            required:true,
             index:true
         }
     ],
@@ -26,6 +27,7 @@ const bookSchema= new Schema({
         {
             type:String,
             trim:true,
+            required:true,
             index:true
         }
     ],
