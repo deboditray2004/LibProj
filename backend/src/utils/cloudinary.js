@@ -1,1 +1,69 @@
-// Write your Cloudinary upload logic here!
+import {v2 as cloudinary} from "cloudinary"
+import fs from "fs"
+
+cloudinary.config({ 
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+  api_key: process.env.CLOUDINARY_API_KEY, 
+  api_secret: process.env.CLOUDINARY_API_SECRET 
+});
+
+const uploadOnCloudinary = async (localFilePath)=>{
+    try {
+
+        if(!localFilePath) return null
+        const response = await cloudinary.uploader.upload(localFilePath,{
+            resource_type:"auto"
+        })
+        console.log("Upload successful",response)
+
+        // delete temp file after upload
+        fs.unlinkSync(localFilePath)
+        return response
+
+    } catch (error) {
+
+        if (fs.existsSync(localFilePath)) 
+        fs.unlinkSync(localFilePath);
+
+        console.log("Upload failed",error)
+        return null
+    }
+}
+
+const getPublicIdFromUrl= (url)=>{
+    try{
+        if(!url) return null
+
+        const parts=url.split("/")
+        const fileName= parts[parts.length-1]
+        const publicId = fileName.split(".")[0];
+
+        return publicId
+    }
+    catch (error)
+    {
+        return null
+    }
+}
+
+const deleteFromCloudinary = async (imageUrl) => {
+    try {
+        if (!imageUrl) return
+
+        const publicId = getPublicIdFromUrl(imageUrl)
+        if (!publicId) return
+
+        await cloudinary.uploader.destroy(publicId, {
+            resource_type: "auto"
+        })
+
+    } catch (error) {
+        console.log("Error deleting from Cloudinary:", error)
+    }
+}
+
+
+export {
+    uploadOnCloudinary,
+    deleteFromCloudinary
+}

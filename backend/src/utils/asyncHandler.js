@@ -1,1 +1,7 @@
-// Write your asyncHandler wrapper here!
+const asyncHandler = (fn)=>{
+    return (req,res,next) =>{
+        Promise.resolve( fn(req,res,next) ).catch( (error)=> next(error) )
+    }
+}
+
+export {asyncHandler}
