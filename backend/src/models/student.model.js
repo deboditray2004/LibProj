@@ -37,8 +37,7 @@ const studentSchema =new Schema({
         required:true
     },
     photo:{
-        type:String,
-        required:true
+        type:String
     },
     dept:{
         type:String,
@@ -64,7 +63,8 @@ const studentSchema =new Schema({
     },
     status:{
         type:String,
-        enum:["Approved","Pending"]
+        enum:["Approved","Pending"],
+        default:"Pending"
     },
     refreshToken: {
         type: String

@@ -25,7 +25,8 @@ const uploadOnCloudinary = async (localFilePath)=>{
         if (fs.existsSync(localFilePath)) 
         fs.unlinkSync(localFilePath);
 
-        console.log("Upload failed",error)
+        console.error(`[Cloudinary Upload Error] Failed to upload local file: ${localFilePath}`);
+        console.error(error);
         return null
     }
 }
@@ -40,8 +41,9 @@ const getPublicIdFromUrl= (url)=>{
 
         return publicId
     }
-    catch (error)
-    {
+    catch (error) {
+        console.error(`[Cloudinary URL Parser Error] Failed to extract ID from URL: ${url}`);
+        console.error(error);
         return null
     }
 }
@@ -58,7 +60,8 @@ const deleteFromCloudinary = async (imageUrl) => {
         })
 
     } catch (error) {
-        console.log("Error deleting from Cloudinary:", error)
+        console.error(`[Cloudinary Delete Error] Failed to delete image: ${imageUrl}`);
+        console.error(error);
     }
 }
 

@@ -14,17 +14,17 @@ const verifyStudent =  asyncHandler( async ( req,_,next) =>
 
         const decodedToken =jwt.verify(token,process.env.ACCESS_TOKEN_SECRET)
 
-        const user = await Student.findById(decodedToken?._id).select("-password -refreshToken")
+        const student = await Student.findById(decodedToken?._id).select("-password -refreshToken")
 
-        if(!user)
+        if(!student)
         throw new ApiError(401,"Invalid Access Token")
 
-        req.user=user
+        req.student=student
         next()
     }
     catch(error)
     {
-        throw new ApiError(401,error?.message || "Invalid access token")
+        throw new ApiError(401,"Invalid access token", error)
     }
         
 })
@@ -39,17 +39,17 @@ const verifyEmployee =  asyncHandler( async ( req,_,next) =>
 
         const decodedToken =jwt.verify(token,process.env.ACCESS_TOKEN_SECRET)
 
-        const user = await Employee.findById(decodedToken?._id).select("-password -refreshToken")
+        const employee = await Employee.findById(decodedToken?._id).select("-password -refreshToken")
 
-        if(!user)
+        if(!employee)
         throw new ApiError(401,"Invalid Access Token")
 
-        req.user=user
+        req.employee=employee
         next()
     }
     catch(error)
     {
-        throw new ApiError(401,error?.message || "Invalid access token")
+        throw new ApiError(401,"Invalid access token", error)
     }
         
 })
