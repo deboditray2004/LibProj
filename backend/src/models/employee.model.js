@@ -52,7 +52,6 @@ employeeSchema.methods.generateAccessToken = function(){
             empId: this.empId,
             name: this.name,
             email: this.email,
-            designation: this.designation
         },
         process.env.ACCESS_TOKEN_SECRET,
         {

@@ -9,6 +9,11 @@ import mongoose, { Schema } from "mongoose";
  */
 
 const bookSchema= new Schema({
+    globalBookId: {
+        type: String,
+        unique: true,
+        sparse: true 
+    },
     title:{
         type:String,
         trim:true,

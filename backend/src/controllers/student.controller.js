@@ -125,6 +125,41 @@ const loginStudent= asyncHandler(async(req, res) =>{
     
 
 })
+
+const logoutStudent = asyncHandler(async(req,res) =>{
+    await Student.findByIdAndUpdate(
+        req.student._id,
+        {
+            $unset:{
+                refreshToken:1
+            }
+        },
+        {
+            new : true
+        }
+    )
+
+    console.log(req.cookies)
+
+    const options ={
+        httpOnly:true,
+        secure:true
+    }
+
+    return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(
+        new ApiResponse(
+            200,
+            {},
+            "Student logged out Successfully"
+        )
+    )
+})
+
+
 // export {
 //     registerStudent,
 //     loginStudent,

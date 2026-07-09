@@ -1,32 +1,33 @@
 import mongoose, { Schema } from "mongoose";
 
-const orderSchema=new Schema({
-    title:{
-        type:String,
-        trim:true,
-        required:true
+const orderSchema = new Schema({
+    globalBookId: {
+        type: String, 
+        required: true
     },
-    authors:[
+    orderTitle: {
+        type: String,
+        trim: true,
+        required: true
+    },
+    authors: [
         {
-            type:String,
-            trim:true,
-            required:true
+            type: String,
+            trim: true
         }
     ],
-    copies:{
-        type:Number,
-        default:1
+    coverImg: {
+        type: String
     },
-    status:{
-        type:String,
-        enum:["Approved","Pending"],
-        default:"Pending"
+    copiesOrdered: {
+        type: Number,
+        default: 1
+    },
+    status: {
+        type: String,
+        enum: ["Pending Delivery", "Received"],
+        default: "Pending Delivery"
     }
-},
-{
-    timestamps:true
-})
+}, { timestamps: true });
 
-export const Order=mongoose.model("Order",orderSchema)
- 
- 
+export const Order = mongoose.model("Order", orderSchema);
