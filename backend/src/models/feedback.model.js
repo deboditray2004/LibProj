@@ -13,8 +13,8 @@ const feedbackSchema=new Schema({
     },
     status:{
         type:String,
-        enum:["Pending","Replied"],
-        default:"Pending"
+        enum:["Pending reply","Replied"],
+        default:"Pending reply"
     }
 },
 {   
