@@ -6,12 +6,7 @@ const bookRequestSchema= new Schema({
         ref: "Student",
         required : true,
     },
-    requestedTitle: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    requestedAuthor: {
+    isbn: {
         type: String,
         required: true,
         trim: true

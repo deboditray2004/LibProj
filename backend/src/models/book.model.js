@@ -1,11 +1,11 @@
 import mongoose, { Schema } from "mongoose";
 
 /*
- * Added `index: true` to fields like title, authors, and category because they are frequently searched.
- * 
- * Without an index (Collection Scan): MongoDB has to read every single book in the database one-by-one to find a title.
- * With an index: MongoDB creates an optimized B-Tree behind the scenes. It jumps instantly to the correct book, 
- * just like using the index at the back of a physical encyclopedia!
+ Added `index: true` to fields like title, authors, and category because they are frequently searched.
+ 
+ Without an index (Collection Scan): MongoDB has to read every single book in the database one-by-one to find a title.
+ With an index: MongoDB creates an optimized B-Tree behind the scenes. It jumps instantly to the correct book, 
+ just like using the index at the back of a physical encyclopedia!
  */
 
 const bookSchema= new Schema({

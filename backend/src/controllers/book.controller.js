@@ -7,87 +7,186 @@ import { BookRequest } from "../models/bookRequest.model.js";
 import { Order } from "../models/order.model.js";
 import { searchGlobalBook, fetchAndFormatBookData } from "../utils/googleBooksAPI.js";
 
-// --- STUDENT FEATURES ---
 
 const requestBook = asyncHandler(async (req, res) => {
-    // 1. Get requestedTitle and requestedAuthor from req.body
+    const { isbn } = req.body;
     
-    // 2. Validate they are not empty (using ApiError if they are)
+    if (!isbn) throw new ApiError(400, "Please provide the ISBN");
     
-    // 3. Create a new BookRequest in the database 
-    // Hint: s_id should be req.student._id (from your verifyStudent middleware!)
+    const bookRequest = await BookRequest.create({
+        s_id: req.student._id,
+        isbn
+    });
     
-    // 4. Return a 201 ApiResponse!
+    return res.status(201).json(new ApiResponse(201, bookRequest, "Book request placed successfully"));
 });
 
-
-// --- EMPLOYEE FEATURES: ORDER PIPELINE ---
-
 const getAggregatedRequests = asyncHandler(async (req, res) => {
-    // 1. Use BookRequest.aggregate() to group by { title: "$requestedTitle", author: "$requestedAuthor" }
-    // 2. Calculate the count for each group using { $sum: 1 }
-    // 3. Push the original request _ids into an array using { $push: "$_id" }
-    // 4. Sort the results so the highest count is at the top
-    // 5. Return the aggregated array in an ApiResponse
+
+    const aggregatedRequests = await BookRequest.aggregate([
+        {
+            $group: {
+                _id: "$isbn",
+                requestCount: { $sum: 1 },
+                requestIds: { $push: "$_id" }
+            }
+        },
+        {
+            $sort: {
+                requestCount: -1
+            }
+        }
+    ])
+
+    return res.status(200).json(
+        new ApiResponse(200, aggregatedRequests, "Aggregated requests fetched successfully")
+    );
+});
+
+const rejectRequest = asyncHandler(async (req, res) => {
+    
+    const { requestIds } = req.body;
+    if (!requestIds || !Array.isArray(requestIds) || requestIds.length === 0) {
+        throw new ApiError(400, "Please provide an array of request IDs to reject");
+    }
+
+    await BookRequest.deleteMany({ _id: { $in: requestIds } });
+
+    return res.status(200).json(
+        new ApiResponse(200, null, "Book requests rejected successfully")
+    );
 });
 
 const placeOrder = asyncHandler(async (req, res) => {
-    // 1. Get requestedTitle, requestedAuthor, copiesOrdered, and requestIds (array) from req.body
+    const { isbn, copiesOrdered, requestIds } = req.body
+    if (!isbn || !copiesOrdered || !requestIds || !Array.isArray(requestIds) || requestIds.length === 0)
+    throw new ApiError(400, "Missing required order details or invalid requestIds array");
+
+    const match = await searchGlobalBook(isbn);
+    if (!match)
+    throw new ApiError(404, "Book not found in global catalogue");
     
-    // 2. Call searchGlobalBook(requestedTitle, requestedAuthor) from the googleBooksAPI utility
+    const order = await Order.create({
+        globalBookId: match.globalBookId,
+        orderTitle: match.orderTitle,
+        authors: match.authors,
+        coverImg: match.coverImg,
+        category: match.category,
+        copiesOrdered
+    });
     
-    // 3. If it returns null -> It's an invalid request! 
-    //    Delete all BookRequests that match those requestIds, and throw a 404 ApiError.
+    await BookRequest.deleteMany({ _id: { $in: requestIds } });
     
-    // 4. If it returns a match -> Create a new Order! 
-    //    Pass in globalBookId, orderTitle, authors, coverImg (from the match), and copiesOrdered.
-    
-    // 5. Delete the original BookRequests (since they are now formally an Order)
-    
-    // 6. Return a 201 ApiResponse with the created Order
+    return res.status(201).json(new ApiResponse(201, order, "Order placed successfully"));
 });
 
 const manualOrder = asyncHandler(async (req, res) => {
-    // 1. Get title, author, and copiesOrdered from req.body
-    // 2. Call searchGlobalBook(title, author)
-    // 3. If no match -> throw 404 ApiError ("Book not found in global catalogue")
-    // 4. If match -> Create a new Order with the returned data
-    // 5. Return 201 ApiResponse
+    
+    const { isbn, copiesOrdered} = req.body
+    if(!isbn || copiesOrdered<=0)
+    throw new ApiError(400, "Missing required order details or invalid copies ordered");
+    
+    const match = await searchGlobalBook(isbn);
+    if (!match)
+    throw new ApiError(404, "Book not found in global catalogue");
+    
+    const order = await Order.create({
+        globalBookId: match.globalBookId,
+        orderTitle: match.orderTitle,
+        authors: match.authors,
+        coverImg: match.coverImg,
+        category: match.category,
+        copiesOrdered
+    });
+    
+    await BookRequest.deleteMany({ isbn });
+    
+    return res.status(201).json(new ApiResponse(201, order, "Order placed successfully"));
 });
 
 const receiveOrder = asyncHandler(async (req, res) => {
-    // 1. Get orderId from req.params (e.g., /orders/receive/:orderId)
-    // 2. Find the Order by ID. If not found, throw 404.
+
+    const {orderId} = req.params;
+    if(!orderId)
+    throw new ApiError(400, "Missing order ID");
+
+    const order = await Order.findById(orderId);
+    if(!order)
+    throw new ApiError(404, "Order not found");
     
-    // 3. Check if a Book already exists with this Order's globalBookId
-    // 4. If Book exists -> Update its 'total' and 'avl' by adding order.copiesOrdered
-    // 5. If Book DOES NOT exist -> 
-    //    a) Call fetchAndFormatBookData(order.globalBookId)
-    //    b) Attach total and avl to the formatted data
-    //    c) Create the new Book!
+    const existingBook = await Book.findOne({ globalBookId: order.globalBookId });
     
-    // 6. Update the Order status to "Received"
-    // 7. Return 200 ApiResponse
+    if (existingBook) {
+        existingBook.total += order.copiesOrdered;
+        existingBook.avl += order.copiesOrdered;
+        await existingBook.save();
+    } else {
+        await Book.create({
+            globalBookId: order.globalBookId,
+            title: order.orderTitle,
+            authors: order.authors,
+            category: order.category,
+            coverImg: order.coverImg,
+            total: order.copiesOrdered,
+            avl: order.copiesOrdered
+        });
+    }
+
+    order.status = "Received";
+    await order.save();
+    
+    return res.status(200).json(
+        new ApiResponse(200, order, "Order received successfully")
+    );
 });
 
 
-// --- PUBLIC / CATALOGUE FEATURES ---
 
 const getAllBooks = asyncHandler(async (req, res) => {
-    // 1. Fetch all books from the DB
-    // 2. Optional: Add search filtering (if req.query.search exists, filter by title/author using $regex)
-    // 3. Return ApiResponse
+    const { search, category } = req.query;
+    
+    const query = {};
+    
+    if (search) {
+        query.$or = [
+            { title: { $regex: search, $options: "i" } },
+            { authors: { $regex: search, $options: "i" } }
+        ];
+    }
+    
+    if (category)
+    query.category = { $regex: category, $options: "i" };
+    
+    const books = await Book.find(query);
+    
+    if (!books || books.length === 0) {
+        throw new ApiError(404, "No books found matching your criteria");
+    }
+    
+    return res.status(200).json(
+        new ApiResponse(200, books, "Books fetched successfully")
+    );
 });
 
 const getBookById = asyncHandler(async (req, res) => {
-    // 1. Find book by ID (req.params.id)
-    // 2. If avl === 0, you will eventually calculate "earliest available date" here
-    // 3. Return ApiResponse
+    
+    const {bookId} = req.params;
+    if(!bookId)
+    throw new ApiError(400, "Missing book ID");
+    
+    const book = await Book.findById(bookId);
+    if(!book)
+    throw new ApiError(404, "Book not found");
+    
+    return res.status(200).json(
+        new ApiResponse(200, book, "Book fetched successfully")
+    );
 });
 
 export {
     requestBook,
     getAggregatedRequests,
+    rejectRequest,
     placeOrder,
     manualOrder,
     receiveOrder,

@@ -16,6 +16,12 @@ const orderSchema = new Schema({
             trim: true
         }
     ],
+    category: [
+        {
+            type: String,
+            trim: true
+        }
+    ],
     coverImg: {
         type: String
     },
