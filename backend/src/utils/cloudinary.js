@@ -5,8 +5,7 @@ cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
   api_key: process.env.CLOUDINARY_API_KEY, 
   api_secret: process.env.CLOUDINARY_API_SECRET 
-});
-
+})
 const uploadOnCloudinary = async (localFilePath)=>{
     try {
 
@@ -23,10 +22,9 @@ const uploadOnCloudinary = async (localFilePath)=>{
     } catch (error) {
 
         if (fs.existsSync(localFilePath)) 
-        fs.unlinkSync(localFilePath);
-
-        console.error(`[Cloudinary Upload Error] Failed to upload local file: ${localFilePath}`);
-        console.error(error);
+        fs.unlinkSync(localFilePath)
+        console.error(`[Cloudinary Upload Error] Failed to upload local file: ${localFilePath}`)
+        console.error(error)
         return null
     }
 }
@@ -37,13 +35,12 @@ const getPublicIdFromUrl= (url)=>{
 
         const parts=url.split("/")
         const fileName= parts[parts.length-1]
-        const publicId = fileName.split(".")[0];
-
+        const publicId = fileName.split(".")[0]
         return publicId
     }
     catch (error) {
-        console.error(`[Cloudinary URL Parser Error] Failed to extract ID from URL: ${url}`);
-        console.error(error);
+        console.error(`[Cloudinary URL Parser Error] Failed to extract ID from URL: ${url}`)
+        console.error(error)
         return null
     }
 }
@@ -60,8 +57,8 @@ const deleteFromCloudinary = async (imageUrl) => {
         })
 
     } catch (error) {
-        console.error(`[Cloudinary Delete Error] Failed to delete image: ${imageUrl}`);
-        console.error(error);
+        console.error(`[Cloudinary Delete Error] Failed to delete image: ${imageUrl}`)
+        console.error(error)
     }
 }
 

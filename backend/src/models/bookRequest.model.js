@@ -1,5 +1,4 @@
-import mongoose, { Schema } from "mongoose";
-
+import mongoose, { Schema } from "mongoose"
 const bookRequestSchema= new Schema({
     s_id:{
         type: mongoose.Schema.Types.ObjectId,
@@ -11,6 +10,5 @@ const bookRequestSchema= new Schema({
         required: true,
         trim: true
     }
-}, { timestamps: true });
-
-export const BookRequest = mongoose.model("BookRequest", bookRequestSchema);
+}, { timestamps: true })
+export const BookRequest = mongoose.model("BookRequest", bookRequestSchema)

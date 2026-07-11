@@ -1,3 +1,2 @@
-import { Router } from "express";
-
+import { Router } from "express"
 // Map your Student routes here!

@@ -1,7 +1,6 @@
-import mongoose, { Schema } from "mongoose";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-
+import mongoose, { Schema } from "mongoose"
+import jwt from "jsonwebtoken"
+import bcrypt from "bcrypt"
 const studentSchema =new Schema({
 
     cardNo:{
@@ -77,12 +76,10 @@ const studentSchema =new Schema({
 })
 
 studentSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next();
-
-    this.password = await bcrypt.hash(this.password, 10);
-    next();
-});
-
+    if (!this.isModified("password")) return next()
+    this.password = await bcrypt.hash(this.password, 10)
+    next()
+})
 
 studentSchema.methods.isPasswordCorrect=async function(password){
     return await bcrypt.compare(password,this.password)
@@ -90,7 +87,7 @@ studentSchema.methods.isPasswordCorrect=async function(password){
 
 studentSchema.methods.generateAccessToken = function(){
     if (!this.cardNo) {
-        throw new Error("Cannot generate token: Student does not have a Library Card Number yet.");
+        throw new Error("Cannot generate token: Student does not have a Library Card Number yet.")
     }
 
     return jwt.sign(

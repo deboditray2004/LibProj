@@ -2,6 +2,12 @@
 
 **Project Overview:** A full-stack, role-based Library Management System designed to handle complex business logic including finite state machine approvals, dynamic fine calculations, automated notifications, and concurrent transactions.
 
+**Current Completion Status: ~85%**
+- ✅ Book Pipeline & Automated Orders (100% Complete)
+- ✅ Communication & Feedback System (100% Complete)
+- ✅ Transaction Engine & Time-Based Fines (100% Complete)
+- ⏳ Management Controllers (Pending)
+
 **User Roles:** System architecture strictly separates users into two independent collections: **Students** and **Employees** (Library Management).
 
 ---
@@ -20,11 +26,13 @@
 - **Active Borrowings:** View currently borrowed books, issue dates, and exact due dates.
 - **Financial Tracking:** View pending fines dynamically calculated for overdue books. Includes a link to a payment portal integration.
 - **Borrowing Constraints (Business Logic):**
-  - **Financial Block:** If a student's total unpaid fines exceed **₹500**, the system automatically blocks them from borrowing any new books until the balance is cleared.
-  - **The Hybrid Fine/Renewal System:** [`transaction.controller.js` -> `payFineOnline` (`POST /api/v1/transactions/pay-fine/:id`)]
-    - If a book is overdue, the student can pay the fine online. 
-    - **Successful Payment = Auto-Renewal:** Paying the fine online automatically counts as a "Renewal". The fine is cleared, the `dueDate` is pushed forward 14 days, and the `renewalCount` increments by 1.
-    - **Hard Limit (Physical Return Required):** Students are strictly limited to **2 consecutive renewals** (either via manual renewal or fine payment). If `renewalCount === 2`, the online payment portal for that book is permanently locked. The student MUST physically return the book to the librarian to freeze and settle the final fine.
+  - **Duplicate Borrowing Block:** Students are strictly prevented from borrowing a second copy of a book they already have an active transaction for.
+  - **The "Two-Fine" Time-Based Architecture:** The backend utilizes an elegant `frozenFine` (database field) and `activeFine` (memory-calculated) architecture.
+    - Returning or Renewing a book instantly locks the current `activeFine` into the `frozenFine` database bank.
+    - **Active Fine Payment Block:** Students are strictly prohibited from paying an actively accumulating fine. They must first physically Return or Renew the book to freeze the fine before paying.
+  - **The Dual-Mode Payment System:** [`transaction.controller.js` -> `payFine` (`POST /api/v1/transactions/pay-fine`)]
+    - Students can pay for a single transaction (by providing `transactionId`), or hit "Pay All" to instantly clear all frozen fines across their entire history.
+    - **Hard Limit (Physical Return Required):** Students are strictly limited to **2 consecutive renewals**. If `renewalCount === 2`, the student MUST physically return the book to the librarian to freeze and settle the final fine.
 
 ### 1.3 Communication (Inbox System)
 - **Notifications Inbox:** [`communication.controller.js` -> `getNotifications` (`GET /api/v1/communication/notifications`)] Students receive automated system notifications and direct messages from Management regarding approvals or restocks.
@@ -37,7 +45,6 @@
   - Displays real-time "Copies Left" for every book.
   - **Predictive Availability:** If copies = 0, the system calculates and displays the earliest time/date a copy will become available (based on the nearest due date of borrowed copies).
 - **Requests System:** [`communication.controller.js` -> `createStudentRequest` (`POST /api/v1/communication/request`)] Students can request the library to order a completely new book or request additional copies of a currently out-of-stock book.
-- **Borrowing Book:** [`transaction.controller.js` -> `borrowBook` (`POST /api/v1/transactions/borrow`)] Checks if fines > 500, decreases avl, creates Transaction.
 
 ---
 
@@ -54,9 +61,10 @@
   - **New Students:** [`employee.controller.js` -> `approveStudent` (`POST /api/v1/employees/approve-student/:id`)] Review Govt IDs and details. Accept or Reject with a mandatory reason/message. Generates cardNo.
   - **Profile Edits:** [`employee.controller.js` -> `approveProfileUpdate` (`POST /api/v1/employees/approve-profile/:id`)] Review requested changes from existing students. Accept or Reject with a message. Merges pendingEdits.
 
-### 2.3 Inventory & Order Management
+### 2.3 Inventory, Desk Operations & Order Management
 - **Add New Book to Catalogue:** [`book.controller.js` -> `addBook` (`POST /api/v1/books`)] Admin adds a book to the system.
-- **Returning Books:** [`transaction.controller.js` -> `returnBook` (`POST /api/v1/transactions/return/:id`)] Admin scans/returns book, setting rtrnDate and calculating final fine.
+- **Physical Borrowing (Desk):** [`transaction.controller.js` -> `borrowBook` (`POST /api/v1/transactions/borrow`)] Employee scans student's Library Card (`cardNo`) and book barcode (`isbn`). Backend automatically looks up IDs and generates the active transaction.
+- **Physical Returns (Desk):** [`transaction.controller.js` -> `returnBook` (`POST /api/v1/transactions/return`)] Employee scans `cardNo` and `isbn`. Backend automatically finds the active transaction, freezes the fine, and sets the `rtrnDate`.
 - **Order Pipeline:** [`communication.controller.js` -> `placeAdminOrder` (`POST /api/v1/communication/order`)] Interface to order new books or request more copies of existing ones. Tracks the name of the book and the number of copies ordered.
 - **Automated Restock Flow:** [`communication.controller.js` -> `receiveAdminOrder` (`POST /api/v1/communication/order/:id/receive`)]
   - When an order arrives, the employee clicks **"Order Received"**.

@@ -1,5 +1,4 @@
-import mongoose, { Schema } from "mongoose";
-
+import mongoose, { Schema } from "mongoose"
 const orderSchema = new Schema({
     globalBookId: {
         type: String, 
@@ -34,6 +33,5 @@ const orderSchema = new Schema({
         enum: ["Pending Delivery", "Received"],
         default: "Pending Delivery"
     }
-}, { timestamps: true });
-
-export const Order = mongoose.model("Order", orderSchema);
+}, { timestamps: true })
+export const Order = mongoose.model("Order", orderSchema)

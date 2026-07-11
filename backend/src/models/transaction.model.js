@@ -1,5 +1,4 @@
-import mongoose, { Schema } from "mongoose";
-
+import mongoose, { Schema } from "mongoose"
 const transactionSchema= new Schema({
     s_id:{
         type: mongoose.Schema.Types.ObjectId,
@@ -27,7 +26,11 @@ const transactionSchema= new Schema({
     rtrnDate:{
         type:Date
     },
-    fine:{
+    frozenFine:{
+        type:Number,
+        default:0
+    },
+    amountCollected:{
         type:Number,
         default:0
     }

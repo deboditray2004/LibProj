@@ -1,10 +1,8 @@
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
-import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js";
-import { Student } from "../models/student.model.js";
-
-
+import { asyncHandler } from "../utils/asyncHandler.js"
+import { ApiError } from "../utils/ApiError.js"
+import { ApiResponse } from "../utils/ApiResponse.js"
+import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js"
+import { Student } from "../models/student.model.js"
 
 const generateAccessAndRefereshTokens = async(studentId)=>{
 
@@ -26,9 +24,8 @@ const generateAccessAndRefereshTokens = async(studentId)=>{
 
 const registerStudent = asyncHandler( async (req, res) => {
     
-    console.log("BODY:", req.body);
-    console.log("FILES:", req.files);
-
+    console.log("BODY:", req.body)
+    console.log("FILES:", req.files)
     const {name, dob, addr, email, dept, rollNo, password } = req.body
 
 
@@ -41,13 +38,13 @@ const registerStudent = asyncHandler( async (req, res) => {
     throw new ApiError(409, "Student already registered")
     
 
-    const photoLocalPath = req.files?.photo?.[0]?.path;
+    const photoLocalPath = req.files?.photo?.[0]?.path
     let photo
     if (photoLocalPath)
     photo = await uploadOnCloudinary(photoLocalPath)
     
 
-    const govtIdLocalPath = req.files?.govtId?.[0]?.path;
+    const govtIdLocalPath = req.files?.govtId?.[0]?.path
     let g_id
     if (govtIdLocalPath){
         g_id = await uploadOnCloudinary(govtIdLocalPath)
@@ -160,14 +157,23 @@ const logoutStudent = asyncHandler(async(req,res) =>{
     )
 })
 
+const getStudentProfile = asyncHandler(async (req, res) => {
+    
+    const student = await Student.findById(req.student._id).select("-password -refreshToken")
+    if (!student) {
+        throw new ApiError(404, "Student not found")
+    }
 
-// export {
-//     registerStudent,
-//     loginStudent,
-//     logoutStudent,
-//     getStudentProfile,
-//     requestProfileUpdate
-// }
+    return res.status(200).json(
+        new ApiResponse(200, student, "Student profile loaded successfully")
+    )
+})
 
+export {
+    registerStudent,
+    loginStudent,
+    logoutStudent,
+    getStudentProfile,
+}
 
 

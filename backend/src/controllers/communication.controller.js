@@ -1,9 +1,8 @@
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
-
-import { Feedback } from "../models/feedback.model.js";
-import { Notification } from "../models/notification.model.js";
+import { asyncHandler } from "../utils/asyncHandler.js"
+import { ApiError } from "../utils/ApiError.js"
+import { ApiResponse } from "../utils/ApiResponse.js"
+import { Feedback } from "../models/feedback.model.js"
+import { Notification } from "../models/notification.model.js"
 
 const submitFeedback = asyncHandler(async (req, res) => {
 
@@ -18,7 +17,7 @@ const submitFeedback = asyncHandler(async (req, res) => {
 
     return res.status(201).json(new ApiResponse(201,feedback,"Feedback submitted successfully"))
     
-});
+})
 
 const getStudentInbox = asyncHandler(async (req, res) => {
 
@@ -26,27 +25,24 @@ const getStudentInbox = asyncHandler(async (req, res) => {
         s_id: req.student._id,
         status: "Unread"
     })
-    .sort({ createdAt: -1 });
-
+    .sort({ createdAt: -1 })
     if (notifs.length > 0) 
     await Notification.updateMany(
         { s_id: req.student._id, status: "Unread" },
         { $set: { status: "Read" } }
-    );
-
-    return res.status(200).json(new ApiResponse(200, notifs, "Inbox fetched successfully"));
-});
+    )
+    return res.status(200).json(new ApiResponse(200, notifs, "Inbox fetched successfully"))
+})
 
 const getEmployeeInbox = asyncHandler(async (req, res) => {
     
     const feedbacks = await Feedback.find({ status: "Pending reply" })
     .populate("s_id", "name cardNo email")
-    .sort({ createdAt: 1 });
-    
+    .sort({ createdAt: 1 })
     return res.status(200).json(
         new ApiResponse(200, feedbacks, "Inbox fetched successfully")
-    );
-});
+    )
+})
 
 const replyToFeedback = asyncHandler(async (req, res) => {
 
@@ -54,24 +50,22 @@ const replyToFeedback = asyncHandler(async (req, res) => {
     if(!feedBackId || !replyMsg?.trim())
     throw new ApiError(400, "Missing required fields")
 
-    const feedback = await Feedback.findById(feedBackId);
+    const feedback = await Feedback.findById(feedBackId)
     if(!feedback)
     throw new ApiError(404, "Feedback not found")
 
-    feedback.status = "Replied";
-    await feedback.save();
-
+    feedback.status = "Replied"
+    await feedback.save()
     await Notification.create({
         s_id: feedback.s_id,
         msg: replyMsg
     })
 
-    return res.status(200).json(new ApiResponse(200, null, "Feedback replied successfully"));
-});
-
+    return res.status(200).json(new ApiResponse(200, null, "Feedback replied successfully"))
+})
 export {
     submitFeedback,
     getStudentInbox,
     getEmployeeInbox,
     replyToFeedback
-};
+}

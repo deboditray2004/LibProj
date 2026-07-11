@@ -1,5 +1,4 @@
-import mongoose, { Schema } from "mongoose";
-
+import mongoose, { Schema } from "mongoose"
 /*
  Added `index: true` to fields like title, authors, and category because they are frequently searched.
  
