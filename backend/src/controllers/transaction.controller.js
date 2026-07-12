@@ -1,4 +1,6 @@
 import { asyncHandler } from "../utils/asyncHandler.js"
+import { BORROW_PERIOD_MS, RENEWAL_PERIOD_MS, FINE_PER_DAY } from "../utils/constants.js"
+import { sessionWrapper } from "../utils/sessionWrapper.js"
 import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
 import { Transaction } from "../models/transaction.model.js"
@@ -22,14 +24,21 @@ const borrowBook = asyncHandler(async (req, res) => {
     if (activeTxn)
     throw new ApiError(400, "Student already has an active copy of this book.")
 
-    book.avl-=1
-    await book.save()
-    const transaction = await Transaction.create({
-        s_id: student._id,
-        b_id: book._id,
-        dueDate:new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
+    const transactionResult = await sessionWrapper(async (session) => {
+        book.avl -= 1
+        await book.save({ session })
+        
+        const transaction = new Transaction({
+            s_id: student._id,
+            b_id: book._id,
+            dueDate: new Date(Date.now() + BORROW_PERIOD_MS)
+        })
+        await transaction.save({ session })
+        
+        return transaction
     })
-    return res.status(201).json(new ApiResponse(201,"Book borrowed successfully",transaction))
+    
+    return res.status(201).json(new ApiResponse(201, "Book borrowed successfully", transactionResult))
 })
 
 const returnBook = asyncHandler(async (req, res) => {
@@ -51,11 +60,15 @@ const returnBook = asyncHandler(async (req, res) => {
 
     transaction.rtrnDate = Date.now()
     const daysLate = Math.max(0, Math.floor((transaction.rtrnDate - transaction.dueDate) / (1000 * 60 * 60 * 24)))
-    const activeFine = daysLate * 5
+    const activeFine = daysLate * FINE_PER_DAY
     transaction.frozenFine += activeFine
-    book.avl+=1
-    await book.save()
-    await transaction.save()
+    
+    await sessionWrapper(async (session) => {
+        book.avl += 1
+        await book.save({ session })
+        await transaction.save({ session })
+    })
+    
     return res.status(200).json(new ApiResponse(200, "Book returned successfully", transaction))
 })
 
@@ -69,12 +82,13 @@ const renewBook = asyncHandler(async (req, res) => {
     throw new ApiError(400,"Max renewals reached")
     if(transaction.rtrnDate)
     throw new ApiError(400,"Cannot renew a returned book")
+
     const now = Date.now()
     const daysLate = Math.max(0, Math.floor((now - transaction.dueDate) / (1000 * 60 * 60 * 24)))
-    const activeFine = daysLate * 5
+    const activeFine = daysLate * FINE_PER_DAY
     transaction.frozenFine += activeFine
     transaction.renewalCnt += 1
-    transaction.dueDate = new Date(now + 7 * 24 * 60 * 60 * 1000)
+    transaction.dueDate = new Date(now + RENEWAL_PERIOD_MS)
     await transaction.save()
     return res.status(200).json(new ApiResponse(200,"Book renewed successfully",transaction))
 })
@@ -86,11 +100,12 @@ const getTransactionHistory = asyncHandler(async (req, res) => {
     .sort({brwDate:-1})
     const now = Date.now()
     const updatedTransactions = transactions.map(txn => {
+        
         const obj = txn.toObject()
         let activeFine = 0
         if (!obj.rtrnDate) {
             const daysLate = Math.max(0, Math.floor((now - obj.dueDate) / (1000 * 60 * 60 * 24)))
-            activeFine = daysLate * 5
+            activeFine = daysLate * FINE_PER_DAY
         }
         
         obj.activeFine = activeFine
@@ -113,21 +128,22 @@ const payFine = asyncHandler(async (req, res) => {
         }
 
         let totalPaid = 0
-        for (const txn of transactions) {
+        await sessionWrapper(async (session) => {
+            for (const txn of transactions) {
+                const now = Date.now()
+                if (!txn.rtrnDate && now > txn.dueDate)
+                continue
+                totalPaid += txn.frozenFine
+                txn.amountCollected += txn.frozenFine
+                txn.frozenFine = 0
+                await txn.save({ session })
+            }
 
-            const now = Date.now()
-            if (!txn.rtrnDate && now > txn.dueDate)
-            continue
-            totalPaid += txn.frozenFine
-            txn.amountCollected += txn.frozenFine
-            txn.frozenFine = 0
-            await txn.save()
-        }
-
-        if (totalPaid === 0) {
-            throw new ApiError(400, "Could not pay fines. All books with fines are actively overdue. Please return/renew them first.")
-        }
-
+            if (totalPaid === 0) {
+                throw new ApiError(400, "Could not pay fines. All books with fines are actively overdue. Please return/renew them first.")
+            }
+        })
+        
         return res.status(200).json(
             new ApiResponse(200, `Successfully paid ₹${totalPaid} for all eligible transactions.`, null)
         )

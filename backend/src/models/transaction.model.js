@@ -1,4 +1,6 @@
 import mongoose, { Schema } from "mongoose"
+import { updateIfCurrentPlugin } from "mongoose-update-if-current"
+
 const transactionSchema= new Schema({
     s_id:{
         type: mongoose.Schema.Types.ObjectId,
@@ -39,5 +41,6 @@ const transactionSchema= new Schema({
     timestamps:true
 })
 
+transactionSchema.plugin(updateIfCurrentPlugin)
 
 export const Transaction= mongoose.model("Transaction",transactionSchema)

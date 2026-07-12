@@ -10,10 +10,11 @@ const submitFeedback = asyncHandler(async (req, res) => {
     if(!msg?.trim())
     throw new ApiError(400,"Message is required")
     
-    const feedback=await Feedback.create({
+    const feedback = new Feedback({
         s_id:req.student._id,
         msg
     })
+    await feedback.save()
 
     return res.status(201).json(new ApiResponse(201,feedback,"Feedback submitted successfully"))
     
@@ -56,10 +57,11 @@ const replyToFeedback = asyncHandler(async (req, res) => {
 
     feedback.status = "Replied"
     await feedback.save()
-    await Notification.create({
+    const notification = new Notification({
         s_id: feedback.s_id,
         msg: replyMsg
     })
+    await notification.save()
 
     return res.status(200).json(new ApiResponse(200, null, "Feedback replied successfully"))
 })

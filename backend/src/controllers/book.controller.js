@@ -1,4 +1,5 @@
 import { asyncHandler } from "../utils/asyncHandler.js"
+import { sessionWrapper } from "../utils/sessionWrapper.js"
 import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
 import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js"
@@ -6,13 +7,17 @@ import { Book } from "../models/book.model.js"
 import { BookRequest } from "../models/bookRequest.model.js"
 import { Order } from "../models/order.model.js"
 import { searchGlobalBook, fetchAndFormatBookData } from "../utils/googleBooksAPI.js"
+
 const requestBook = asyncHandler(async (req, res) => {
+
     const { isbn } = req.body
     if (!isbn) throw new ApiError(400, "Please provide the ISBN")
-    const bookRequest = await BookRequest.create({
+
+    const bookRequest = new BookRequest({
         s_id: req.student._id,
         isbn
     })
+    await bookRequest.save()
     return res.status(201).json(new ApiResponse(201, bookRequest, "Book request placed successfully"))
 })
 
@@ -38,7 +43,7 @@ const getAggregatedRequests = asyncHandler(async (req, res) => {
     )
 })
 
-const rejectRequest = asyncHandler(async (req, res) => {
+const rejectBookRequest = asyncHandler(async (req, res) => {
     
     const { requestIds } = req.body
     if (!requestIds || !Array.isArray(requestIds) || requestIds.length === 0) {
@@ -52,22 +57,31 @@ const rejectRequest = asyncHandler(async (req, res) => {
 })
 
 const placeOrder = asyncHandler(async (req, res) => {
+
     const { isbn, copiesOrdered, requestIds } = req.body
     if (!isbn || !copiesOrdered || !requestIds || !Array.isArray(requestIds) || requestIds.length === 0)
     throw new ApiError(400, "Missing required order details or invalid requestIds array")
     const match = await searchGlobalBook(isbn)
     if (!match)
     throw new ApiError(404, "Book not found in global catalogue")
-    const order = await Order.create({
-        globalBookId: match.globalBookId,
-        orderTitle: match.orderTitle,
-        authors: match.authors,
-        coverImg: match.coverImg,
-        category: match.category,
-        copiesOrdered
+
+    const orderResult = await sessionWrapper(async (session) => {
+        const order = new Order({
+            globalBookId: match.globalBookId,
+            orderTitle: match.orderTitle,
+            authors: match.authors,
+            coverImg: match.coverImg,
+            category: match.category,
+            copiesOrdered
+        })
+        await order.save({ session })
+        
+        await BookRequest.deleteMany({ _id: { $in: requestIds } }).session(session)
+        
+        return order
     })
-    await BookRequest.deleteMany({ _id: { $in: requestIds } })
-    return res.status(201).json(new ApiResponse(201, order, "Order placed successfully"))
+    
+    return res.status(201).json(new ApiResponse(201, orderResult, "Order placed successfully"))
 })
 
 const manualOrder = asyncHandler(async (req, res) => {
@@ -78,16 +92,25 @@ const manualOrder = asyncHandler(async (req, res) => {
     const match = await searchGlobalBook(isbn)
     if (!match)
     throw new ApiError(404, "Book not found in global catalogue")
-    const order = await Order.create({
-        globalBookId: match.globalBookId,
-        orderTitle: match.orderTitle,
-        authors: match.authors,
-        coverImg: match.coverImg,
-        category: match.category,
-        copiesOrdered
+
+
+    const orderResult = await sessionWrapper(async (session) => {
+        const order = new Order({
+            globalBookId: match.globalBookId,
+            orderTitle: match.orderTitle,
+            authors: match.authors,
+            coverImg: match.coverImg,
+            category: match.category,
+            copiesOrdered
+        })
+        await order.save({ session })
+        
+        await BookRequest.deleteMany({ isbn }).session(session)
+        
+        return order
     })
-    await BookRequest.deleteMany({ isbn })
-    return res.status(201).json(new ApiResponse(201, order, "Order placed successfully"))
+    
+    return res.status(201).json(new ApiResponse(201, orderResult, "Order placed successfully"))
 })
 
 const receiveOrder = asyncHandler(async (req, res) => {
@@ -99,24 +122,31 @@ const receiveOrder = asyncHandler(async (req, res) => {
     if(!order)
     throw new ApiError(404, "Order not found")
     const existingBook = await Book.findOne({ globalBookId: order.globalBookId })
-    if (existingBook) {
-        existingBook.total += order.copiesOrdered
-        existingBook.avl += order.copiesOrdered
-        await existingBook.save()
-    } else {
-        await Book.create({
-            globalBookId: order.globalBookId,
-            title: order.orderTitle,
-            authors: order.authors,
-            category: order.category,
-            coverImg: order.coverImg,
-            total: order.copiesOrdered,
-            avl: order.copiesOrdered
-        })
-    }
+    
+    await sessionWrapper(async (session) => {
 
-    order.status = "Received"
-    await order.save()
+        if (existingBook) {
+            existingBook.total += order.copiesOrdered
+            existingBook.avl += order.copiesOrdered
+            await existingBook.save({ session })
+        } 
+        else {
+            const newBook = new Book({
+                globalBookId: order.globalBookId,
+                title: order.orderTitle,
+                authors: order.authors,
+                category: order.category,
+                coverImg: order.coverImg,
+                total: order.copiesOrdered,
+                avl: order.copiesOrdered
+            })
+            await newBook.save({ session })
+        }
+
+        order.status = "Received"
+        await order.save({ session })
+    })
+    
     return res.status(200).json(
         new ApiResponse(200, order, "Order received successfully")
     )
@@ -160,7 +190,7 @@ const getBookById = asyncHandler(async (req, res) => {
 export {
     requestBook,
     getAggregatedRequests,
-    rejectRequest,
+    rejectBookRequest,
     placeOrder,
     manualOrder,
     receiveOrder,

@@ -1,4 +1,6 @@
 import mongoose, { Schema } from "mongoose"
+import { updateIfCurrentPlugin } from "mongoose-update-if-current"
+
 const feedbackSchema=new Schema({
     s_id:{
         type:mongoose.Schema.Types.ObjectId,
@@ -19,5 +21,7 @@ const feedbackSchema=new Schema({
 {   
     timestamps:true
 })
+
+feedbackSchema.plugin(updateIfCurrentPlugin)
 
 export const Feedback=mongoose.model("Feedback",feedbackSchema)

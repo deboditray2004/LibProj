@@ -55,7 +55,7 @@ const registerStudent = asyncHandler( async (req, res) => {
     throw new ApiError(400, "Government Id is required")
 
 
-    const student = await Student.create({
+    const student = new Student({
         name,
         photo: photo?.url || "",
         govtId: g_id.url,
@@ -65,6 +65,7 @@ const registerStudent = asyncHandler( async (req, res) => {
         email, 
         password,
     })
+    await student.save()
 
 
     const createdStudent = await Student.findById(student._id).select(

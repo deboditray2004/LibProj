@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose"
+import { updateIfCurrentPlugin } from "mongoose-update-if-current"
 const orderSchema = new Schema({
     globalBookId: {
         type: String, 
@@ -34,4 +35,7 @@ const orderSchema = new Schema({
         default: "Pending Delivery"
     }
 }, { timestamps: true })
+
+orderSchema.plugin(updateIfCurrentPlugin)
+
 export const Order = mongoose.model("Order", orderSchema)
