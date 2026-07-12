@@ -169,11 +169,36 @@ const getStudentProfile = asyncHandler(async (req, res) => {
     )
 })
 
+const requestProfileUpdate = asyncHandler(async (req, res) => {
+    const updates = req.body
+
+    delete updates.cardNo
+    delete updates.status
+    delete updates.tot_fine
+
+    if (Object.keys(updates).length === 0)
+    throw new ApiError(400, "No valid fields provided for update")
+
+    const student = await Student.findById(req.student._id)
+    if (!student) throw new ApiError(404, "Student not found")
+    
+    student.pendingEdits = {
+        ...(student.pendingEdits || {}),
+        ...updates
+    }
+    await student.save({ validateBeforeSave: false })
+
+    return res.status(200).json(
+        new ApiResponse(200, student.pendingEdits, "Profile update requested successfully. Pending admin approval.")
+    )
+})
+
 export {
     registerStudent,
     loginStudent,
     logoutStudent,
     getStudentProfile,
+    requestProfileUpdate
 }
 
 

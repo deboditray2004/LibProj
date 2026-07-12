@@ -74,7 +74,7 @@ const renewBook = asyncHandler(async (req, res) => {
     const activeFine = daysLate * 5
     transaction.frozenFine += activeFine
     transaction.renewalCnt += 1
-    transaction.dueDate = new Date(now + 14 * 24 * 60 * 60 * 1000)
+    transaction.dueDate = new Date(now + 7 * 24 * 60 * 60 * 1000)
     await transaction.save()
     return res.status(200).json(new ApiResponse(200,"Book renewed successfully",transaction))
 })
