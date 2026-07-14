@@ -1,69 +1,74 @@
 # Library Management System - Product Requirements Document (PRD)
 
-**Project Overview:** A full-stack, role-based Library Management System designed to handle complex business logic including finite state machine approvals, dynamic fine calculations, automated notifications, and concurrent transactions.
-
-**User Roles:** System architecture strictly separates users into two independent collections: **Students** and **Employees** (Library Management).
+**Project Overview:** A full-stack, enterprise-grade Library Management System designed to handle complex business logic. The system strictly separates users into two independent roles: **Students** and **Library Management (Employees)**, and features robust concurrency control, automated penalty calculations, and an intelligent digital inventory.
 
 ---
 
 ## 1. Student Portal Features
 
 ### 1.1 Authentication & Onboarding
-- **Registration Pipeline:** [`student.controller.js` -> `registerStudent` (`POST /api/v1/students/register`)] Students register by submitting Personal details (Name, DOB, Address, Govt ID, Photo) and Academic details (Department, Roll No).
-- **Approval Workflow:** Registrations are placed in a "Pending" state. Once approved by Management, the system generates and assigns a unique 4-digit Library Card No (Format: `ID-XXXX`).
-- **Login:** [`student.controller.js` -> `loginStudent` (`POST /api/v1/students/login`)] Secure login using the generated Library Card No and password.
-- **Logout:** [`student.controller.js` -> `logoutStudent` (`POST /api/v1/students/logout`)]
+- **Registration Pipeline:** Students register by submitting their personal and academic details, along with their Government ID and photo. 
+- **Approval Workflow:** All new registrations are placed in a "Pending" queue. Once vetted and approved by Management, the system automatically generates a unique 4-digit Library Card Number.
+- **Secure Access:** Students log into their personalized dashboard using their Library Card Number and password.
 
 ### 1.2 Dashboard & Profile Management
-- **Profile Updates:** [`student.controller.js` -> `requestProfileUpdate` (`PATCH /api/v1/students/profile`)] Students can edit their personal details. Changes require management approval before taking effect across the system.
-- **View Profile:** [`student.controller.js` -> `getStudentProfile` (`GET /api/v1/students/profile`)] Returns current user details.
-- **Active Borrowings:** View currently borrowed books, issue dates, and exact due dates.
-- **Financial Tracking:** View pending fines dynamically calculated for overdue books. Includes a link to a payment portal integration.
+- **Profile Updates:** Students can request edits to their personal details. To maintain data integrity, changes remain pending until authorized by Management.
+- **Active Borrowings:** A real-time dashboard displaying currently borrowed books, issue dates, and exact due dates.
+- **Financial Tracking:** A dynamic fine-calculation engine that displays exact overdue penalties in real-time.
 - **Borrowing Constraints (Business Logic):**
-  - **Duplicate Borrowing Block:** Students are strictly prevented from borrowing a second copy of a book they already have an active transaction for.
-  - **The "Two-Fine" Time-Based Architecture:** The backend utilizes an elegant `frozenFine` (database field) and `activeFine` (memory-calculated) architecture.
-    - Returning or Renewing a book instantly locks the current `activeFine` into the `frozenFine` database bank.
-    - **Active Fine Payment Block:** Students are strictly prohibited from paying an actively accumulating fine. They must first physically Return or Renew the book to freeze the fine before paying.
-  - **The Dual-Mode Payment System:** [`transaction.controller.js` -> `payFine` (`POST /api/v1/transactions/pay-fine`)]
-    - Students can pay for a single transaction (by providing `transactionId`), or hit "Pay All" to instantly clear all frozen fines across their entire history.
-    - **Hard Limit (Physical Return Required):** Students are strictly limited to **2 consecutive renewals**. If `renewalCount === 2`, the student MUST physically return the book to the librarian to freeze and settle the final fine.
+  - **Duplicate Borrowing Block:** Students are strictly prevented from checking out multiple copies of the exact same book.
+  - **The "Two-Fine" Time-Based Architecture:** Fines are calculated actively in memory based on the due date. The fine is only "frozen" into the database bank once the student physically returns or renews the book.
+  - **Hard Limit (Physical Return Required):** Students are limited to **2 consecutive online renewals**. After the second renewal, physical return to the librarian is mandatory to settle the account.
 
 ### 1.3 Communication (Inbox System)
-- **Notifications Inbox:** [`communication.controller.js` -> `getNotifications` (`GET /api/v1/communication/notifications`)] Students receive automated system notifications and direct messages from Management regarding approvals or restocks.
-- **Feedback & Reviews:** [`communication.controller.js` -> `submitFeedback` (`POST /api/v1/communication/feedback`)] Students can submit feedback, condition reports, or general reviews to the Management team.
+- **Notifications Inbox:** A built-in messaging system where students receive automated alerts (e.g., "Book is now available") and direct messages from the Library Management.
+- **Feedback & Reviews:** A portal for students to submit condition reports, book reviews, or general feedback directly to the administration.
 
-### 1.4 Digital Catalogue
-- **Guest Access:** Non-authenticated users can browse the public catalogue.
-- **Search & Filters:** [`book.controller.js` -> `getAllBooks` (`GET /api/v1/books`)] Real-time search by Title or Author, with advanced filtering by Book Category. Designed to handle a vast inventory.
-- **Inventory & Availability Engine:** [`book.controller.js` -> `getBookDetails` (`GET /api/v1/books/:id`)]
-  - Displays real-time "Copies Left" for every book.
-  - **Predictive Availability:** If copies = 0, the system calculates and displays the earliest time/date a copy will become available (based on the nearest due date of borrowed copies).
-- **Requests System:** [`communication.controller.js` -> `createStudentRequest` (`POST /api/v1/communication/request`)] Students can request the library to order a completely new book or request additional copies of a currently out-of-stock book.
+### 1.4 Digital Catalogue & Inventory
+- **Guest Access:** Non-authenticated users can freely browse the public catalogue.
+- **Search & Filters:** Real-time, highly performant search by Title, Author, and Category.
+- **Predictive Availability:** The system displays real-time "Copies Left". If a book is out of stock, the engine automatically calculates and displays the exact date the next copy is expected to be returned.
+- **Automated Request System:** If a book is missing or out of stock, students can submit a formal request. These requests are aggregated by ISBN and sent to the Management's purchasing pipeline.
 
 ---
 
 ## 2. Library Management (Admin) Features
 
 ### 2.1 Access & Employee Management
-- **Login:** [`employee.controller.js` -> `loginEmployee` (`POST /api/v1/employees/login`)] Employees log in using pre-assigned Employee IDs.
-- **Logout:** [`employee.controller.js` -> `logoutEmployee` (`POST /api/v1/employees/logout`)]
-- **Concurrency Control:** The backend utilizes atomic database operations (Optimistic Concurrency Control) to ensure multiple employees can work simultaneously without causing data race conditions.
+- **Secure Login:** Employees log in using pre-assigned, highly privileged Employee IDs.
+- **Concurrency Control:** The backend utilizes Optimistic Concurrency Control (OCC) to ensure multiple librarians can work simultaneously at different desks without ever causing data race conditions.
 
 ### 2.2 Administrative Queues
-- **Pending Fines Report:** Centralized dashboard to track and follow up on students with active fines.
+- **Pending Fines Report:** A centralized dashboard to track, monitor, and follow up on students with actively accumulating fines.
 - **Pending Approvals Pipeline:**
-  - **New Students:** [`employee.controller.js` -> `approveStudent` (`POST /api/v1/employees/approve-student/:id`)] Review Govt IDs and details. Accept or Reject with a mandatory reason/message. Generates cardNo.
-  - **Profile Edits:** [`employee.controller.js` -> `approveProfileUpdate` (`POST /api/v1/employees/approve-profile/:id`)] Review requested changes from existing students. Accept or Reject with a message. Merges pendingEdits.
+  - **New Students:** Review submitted Government IDs and approve/reject registrations with automated email triggers.
+  - **Profile Edits:** Review and authorize requested student profile changes.
 
 ### 2.3 Inventory, Desk Operations & Order Management
-- **Add New Book to Catalogue:** [`book.controller.js` -> `addBook` (`POST /api/v1/books`)] Admin adds a book to the system.
-- **Physical Borrowing (Desk):** [`transaction.controller.js` -> `borrowBook` (`POST /api/v1/transactions/borrow`)] Employee scans student's Library Card (`cardNo`) and book barcode (`isbn`). Backend automatically looks up IDs and generates the active transaction.
-- **Physical Returns (Desk):** [`transaction.controller.js` -> `returnBook` (`POST /api/v1/transactions/return`)] Employee scans `cardNo` and `isbn`. Backend automatically finds the active transaction, freezes the fine, and sets the `rtrnDate`.
-- **Order Pipeline:** [`communication.controller.js` -> `placeAdminOrder` (`POST /api/v1/communication/order`)] Interface to order new books or request more copies of existing ones. Tracks the name of the book and the number of copies ordered.
-- **Automated Restock Flow:** [`communication.controller.js` -> `receiveAdminOrder` (`POST /api/v1/communication/order/:id/receive`)]
-  - When an order arrives, the employee clicks **"Order Received"**.
-  - The system updates the inventory count.
-  - **Automation:** The system scans the database for any pending "Student Requests" for that specific book, sends an automated "Now Available" notification to those students' inboxes, and clears the pending requests.
+- **Physical Borrowing (Desk):** The librarian scans the student's Library Card and the book's barcode. The system instantly processes the transaction, decrements inventory, and assigns a due date.
+- **Physical Returns (Desk):** Scanning the book processes the return, calculates the final frozen fine, and increments library inventory.
+- **Automated Order Pipeline (Global Integration):**
+  - Librarians view aggregated student requests sorted by popularity.
+  - By entering an ISBN, the system automatically fetches high-quality metadata and cover images from the **Google Books API**, caching the data to avoid redundant API calls.
+- **Automated Restock Flow:**
+  - When a physical book delivery arrives, the librarian clicks "Order Received".
+  - The system instantly adds the book to the internal database, marks all related student requests as "Fulfilled", and fires off automated "Now Available" inbox notifications to the waiting students.
 
 ### 2.4 Feedback Loop
-- **Review Center:** [`communication.controller.js` -> `replyToFeedback` (`POST /api/v1/communication/feedback/:id/reply`)] Read incoming student feedback/reviews and reply directly. Replies are routed to the student's Notification Inbox.
+- **Review Center:** A dedicated portal to read incoming student feedback, resolve issues, and send direct replies to student inboxes.
+
+---
+
+## 3. System Architecture & Security
+
+### 3.1 Data Validation (Zod)
+- **Declarative Schemas:** All incoming network traffic is strictly validated against mathematical schemas. 
+- **Validation Middleware:** A centralized gatekeeper intercepts requests, instantly rejecting malformed data with detailed feedback. The business logic only executes if the payload is 100% flawless.
+
+### 3.2 Concurrency & ACID Compliance
+- **Optimistic Concurrency Control (OCC):** Prevents edge-case race conditions during high-volume periods (e.g., preventing two librarians from checking out the final copy of a book simultaneously).
+- **Atomic Transactions:** Critical multi-document database changes (e.g., decrementing book availability while simultaneously generating a transaction record) are wrapped in secure database sessions. If a sudden failure occurs mid-transaction, the entire operation rolls back to prevent corrupted or orphaned data.
+
+### 3.3 Security & Error Handling
+- **Global Error Handler:** A unified safety net guarantees that any thrown error—whether a database conflict, validation failure, or authorization error—is formatted into a clean, standardized JSON response, preventing sensitive stack traces from leaking.
+- **Role-Based JWT Security:** Secure HTTP-only cookies and JSON Web Tokens ensure that every API endpoint is mathematically protected against unauthorized access.
