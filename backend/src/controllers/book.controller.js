@@ -11,7 +11,6 @@ import { searchGlobalBook, fetchAndFormatBookData } from "../utils/googleBooksAP
 const requestBook = asyncHandler(async (req, res) => {
 
     const { isbn } = req.body
-    if (!isbn) throw new ApiError(400, "Please provide the ISBN")
 
     const bookRequest = new BookRequest({
         s_id: req.student._id,
@@ -46,9 +45,6 @@ const getAggregatedRequests = asyncHandler(async (req, res) => {
 const rejectBookRequest = asyncHandler(async (req, res) => {
     
     const { requestIds } = req.body
-    if (!requestIds || !Array.isArray(requestIds) || requestIds.length === 0) {
-        throw new ApiError(400, "Please provide an array of request IDs to reject")
-    }
 
     await BookRequest.deleteMany({ _id: { $in: requestIds } })
     return res.status(200).json(
@@ -59,8 +55,6 @@ const rejectBookRequest = asyncHandler(async (req, res) => {
 const placeOrder = asyncHandler(async (req, res) => {
 
     const { isbn, copiesOrdered, requestIds } = req.body
-    if (!isbn || !copiesOrdered || !requestIds || !Array.isArray(requestIds) || requestIds.length === 0)
-    throw new ApiError(400, "Missing required order details or invalid requestIds array")
     const match = await searchGlobalBook(isbn)
     if (!match)
     throw new ApiError(404, "Book not found in global catalogue")
@@ -87,8 +81,6 @@ const placeOrder = asyncHandler(async (req, res) => {
 const manualOrder = asyncHandler(async (req, res) => {
     
     const { isbn, copiesOrdered} = req.body
-    if(!isbn || copiesOrdered<=0)
-    throw new ApiError(400, "Missing required order details or invalid copies ordered")
     const match = await searchGlobalBook(isbn)
     if (!match)
     throw new ApiError(404, "Book not found in global catalogue")

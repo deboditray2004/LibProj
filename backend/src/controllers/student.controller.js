@@ -29,10 +29,6 @@ const registerStudent = asyncHandler( async (req, res) => {
     const {name, dob, addr, email, dept, rollNo, password } = req.body
 
 
-    if ([name, dob, addr, email, dept, rollNo, password].some((field) => String(field)?.trim() === ""))
-    throw new ApiError(400, "All fields are required")
-
-
     const existingStudent = await Student.findOne({ rollNo })
     if(existingStudent)
     throw new ApiError(409, "Student already registered")
@@ -86,8 +82,6 @@ const registerStudent = asyncHandler( async (req, res) => {
 const loginStudent= asyncHandler(async(req, res) =>{
 
     const {cardNo , password} = req.body
-    if(!cardNo || !password)
-    throw new ApiError(400, "Library Card No and Password is required")
 
     const student=await Student.findOne({cardNo})
     if(!student)
@@ -176,9 +170,6 @@ const requestProfileUpdate = asyncHandler(async (req, res) => {
     delete updates.cardNo
     delete updates.status
     delete updates.tot_fine
-
-    if (Object.keys(updates).length === 0)
-    throw new ApiError(400, "No valid fields provided for update")
 
     const student = await Student.findById(req.student._id)
     if (!student) throw new ApiError(404, "Student not found")

@@ -15,7 +15,7 @@ app.use(express.urlencoded({extended: true, limit: "16kb"}))
 app.use(express.static("public"))
 app.use(cookieParser())
 
-// Import routes
+//import routes
 import studentRouter from "./routes/student.routes.js"
 import employeeRouter from "./routes/employee.routes.js"
 import managementRouter from "./routes/management.routes.js"
@@ -23,17 +23,18 @@ import bookRouter from "./routes/book.routes.js"
 import transactionRouter from "./routes/transaction.routes.js"
 import communicationRouter from "./routes/communication.routes.js"
 
-// Mount routes
-app.use("/api/v1/students", studentRouter)
-app.use("/api/v1/employees", employeeRouter)
-app.use("/api/v1/management", managementRouter)
-app.use("/api/v1/books", bookRouter)
-app.use("/api/v1/transactions", transactionRouter)
-app.use("/api/v1/communication", communicationRouter)
+//mount routes
+app.use("/api/students", studentRouter)
+app.use("/api/employees", employeeRouter)
+app.use("/api/management", managementRouter)
+app.use("/api/books", bookRouter)
+app.use("/api/transactions", transactionRouter)
+app.use("/api/communication", communicationRouter)
 
-// Global Error Handler
+//global Error Handler
 app.use((err, req, res, next) => {
-    // Check for Mongoose OCC VersionError
+    
+    // mongoose OCC VersionError
     if (err instanceof mongoose.Error.VersionError) {
         return res.status(409).json({
             statusCode: 409,
@@ -43,7 +44,7 @@ app.use((err, req, res, next) => {
         })
     }
 
-    // Default ApiError format or fallback
+    //default ApiError format or fallback
     const statusCode = err.statusCode || 500
     const message = err.message || "Something went wrong on the server"
     

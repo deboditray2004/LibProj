@@ -1,7 +1,4 @@
 /*
-=========================================================
-^ API ERROR ARCHITECTURE NOTES 
-=========================================================
 1. Why explicitly declare `this.message = finalMessage`?
    When calling super(message), Node.js creates a NON-enumerable message property.
    If we don't explicitly re-declare it, JSON.stringify() will ignore it, and the 
@@ -18,7 +15,7 @@
      Error.captureStackTrace generates a brand new stack trace so we still know which controller threw the 404.
 
 Summary: The Custom Object is packaged for the Frontend. The Console Logs are for the Backend!
-=========================================================
+
 */
 class ApiError extends Error {
     constructor(

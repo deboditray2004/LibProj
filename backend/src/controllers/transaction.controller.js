@@ -1,5 +1,5 @@
 import { asyncHandler } from "../utils/asyncHandler.js"
-import { BORROW_PERIOD_MS, RENEWAL_PERIOD_MS, FINE_PER_DAY } from "../utils/constants.js"
+import { BORROW_PERIOD_MS, RENEWAL_PERIOD_MS, FINE_PER_DAY } from "../constants.js"
 import { sessionWrapper } from "../utils/sessionWrapper.js"
 import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
@@ -82,7 +82,7 @@ const renewBook = asyncHandler(async (req, res) => {
     throw new ApiError(400,"Max renewals reached")
     if(transaction.rtrnDate)
     throw new ApiError(400,"Cannot renew a returned book")
-
+    
     const now = Date.now()
     const daysLate = Math.max(0, Math.floor((now - transaction.dueDate) / (1000 * 60 * 60 * 24)))
     const activeFine = daysLate * FINE_PER_DAY
@@ -150,8 +150,6 @@ const payFine = asyncHandler(async (req, res) => {
     }
 
     // pay single transaction
-    if (!transactionId)
-    throw new ApiError(400, "Please provide a transactionId or set payAll to true.")
 
     const transaction = await Transaction.findById(transactionId)
     if (!transaction)
