@@ -36,6 +36,9 @@ export const resetPassword = (token: string, data: { password: string; confirmPa
 export const searchBooks = (params: { search?: string; category?: string }) =>
   api.get('/books/search', { params }).then((r) => r.data)
 
+export const getCategories = () =>
+  api.get('/books/categories').then((r) => r.data)
+
 export const getBookById = (bookId: string) =>
   api.get(`/books/${bookId}`).then((r) => r.data)
 

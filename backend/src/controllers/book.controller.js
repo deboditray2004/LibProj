@@ -166,6 +166,13 @@ const getAllBooks = asyncHandler(async (req, res) => {
     )
 })
 
+const getAllCategories = asyncHandler(async (req, res) => {
+    const categories = await Book.distinct("category")
+    return res.status(200).json(
+        new ApiResponse(200, categories, "Categories fetched successfully")
+    )
+})
+
 const getBookById = asyncHandler(async (req, res) => {
     
     const {bookId} = req.params
@@ -195,5 +202,6 @@ export {
     receiveOrder,
     getAllBooks,
     getBookById,
-    getAllOrders
+    getAllOrders,
+    getAllCategories
 }

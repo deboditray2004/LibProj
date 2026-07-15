@@ -85,10 +85,9 @@ const studentSchema =new Schema({
 
 studentSchema.plugin(updateIfCurrentPlugin)
 
-studentSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next()
+studentSchema.pre("save", async function () {
+    if (!this.isModified("password")) return;
     this.password = await bcrypt.hash(this.password, 10)
-    next()
 })
 
 studentSchema.methods.isPasswordCorrect=async function(password){

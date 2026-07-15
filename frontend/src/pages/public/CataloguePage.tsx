@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { searchBooks } from '../../api'
+import { searchBooks, getCategories } from '../../api'
 import { ArrowLeft, MagnifyingGlass, BookOpen, WarningCircle } from '@phosphor-icons/react'
 
 export default function CataloguePage() {
@@ -13,8 +13,15 @@ export default function CataloguePage() {
     queryFn: () => searchBooks({ search, category }),
   })
 
+  const { data: catData } = useQuery({
+    queryKey: ['categories'],
+    queryFn: getCategories,
+  })
+
   // Ensure books is always an array. API error 404 is thrown if empty.
   const books = data?.data || []
+  // Filter out empty strings from categories list and prepend '' (All Categories)
+  const categoriesList = ['', ...(catData?.data?.filter((c: string) => c) || [])]
 
   return (
     <div style={styles.page}>
@@ -47,7 +54,7 @@ export default function CataloguePage() {
 
           <div style={styles.filterGroup}>
             <p style={styles.filterTitle}>Category</p>
-            {['', 'Fiction', 'Non-Fiction', 'Science', 'Technology', 'History'].map((cat) => (
+            {categoriesList.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setCategory(cat)}

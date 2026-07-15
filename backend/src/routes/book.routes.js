@@ -8,7 +8,8 @@ import {
     receiveOrder, 
     getAllBooks, 
     getBookById,
-    getAllOrders
+    getAllOrders,
+    getAllCategories
 } from "../controllers/book.controller.js"
 import { verifyStudent, verifyEmployee } from "../middlewares/auth.middleware.js"
 import { validate } from "../middlewares/validate.middleware.js"
@@ -18,6 +19,7 @@ const router = Router()
 
 // Public Routes
 router.route("/search").get(getAllBooks)
+router.route("/categories").get(getAllCategories)
 router.route("/:bookId").get(getBookById)
 
 // Student Routes
