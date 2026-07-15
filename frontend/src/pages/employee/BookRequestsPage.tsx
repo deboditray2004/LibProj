@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
 import { getAggregatedRequests, placeOrder, rejectBookRequest } from '../../api'
 import { WarningCircle, BookOpen, X, ShoppingCart } from '@phosphor-icons/react'
 
@@ -24,17 +25,25 @@ export default function BookRequestsPage() {
   const orderMutation = useMutation({
     mutationFn: placeOrder,
     onSuccess: () => {
+      toast.success('Order placed successfully!')
       queryClient.invalidateQueries({ queryKey: ['aggregatedRequests'] })
       setOrderModalOpen(false)
       setCopiesOrdered(1)
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Failed to place order.')
     }
   })
 
   const rejectMutation = useMutation({
     mutationFn: rejectBookRequest,
     onSuccess: () => {
+      toast.success('Requests rejected.')
       queryClient.invalidateQueries({ queryKey: ['aggregatedRequests'] })
       setRejectModalOpen(false)
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Failed to reject requests.')
     }
   })
 
@@ -120,45 +129,42 @@ export default function BookRequestsPage() {
         </div>
       )}
 
-      {/* Order Modal */}
-      {orderModalOpen && selectedGroup && (
-        <div style={styles.modalOverlay}>
-          <div className="card" style={styles.modal}>
-            <h3 style={styles.modalTitle}>Place Book Order</h3>
-            <p style={styles.modalDesc}>How many copies of <strong>{selectedGroup.bookDetails?.title}</strong> would you like to order from the publisher?</p>
-            
-            <div style={styles.field}>
-              <label style={styles.label}>Copies to Order</label>
-              <input 
-                type="number" 
-                min="1" 
-                style={styles.input}
-                value={copiesOrdered}
-                onChange={(e) => setCopiesOrdered(parseInt(e.target.value) || 1)}
-              />
-            </div>
-
+      {/* Reject Modal */}
+      {rejectModalOpen && (
+        <div className="modal-overlay" onClick={() => setRejectModalOpen(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <h3 style={styles.modalTitle}>Reject Requests</h3>
+            <p style={styles.modalDesc}>Are you sure you want to dismiss {selectedGroup?.count} requests for this book?</p>
             <div style={styles.modalActions}>
-              <button className="btn btn-secondary" onClick={() => setOrderModalOpen(false)}>Cancel</button>
-              <button className="btn btn-primary" onClick={submitOrder} disabled={orderMutation.isPending}>
-                {orderMutation.isPending ? 'Ordering...' : 'Confirm Order'}
+              <button className="btn btn-secondary" onClick={() => setRejectModalOpen(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={submitReject} disabled={rejectMutation.isPending} style={{ backgroundColor: 'var(--color-accent-rose)', borderColor: 'var(--color-accent-rose)' }}>
+                {rejectMutation.isPending ? 'Rejecting...' : 'Yes, Reject'}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Reject Modal */}
-      {rejectModalOpen && selectedGroup && (
-        <div style={styles.modalOverlay}>
-          <div className="card" style={styles.modal}>
-            <h3 style={styles.modalTitle}>Reject Requests</h3>
-            <p style={styles.modalDesc}>Are you sure you want to reject all <strong>{selectedGroup.count}</strong> requests for <strong>{selectedGroup.bookDetails?.title}</strong>? This cannot be undone.</p>
-            
+      {/* Order Modal */}
+      {orderModalOpen && (
+        <div className="modal-overlay" onClick={() => setOrderModalOpen(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <h3 style={styles.modalTitle}>Place Order</h3>
+            <p style={styles.modalDesc}>How many copies of <strong>{selectedGroup?.bookDetails?.title || selectedGroup?._id}</strong> would you like to order from the publisher?</p>
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Copies</label>
+              <input 
+                className="input"
+                type="number" 
+                min={1}
+                value={copiesOrdered}
+                onChange={e => setCopiesOrdered(parseInt(e.target.value) || 1)}
+              />
+            </div>
             <div style={styles.modalActions}>
-              <button className="btn btn-secondary" onClick={() => setRejectModalOpen(false)}>Cancel</button>
-              <button className="btn btn-primary" onClick={submitReject} disabled={rejectMutation.isPending} style={{ backgroundColor: 'var(--color-accent-rose)', borderColor: 'var(--color-accent-rose)' }}>
-                {rejectMutation.isPending ? 'Rejecting...' : 'Confirm Reject'}
+              <button className="btn btn-secondary" onClick={() => setOrderModalOpen(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={submitOrder} disabled={orderMutation.isPending || copiesOrdered < 1}>
+                {orderMutation.isPending ? 'Ordering...' : 'Confirm Order'}
               </button>
             </div>
           </div>
@@ -215,6 +221,9 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '1.5rem',
   },
   card: {
+    backgroundColor: 'var(--color-bg-card)',
+    border: '2px solid var(--color-border)',
+    boxShadow: '4px 4px 0px 0px #111111',
     display: 'flex',
     flexDirection: 'column',
   },
@@ -290,24 +299,6 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '0.75rem',
     padding: '1.5rem',
   },
-  modalOverlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 100,
-    padding: '1rem',
-  },
-  modal: {
-    width: '100%',
-    maxWidth: '400px',
-    padding: '1.5rem',
-  },
   modalTitle: {
     fontFamily: 'var(--font-sans)',
     fontSize: '18px',
@@ -321,29 +312,6 @@ const styles: Record<string, React.CSSProperties> = {
     color: 'var(--color-text-secondary)',
     margin: '0 0 1.5rem 0',
     lineHeight: 1.4,
-  },
-  field: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem',
-    marginBottom: '1.5rem',
-  },
-  label: {
-    fontFamily: 'var(--font-mono)',
-    fontSize: '12px',
-    color: 'var(--color-text-muted)',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-  },
-  input: {
-    backgroundColor: 'var(--color-bg-base)',
-    border: '1px solid var(--color-border)',
-    borderRadius: '4px',
-    padding: '10px 12px',
-    color: 'var(--color-text-primary)',
-    fontFamily: 'var(--font-sans)',
-    fontSize: '14px',
-    width: '100%',
   },
   modalActions: {
     display: 'flex',

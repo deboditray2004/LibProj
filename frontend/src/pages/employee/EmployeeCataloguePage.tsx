@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
 import { searchBooks, getCategories, manualOrder } from '../../api'
 import { MagnifyingGlass, BookOpen, WarningCircle, ShoppingCart } from '@phosphor-icons/react'
 
@@ -25,9 +26,13 @@ export default function EmployeeCataloguePage() {
   const orderMutation = useMutation({
     mutationFn: manualOrder,
     onSuccess: () => {
+      toast.success('Order placed successfully!')
       queryClient.invalidateQueries({ queryKey: ['books'] })
       setOrderModalOpen(false)
       setCopiesOrdered(1)
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Failed to place order.')
     }
   })
 
@@ -148,27 +153,25 @@ export default function EmployeeCataloguePage() {
       </main>
 
       {/* Order Modal */}
-      {orderModalOpen && selectedBook && (
-        <div style={styles.modalOverlay}>
-          <div className="card" style={styles.modal}>
-            <h3 style={styles.modalTitle}>Manual Order</h3>
-            <p style={styles.modalDesc}>How many copies of <strong>{selectedBook.title}</strong> would you like to order from the publisher?</p>
-            
-            <div style={styles.field}>
-              <label style={styles.label}>Copies to Order</label>
+      {orderModalOpen && (
+        <div className="modal-overlay" onClick={() => setOrderModalOpen(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <h3 style={styles.modalTitle}>Order Book</h3>
+            <p style={styles.modalDesc}>How many copies of <strong>{selectedBook?.title}</strong> would you like to order from the publisher?</p>
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Copies</label>
               <input 
+                className="input"
                 type="number" 
-                min="1" 
-                style={styles.inputModal}
+                min={1}
                 value={copiesOrdered}
-                onChange={(e) => setCopiesOrdered(parseInt(e.target.value) || 1)}
+                onChange={e => setCopiesOrdered(parseInt(e.target.value) || 1)}
               />
             </div>
-
             <div style={styles.modalActions}>
               <button className="btn btn-secondary" onClick={() => setOrderModalOpen(false)}>Cancel</button>
-              <button className="btn btn-primary" onClick={submitOrder} disabled={orderMutation.isPending}>
-                {orderMutation.isPending ? 'Ordering...' : 'Place Order'}
+              <button className="btn btn-primary" onClick={submitOrder} disabled={orderMutation.isPending || copiesOrdered < 1}>
+                {orderMutation.isPending ? 'Ordering...' : 'Confirm Order'}
               </button>
             </div>
           </div>
@@ -346,24 +349,6 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '11px',
     color: 'var(--color-text-muted)',
   },
-  modalOverlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 100,
-    padding: '1rem',
-  },
-  modal: {
-    width: '100%',
-    maxWidth: '400px',
-    padding: '1.5rem',
-  },
   modalTitle: {
     fontFamily: 'var(--font-sans)',
     fontSize: '18px',
@@ -378,29 +363,7 @@ const styles: Record<string, React.CSSProperties> = {
     margin: '0 0 1.5rem 0',
     lineHeight: 1.4,
   },
-  field: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem',
-    marginBottom: '1.5rem',
-  },
-  label: {
-    fontFamily: 'var(--font-mono)',
-    fontSize: '12px',
-    color: 'var(--color-text-muted)',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-  },
-  inputModal: {
-    backgroundColor: 'var(--color-bg-base)',
-    border: '1px solid var(--color-border)',
-    borderRadius: '4px',
-    padding: '10px 12px',
-    color: 'var(--color-text-primary)',
-    fontFamily: 'var(--font-sans)',
-    fontSize: '14px',
-    width: '100%',
-  },
+  /* Removed unused input styles */
   modalActions: {
     display: 'flex',
     justifyContent: 'flex-end',

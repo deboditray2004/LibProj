@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
 import { getPendingEdits, approveEdit, rejectEdit } from '../../api'
 import { WarningCircle, UserCircle, X, Check, ArrowRight } from '@phosphor-icons/react'
 
@@ -17,16 +18,24 @@ export default function PendingEditsPage() {
   const approveMutation = useMutation({
     mutationFn: approveEdit,
     onSuccess: () => {
+      toast.success('Edits approved successfully!')
       queryClient.invalidateQueries({ queryKey: ['pendingEdits'] })
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Failed to approve edits.')
     }
   })
 
   const rejectMutation = useMutation({
     mutationFn: rejectEdit,
     onSuccess: () => {
+      toast.success('Edits rejected.')
       queryClient.invalidateQueries({ queryKey: ['pendingEdits'] })
       setRejectModalOpen(false)
       setRejectReason('')
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Failed to reject edits.')
     }
   })
 
@@ -123,15 +132,16 @@ export default function PendingEditsPage() {
 
       {/* Reject Modal */}
       {rejectModalOpen && (
-        <div style={styles.modalOverlay}>
-          <div className="card" style={styles.modal}>
+        <div className="modal-overlay" onClick={() => setRejectModalOpen(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
             <h3 style={styles.modalTitle}>Reject Edits</h3>
-            <p style={styles.modalDesc}>Please provide a reason for rejecting these profile edits.</p>
+            <p style={styles.modalDesc}>Please provide a reason for rejecting these edits.</p>
             <textarea 
-              style={styles.textarea}
-              placeholder="e.g. Invalid address format..."
+              className="input"
+              style={{ minHeight: '100px', resize: 'vertical', width: '100%', marginBottom: '1rem' }}
+              placeholder="Reason for rejection..."
               value={rejectReason}
-              onChange={(e) => setRejectReason(e.target.value)}
+              onChange={e => setRejectReason(e.target.value)}
             />
             <div style={styles.modalActions}>
               <button className="btn btn-secondary" onClick={() => setRejectModalOpen(false)}>Cancel</button>
@@ -193,6 +203,9 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '1.5rem',
   },
   card: {
+    backgroundColor: 'var(--color-bg-card)',
+    border: '2px solid var(--color-border)',
+    boxShadow: '4px 4px 0px 0px #111111',
     display: 'flex',
     flexDirection: 'column',
   },
@@ -283,24 +296,6 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '1.5rem',
     borderTop: '1px solid var(--color-border)',
   },
-  modalOverlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 100,
-    padding: '1rem',
-  },
-  modal: {
-    width: '100%',
-    maxWidth: '400px',
-    padding: '1.5rem',
-  },
   modalTitle: {
     fontFamily: 'var(--font-sans)',
     fontSize: '18px',
@@ -314,19 +309,6 @@ const styles: Record<string, React.CSSProperties> = {
     color: 'var(--color-text-secondary)',
     margin: '0 0 1rem 0',
     lineHeight: 1.4,
-  },
-  textarea: {
-    width: '100%',
-    minHeight: '100px',
-    backgroundColor: 'var(--color-bg-base)',
-    border: '1px solid var(--color-border)',
-    borderRadius: '4px',
-    padding: '10px 12px',
-    color: 'var(--color-text-primary)',
-    fontFamily: 'var(--font-sans)',
-    fontSize: '14px',
-    resize: 'vertical',
-    marginBottom: '1.5rem',
   },
   modalActions: {
     display: 'flex',

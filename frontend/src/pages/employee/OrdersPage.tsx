@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
 import { getAllOrders, receiveOrder } from '../../api'
 import { WarningCircle, Package, Check, Truck } from '@phosphor-icons/react'
 
@@ -13,7 +14,11 @@ export default function OrdersPage() {
   const receiveMutation = useMutation({
     mutationFn: receiveOrder,
     onSuccess: () => {
+      toast.success('Order marked as received!')
       queryClient.invalidateQueries({ queryKey: ['orders'] })
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Failed to receive order.')
     }
   })
 
@@ -128,9 +133,11 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '1rem',
   },
   card: {
+    backgroundColor: 'var(--color-bg-card)',
+    border: '2px solid var(--color-border)',
+    boxShadow: '4px 4px 0px 0px #111111',
     display: 'flex',
     flexDirection: 'column',
-    transition: 'opacity 200ms ease',
   },
   cardHeader: {
     display: 'flex',

@@ -48,7 +48,6 @@ export default function EmployeeLayout() {
               <span style={styles.brandText}>Employee Portal</span>
             </div>
           )}
-          {collapsed && <div style={styles.brandLogo}>Lib</div>}
           <button 
             onClick={() => setCollapsed(!collapsed)} 
             style={styles.collapseBtn}
@@ -82,8 +81,8 @@ export default function EmployeeLayout() {
         <div style={{ ...styles.userSection, flexDirection: collapsed ? 'column' : 'row', padding: collapsed ? '1.25rem 0' : '1.25rem', gap: collapsed ? '1rem' : '0' }}>
           {!collapsed && (
             <div style={styles.userInfo}>
-              <p style={styles.userName}>{state.user?.name || 'Employee'}</p>
-              <p style={styles.userRole}>ID: {state.user?.empId}</p>
+              <p style={styles.userName}>Name: {state.user?.name || (state.user as any)?.employee?.name || 'Employee'}</p>
+              <p style={styles.userRole}>ID: {state.user?.empId || (state.user as any)?.employee?.empId || 'N/A'}</p>
             </div>
           )}
           <button onClick={handleLogout} style={styles.logoutBtn} aria-label="Logout" title="Logout">

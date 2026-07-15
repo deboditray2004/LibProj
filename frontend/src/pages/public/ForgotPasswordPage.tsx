@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import toast from 'react-hot-toast'
 import { useMutation } from '@tanstack/react-query'
 import { forgotPassword } from '../../api'
-import { ArrowLeft, WarningCircle, CheckCircle } from '@phosphor-icons/react'
+import { ArrowLeft, CheckCircle } from '@phosphor-icons/react'
 
 const schema = z.object({
   email: z.string().email('Valid email is required'),
@@ -30,7 +31,11 @@ export default function ForgotPasswordPage() {
     mutationFn: forgotPassword,
     onSuccess: () => {
       setSuccess(true)
+      toast.success('Reset link sent!')
     },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Failed to send reset link.')
+    }
   })
 
   const onSubmit = (data: FormData) => mutation.mutate(data)
@@ -116,15 +121,7 @@ export default function ForgotPasswordPage() {
               )}
             </div>
 
-            {/* API Error */}
-            {mutation.isError && (
-              <div style={styles.apiError}>
-                <WarningCircle size={14} color="var(--color-accent-rose)" />
-                <span>
-                  {(mutation.error as any)?.response?.data?.message || 'Failed to send reset link.'}
-                </span>
-              </div>
-            )}
+            {/* Removed inline error */}
 
             <button
               type="submit"
@@ -172,8 +169,8 @@ const styles: Record<string, React.CSSProperties> = {
     width: '100%',
     maxWidth: '420px',
     backgroundColor: 'var(--color-bg-card)',
-    border: '1px solid var(--color-border)',
-    borderRadius: 'var(--radius-lg)',
+    border: '2px solid var(--color-border)',
+    boxShadow: '4px 4px 0px 0px #111111',
     padding: '2.5rem',
   },
   cardHeader: {

@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useQuery, useMutation } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
 import { searchBooks, getCategories, requestBook } from '../../api'
-import { MagnifyingGlass, BookOpen, WarningCircle, CheckCircle } from '@phosphor-icons/react'
+import { MagnifyingGlass, BookOpen, WarningCircle } from '@phosphor-icons/react'
 
 export default function StudentCataloguePage() {
   const [search, setSearch] = useState('')
@@ -19,6 +20,12 @@ export default function StudentCataloguePage() {
 
   const requestMutation = useMutation({
     mutationFn: (isbn: string) => requestBook({ isbn }),
+    onSuccess: () => {
+      toast.success('Book requested successfully!')
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Failed to request book.')
+    }
   })
 
   // Ensure books is always an array. API error 404 is thrown if empty.
@@ -119,17 +126,7 @@ export default function StudentCataloguePage() {
                         )}
                       </div>
 
-                      {/* inline feedback for request */}
-                      {requestMutation.isSuccess && requestMutation.variables === book.globalBookId && (
-                        <div style={styles.successMsg}>
-                          <CheckCircle size={14} /> Request sent!
-                        </div>
-                      )}
-                      {requestMutation.isError && requestMutation.variables === book.globalBookId && (
-                        <div style={styles.errorMsg}>
-                          <WarningCircle size={14} /> Failed to request.
-                        </div>
-                      )}
+                      {/* Removed inline feedback for request */}
                     </div>
                   </div>
                 )
@@ -299,25 +296,5 @@ const styles: Record<string, React.CSSProperties> = {
     color: 'var(--color-text-muted)',
     display: 'block',
     marginTop: '4px',
-  },
-  successMsg: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '4px',
-    color: 'var(--color-accent-seafoam)',
-    fontFamily: 'var(--font-mono)',
-    fontSize: '11px',
-    marginTop: '0.75rem',
-    justifyContent: 'flex-end',
-  },
-  errorMsg: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '4px',
-    color: 'var(--color-accent-rose)',
-    fontFamily: 'var(--font-mono)',
-    fontSize: '11px',
-    marginTop: '0.75rem',
-    justifyContent: 'flex-end',
   },
 }

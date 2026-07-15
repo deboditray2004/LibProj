@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
 import { getStudentProfile, getTransactionHistory, payFine, renewBook } from '../../api'
-import { User, Receipt, Books, WarningCircle, CheckCircle, BookOpen } from '@phosphor-icons/react'
+import { User, Receipt, Books, BookOpen } from '@phosphor-icons/react'
 import { useState } from 'react'
 
 export default function StudentDashboard() {
@@ -24,7 +25,11 @@ export default function StudentDashboard() {
   const renewMutation = useMutation({
     mutationFn: (transactionId: string) => renewBook({ transactionId }),
     onSuccess: () => {
+      toast.success('Book renewed successfully!')
       queryClient.invalidateQueries({ queryKey: ['studentTransactions'] })
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Failed to renew book.')
     }
   })
 
@@ -45,10 +50,11 @@ export default function StudentDashboard() {
         await payFine({ payAll: true })
       }
       setPayStatus({ loading: false, error: null, success: true })
+      toast.success('Fine paid successfully!')
       queryClient.invalidateQueries({ queryKey: ['studentTransactions'] })
-      setTimeout(() => setPayStatus(s => ({ ...s, success: false })), 3000)
     } catch (err: any) {
-      setPayStatus({ loading: false, error: err.response?.data?.message || 'Failed to pay fines', success: false })
+      toast.error(err.response?.data?.message || 'Failed to pay fines')
+      setPayStatus({ loading: false, error: null, success: false })
     }
   }
 
@@ -56,14 +62,14 @@ export default function StudentDashboard() {
     e.preventDefault()
     setUpdateStatus({ loading: true, error: null, success: false })
     try {
-      // Just mock the requestProfileUpdate API call for now (or use it if imported)
       const { requestProfileUpdate } = await import('../../api')
       await requestProfileUpdate(editForm)
       setUpdateStatus({ loading: false, error: null, success: true })
+      toast.success('Profile update requested!')
       setEditMode(false)
-      setTimeout(() => setUpdateStatus(s => ({ ...s, success: false })), 3000)
     } catch (err: any) {
-      setUpdateStatus({ loading: false, error: err.response?.data?.message || 'Failed to request update', success: false })
+      toast.error(err.response?.data?.message || 'Failed to request update')
+      setUpdateStatus({ loading: false, error: null, success: false })
     }
   }
 
@@ -100,12 +106,6 @@ export default function StudentDashboard() {
             )}
           </div>
           <div style={styles.cardBody}>
-            {updateStatus.success && (
-              <div style={styles.successAlert}>
-                <CheckCircle size={16} />
-                Profile update requested. Waiting for Admin approval.
-              </div>
-            )}
             {editMode ? (
               <form onSubmit={handleEditSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={styles.infoRow}>
@@ -120,7 +120,6 @@ export default function StudentDashboard() {
                   <label style={styles.infoLabel}>Address</label>
                   <input style={styles.input} type="text" value={editForm.addr || ''} onChange={e => setEditForm({...editForm, addr: e.target.value})} />
                 </div>
-                {updateStatus.error && <p style={{ color: 'var(--color-accent-rose)', fontSize: '12px', margin: 0 }}>{updateStatus.error}</p>}
                 <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
                   <button type="button" className="btn btn-secondary" onClick={() => setEditMode(false)}>Cancel</button>
                   <button type="submit" className="btn btn-primary" disabled={updateStatus.loading}>
@@ -229,18 +228,7 @@ export default function StudentDashboard() {
               </button>
             )}
 
-            {payStatus.error && (
-              <div style={styles.errorAlert}>
-                <WarningCircle size={16} />
-                {payStatus.error}
-              </div>
-            )}
-            {payStatus.success && (
-              <div style={styles.successAlert}>
-                <CheckCircle size={16} />
-                Fines paid successfully!
-              </div>
-            )}
+            {/* Removed inline pay fines success/error */}
           </div>
         </div>
 
@@ -332,16 +320,19 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '1.5rem',
   },
   card: {
-    padding: '1.5rem',
+    backgroundColor: 'var(--color-bg-card)',
+    border: '2px solid var(--color-border)',
+    boxShadow: '4px 4px 0px 0px #111111',
     display: 'flex',
     flexDirection: 'column',
+    padding: '1.5rem',
     gap: '1.5rem',
   },
   cardHeader: {
     display: 'flex',
     alignItems: 'center',
     gap: '0.75rem',
-    borderBottom: '1px solid var(--color-border)',
+    borderBottom: '2px solid var(--color-border)',
     paddingBottom: '1rem',
   },
   cardTitle: {
@@ -376,17 +367,6 @@ const styles: Record<string, React.CSSProperties> = {
     color: 'var(--color-text-primary)',
     fontWeight: 500,
   },
-  input: {
-    backgroundColor: 'var(--color-bg-base)',
-    border: '1px solid var(--color-border)',
-    borderRadius: '4px',
-    padding: '6px 10px',
-    color: 'var(--color-text-primary)',
-    fontFamily: 'var(--font-sans)',
-    fontSize: '14px',
-    width: '100%',
-    maxWidth: '220px',
-  },
   emptyState: {
     fontFamily: 'var(--font-mono)',
     fontSize: '13px',
@@ -405,9 +385,7 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: '0.75rem',
-    backgroundColor: 'var(--color-bg-base)',
-    border: '1px solid var(--color-border)',
-    borderRadius: 'var(--radius-md)',
+    border: '2px solid var(--color-border)',
   },
   fineItemLeft: {
     display: 'flex',
@@ -418,7 +396,6 @@ const styles: Record<string, React.CSSProperties> = {
     width: '40px',
     height: '60px',
     objectFit: 'cover',
-    borderRadius: '4px',
   },
   fineItemInfo: {
     display: 'flex',
@@ -453,9 +430,7 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: '1rem',
-    backgroundColor: 'var(--color-bg-base)',
-    border: '1px solid var(--color-border)',
-    borderRadius: 'var(--radius-md)',
+    border: '2px solid var(--color-border)',
   },
   bookInfo: {
     display: 'flex',

@@ -126,7 +126,7 @@ export default function LandingPage() {
               variants={item}
               onClick={() => navigate(card.href)}
               whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px #111111' }}
-              transition={{ duration: 0.15 }}
+              transition={{ duration: 0.075, ease: [0, 0, 0.2, 1] }}
               style={{
                 backgroundColor: 'var(--color-bg-card)',
                 border: '2px solid var(--color-border)',
@@ -137,7 +137,6 @@ export default function LandingPage() {
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '1rem',
-                transition: 'all 150ms ease',
               }}
             >
               {/* Icon */}

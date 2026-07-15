@@ -1,17 +1,7 @@
 import React, { createContext, useContext, useReducer } from 'react'
+import type { AuthUser } from '../types/auth'
 
 // --- Types ---
-export type Role = 'student' | 'employee'
-
-export interface AuthUser {
-  _id: string
-  name?: string
-  cardNo?: number
-  empId?: number
-  email?: string
-  role: Role
-}
-
 interface AuthState {
   user: AuthUser | null
   isAuthenticated: boolean
@@ -53,7 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     </AuthContext.Provider>
   )
 }
-
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const ctx = useContext(AuthContext)
   if (!ctx) throw new Error('useAuth must be used within AuthProvider')

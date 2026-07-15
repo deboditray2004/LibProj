@@ -73,8 +73,6 @@ const logoutEmployee = asyncHandler(async(req,res) =>{
         }
     )
 
-    console.log(req.cookies)
-
     const options ={
         httpOnly:true,
         secure:true

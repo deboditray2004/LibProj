@@ -2,11 +2,12 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import toast from 'react-hot-toast'
 import { useMutation } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { useAuth } from '../../context/AuthContext'
 import { employeeLogin } from '../../api'
-import { ArrowLeft, WarningCircle } from '@phosphor-icons/react'
+import { ArrowLeft } from '@phosphor-icons/react'
 
 const schema = z.object({
   empId: z.string().min(1, 'Employee ID is required'),
@@ -29,10 +30,14 @@ export default function EmployeeLoginPage() {
     onSuccess: (data) => {
       dispatch({
         type: 'LOGIN',
-        payload: { ...data.data, role: 'employee' },
+        payload: { ...(data.data.employee || data.data), role: 'employee' },
       })
-      navigate('/employee/pending-students')
+      toast.success('Login successful!')
+      navigate('/employee/dashboard')
     },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Login failed. Please try again.')
+    }
   })
 
   const onSubmit = (data: FormData) => mutation.mutate(data)
@@ -91,15 +96,7 @@ export default function EmployeeLoginPage() {
             )}
           </div>
 
-          {/* API Error */}
-          {mutation.isError && (
-            <div style={styles.apiError}>
-              <WarningCircle size={14} color="var(--color-accent-rose)" />
-              <span>
-                {(mutation.error as any)?.response?.data?.message || 'Login failed. Please try again.'}
-              </span>
-            </div>
-          )}
+          {/* Removed API Error Block */}
 
           <button
             type="submit"
@@ -150,10 +147,10 @@ const styles: Record<string, React.CSSProperties> = {
   },
   card: {
     width: '100%',
-    maxWidth: '420px',
+    maxWidth: '400px',
     backgroundColor: 'var(--color-bg-card)',
-    border: '1px solid var(--color-border)',
-    borderRadius: 'var(--radius-lg)',
+    border: '2px solid var(--color-border)',
+    boxShadow: '4px 4px 0px 0px #111111',
     padding: '2.5rem',
   },
   cardHeader: {

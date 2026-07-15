@@ -1,30 +1,12 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getTransactionHistory, renewBook } from '../../api'
-import { WarningCircle, CheckCircle } from '@phosphor-icons/react'
-import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { getTransactionHistory } from '../../api'
+import { WarningCircle } from '@phosphor-icons/react'
 
 export default function StudentHistoryPage() {
-  const queryClient = useQueryClient()
-  const [renewError, setRenewError] = useState<string | null>(null)
-  const [renewSuccess, setRenewSuccess] = useState<string | null>(null)
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['studentTransactions'],
     queryFn: getTransactionHistory,
-  })
-
-  const renewMutation = useMutation({
-    mutationFn: (transactionId: string) => renewBook({ transactionId }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['studentTransactions'] })
-      setRenewSuccess('Book renewed successfully (+15 days).')
-      setRenewError(null)
-      setTimeout(() => setRenewSuccess(null), 3000)
-    },
-    onError: (err: any) => {
-      setRenewError(err.response?.data?.message || 'Failed to renew book.')
-      setRenewSuccess(null)
-    },
   })
 
   // Only show returned books in history
@@ -49,13 +31,6 @@ export default function StudentHistoryPage() {
         <h1 style={styles.title}>History</h1>
         <p style={styles.subtitle}>View your past borrowed books.</p>
       </header>
-
-      {(renewError || renewSuccess) && (
-        <div style={renewError ? styles.errorAlert : styles.successAlert}>
-          {renewError ? <WarningCircle size={16} /> : <CheckCircle size={16} />}
-          {renewError || renewSuccess}
-        </div>
-      )}
 
       {transactions.length === 0 ? (
         <div style={styles.stateCenter}>

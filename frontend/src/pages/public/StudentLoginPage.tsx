@@ -2,12 +2,13 @@ import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import toast from 'react-hot-toast'
 import { useMutation } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { studentLogin } from '../../api'
-import { ArrowLeft, WarningCircle } from '@phosphor-icons/react'
+import { ArrowLeft } from '@phosphor-icons/react'
 
 const schema = z.object({
   cardNo: z.string().min(1, 'Card number is required'),
@@ -30,10 +31,14 @@ export default function StudentLoginPage() {
     onSuccess: (data) => {
       dispatch({
         type: 'LOGIN',
-        payload: { ...data.data, role: 'student' },
+        payload: { ...(data.data.student || data.data), role: 'student' },
       })
+      toast.success('Login successful!')
       navigate('/student/dashboard')
     },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Login failed. Please try again.')
+    }
   })
 
   const onSubmit = (data: FormData) => mutation.mutate(data)
@@ -92,15 +97,7 @@ export default function StudentLoginPage() {
             )}
           </div>
 
-          {/* API Error */}
-          {mutation.isError && (
-            <div style={styles.apiError}>
-              <WarningCircle size={14} color="var(--color-accent-rose)" />
-              <span>
-                {(mutation.error as any)?.response?.data?.message || 'Login failed. Please try again.'}
-              </span>
-            </div>
-          )}
+          {/* Removed API Error Block */}
 
           <button
             type="submit"
@@ -156,10 +153,10 @@ const styles: Record<string, React.CSSProperties> = {
   },
   card: {
     width: '100%',
-    maxWidth: '420px',
+    maxWidth: '400px',
     backgroundColor: 'var(--color-bg-card)',
-    border: '1px solid var(--color-border)',
-    borderRadius: 'var(--radius-lg)',
+    border: '2px solid var(--color-border)',
+    boxShadow: '4px 4px 0px 0px #111111',
     padding: '2.5rem',
   },
   cardHeader: {

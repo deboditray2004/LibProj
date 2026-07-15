@@ -3,9 +3,10 @@ import { Link, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import toast from 'react-hot-toast'
 import { useMutation } from '@tanstack/react-query'
 import { resetPassword } from '../../api'
-import { WarningCircle, CheckCircle } from '@phosphor-icons/react'
+import { CheckCircle } from '@phosphor-icons/react'
 
 const schema = z
   .object({
@@ -33,7 +34,11 @@ export default function ResetPasswordPage() {
     mutationFn: (data: FormData) => resetPassword(token!, data),
     onSuccess: () => {
       setSuccess(true)
+      toast.success('Password updated successfully!')
     },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Failed to reset password. Link may be invalid or expired.')
+    }
   })
 
   const onSubmit = (data: FormData) => mutation.mutate(data)
@@ -90,15 +95,7 @@ export default function ResetPasswordPage() {
               )}
             </div>
 
-            {/* API Error */}
-            {mutation.isError && (
-              <div style={styles.apiError}>
-                <WarningCircle size={14} color="var(--color-accent-rose)" />
-                <span>
-                  {(mutation.error as any)?.response?.data?.message || 'Failed to reset password. Link may be invalid or expired.'}
-                </span>
-              </div>
-            )}
+            {/* Removed inline error block */}
 
             <button
               type="submit"
@@ -129,8 +126,8 @@ const styles: Record<string, React.CSSProperties> = {
     width: '100%',
     maxWidth: '420px',
     backgroundColor: 'var(--color-bg-card)',
-    border: '1px solid var(--color-border)',
-    borderRadius: 'var(--radius-lg)',
+    border: '2px solid var(--color-border)',
+    boxShadow: '4px 4px 0px 0px #111111',
     padding: '2.5rem',
   },
   cardHeader: {

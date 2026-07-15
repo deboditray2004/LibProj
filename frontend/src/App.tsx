@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
 import { useAuth } from './context/AuthContext'
 
 // Public Pages
@@ -35,6 +36,7 @@ function ProtectedRoute({ children, role }: { children: React.ReactNode; role: '
 
 export default function App() {
   return (
+    <>
     <Routes>
       {/* Public */}
       <Route path="/" element={<LandingPage />} />
@@ -81,5 +83,32 @@ export default function App() {
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    <Toaster 
+      position="bottom-right"
+      toastOptions={{
+        style: {
+          background: 'var(--color-bg-surface)',
+          color: 'var(--color-text-primary)',
+          border: '2px solid var(--color-border)',
+          borderRadius: '0px',
+          boxShadow: '4px 4px 0px 0px #111111',
+          fontFamily: 'var(--font-sans)',
+          fontWeight: 500,
+        },
+        success: {
+          iconTheme: {
+            primary: 'var(--color-accent-seafoam)',
+            secondary: '#111111',
+          },
+        },
+        error: {
+          iconTheme: {
+            primary: 'var(--color-accent-rose)',
+            secondary: '#111111',
+          },
+        },
+      }}
+    />
+    </>
   )
 }

@@ -24,8 +24,6 @@ const generateAccessAndRefereshTokens = async(studentId)=>{
 
 const registerStudent = asyncHandler( async (req, res) => {
     
-    console.log("BODY:", req.body)
-    console.log("FILES:", req.files)
     const {name, dob, addr, email, dept, rollNo, password } = req.body
 
 
@@ -126,8 +124,6 @@ const logoutStudent = asyncHandler(async(req,res) =>{
             new : true
         }
     )
-
-    console.log(req.cookies)
 
     const options ={
         httpOnly:true,

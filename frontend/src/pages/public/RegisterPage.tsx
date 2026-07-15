@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import toast from 'react-hot-toast'
 import { useMutation } from '@tanstack/react-query'
 import { registerStudent } from '../../api'
-import { ArrowLeft, WarningCircle, CheckCircle, UploadSimple } from '@phosphor-icons/react'
+import { ArrowLeft, CheckCircle, UploadSimple } from '@phosphor-icons/react'
 
 const MAX_FILE_SIZE = 5000000 // 5MB
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
@@ -49,7 +50,11 @@ export default function RegisterPage() {
     mutationFn: (data: globalThis.FormData) => registerStudent(data),
     onSuccess: () => {
       setSuccess(true)
+      toast.success('Registration submitted!')
     },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Registration failed. Please try again.')
+    }
   })
 
   const onSubmit = (data: FormData) => {
@@ -177,14 +182,7 @@ export default function RegisterPage() {
                 {errors.govtId && <span className="field-error">{errors.govtId?.message as string}</span>}
               </div>
 
-              {mutation.isError && (
-                <div style={styles.apiError}>
-                  <WarningCircle size={14} color="var(--color-accent-rose)" />
-                  <span>
-                    {(mutation.error as any)?.response?.data?.message || 'Registration failed. Please try again.'}
-                  </span>
-                </div>
-              )}
+              {/* Removed inline API error block */}
 
               <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
                 <button
@@ -242,10 +240,10 @@ const styles: Record<string, React.CSSProperties> = {
   },
   card: {
     width: '100%',
-    maxWidth: '440px',
+    maxWidth: '480px',
     backgroundColor: 'var(--color-bg-card)',
-    border: '1px solid var(--color-border)',
-    borderRadius: 'var(--radius-lg)',
+    border: '2px solid var(--color-border)',
+    boxShadow: '4px 4px 0px 0px #111111',
     padding: '2.5rem',
   },
   cardHeader: {

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
 import { getPendingStudents, approveStudent, rejectStudent } from '../../api'
 import { WarningCircle, UserCircle, IdentificationCard, X, Check } from '@phosphor-icons/react'
 
@@ -17,16 +18,24 @@ export default function PendingStudentsPage() {
   const approveMutation = useMutation({
     mutationFn: approveStudent,
     onSuccess: () => {
+      toast.success('Student approved successfully!')
       queryClient.invalidateQueries({ queryKey: ['pendingStudents'] })
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Failed to approve student.')
     }
   })
 
   const rejectMutation = useMutation({
     mutationFn: rejectStudent,
     onSuccess: () => {
+      toast.success('Student rejected.')
       queryClient.invalidateQueries({ queryKey: ['pendingStudents'] })
       setRejectModalOpen(false)
       setRejectReason('')
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Failed to reject student.')
     }
   })
 
@@ -104,26 +113,26 @@ export default function PendingStudentsPage() {
       )}
 
       {/* Reject Modal */}
-      {rejectModalOpen && (
-        <div style={styles.modalOverlay}>
-          <div className="card" style={styles.modal}>
-            <h3 style={styles.modalTitle}>Reject Application</h3>
-            <p style={styles.modalDesc}>Please provide a reason for rejecting this student's application. They will receive an email with this reason.</p>
-            <textarea 
-              style={styles.textarea}
-              placeholder="e.g. Blurry ID card, ID mismatch..."
-              value={rejectReason}
-              onChange={(e) => setRejectReason(e.target.value)}
-            />
+      {rejectModalOpen && <div className="modal-overlay" onClick={() => setRejectModalOpen(false)}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+              <h3 style={styles.modalTitle}>Reject Application</h3>
+              <p style={styles.modalText}>Please provide a reason for rejecting this application. This will be emailed to the student.</p>
+              <textarea 
+                className="input"
+                style={{ minHeight: '100px', resize: 'vertical' }}
+                placeholder="Reason for rejection..."
+                value={rejectReason}
+                onChange={e => setRejectReason(e.target.value)}
+              />
             <div style={styles.modalActions}>
               <button className="btn btn-secondary" onClick={() => setRejectModalOpen(false)}>Cancel</button>
               <button className="btn btn-primary" onClick={submitReject} disabled={!rejectReason.trim() || rejectMutation.isPending} style={{ backgroundColor: 'var(--color-accent-rose)', borderColor: 'var(--color-accent-rose)' }}>
                 {rejectMutation.isPending ? 'Rejecting...' : 'Confirm Reject'}
               </button>
             </div>
+            </div>
           </div>
-        </div>
-      )}
+      }
     </div>
   )
 }
@@ -175,6 +184,9 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '1.5rem',
   },
   card: {
+    backgroundColor: 'var(--color-bg-card)',
+    border: '2px solid var(--color-border)',
+    boxShadow: '4px 4px 0px 0px #111111',
     display: 'flex',
     flexDirection: 'column',
   },
@@ -237,50 +249,12 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '1.5rem',
     borderTop: '1px solid var(--color-border)',
   },
-  modalOverlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 100,
-    padding: '1rem',
-  },
-  modal: {
-    width: '100%',
-    maxWidth: '400px',
-    padding: '1.5rem',
-  },
   modalTitle: {
     fontFamily: 'var(--font-sans)',
     fontSize: '18px',
     fontWeight: 600,
     color: 'var(--color-text-primary)',
     margin: '0 0 0.5rem 0',
-  },
-  modalDesc: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '13px',
-    color: 'var(--color-text-secondary)',
-    margin: '0 0 1rem 0',
-    lineHeight: 1.4,
-  },
-  textarea: {
-    width: '100%',
-    minHeight: '100px',
-    backgroundColor: 'var(--color-bg-base)',
-    border: '1px solid var(--color-border)',
-    borderRadius: '4px',
-    padding: '10px 12px',
-    color: 'var(--color-text-primary)',
-    fontFamily: 'var(--font-sans)',
-    fontSize: '14px',
-    resize: 'vertical',
-    marginBottom: '1.5rem',
   },
   modalActions: {
     display: 'flex',

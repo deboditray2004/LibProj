@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
 import { borrowBook, returnBook } from '../../api'
-import { CheckCircle, WarningCircle, BookBookmark, ArrowUUpLeft } from '@phosphor-icons/react'
+import { BookBookmark, ArrowUUpLeft } from '@phosphor-icons/react'
 
 export default function EmployeeDashboard() {
   return (
@@ -21,26 +22,20 @@ export default function EmployeeDashboard() {
 
 function IssueDesk() {
   const [form, setForm] = useState({ cardNo: '', isbn: '' })
-  const [success, setSuccess] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-
   const mutation = useMutation({
     mutationFn: borrowBook,
     onSuccess: () => {
-      setSuccess('Book issued successfully!')
-      setError(null)
+      toast.success('Book issued successfully!')
       setForm({ cardNo: '', isbn: '' })
-      setTimeout(() => setSuccess(null), 3000)
     },
     onError: (err: any) => {
-      setError(err.response?.data?.message || 'Failed to issue book.')
-      setSuccess(null)
+      toast.error(err.response?.data?.message || 'Failed to issue book.')
     }
   })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!form.cardNo || !form.isbn) return setError('Please fill all fields.')
+    if (!form.cardNo || !form.isbn) return toast.error('Please fill all fields.')
     mutation.mutate(form)
   }
 
@@ -57,9 +52,9 @@ function IssueDesk() {
       <div style={styles.cardBody}>
         <form onSubmit={handleSubmit} style={styles.form}>
           <div style={styles.field}>
-            <label style={styles.label}>Student Card No</label>
+            <label>Student Card No</label>
             <input 
-              style={styles.input} 
+              className="input"
               type="text" 
               placeholder="e.g. LIB-STU-123"
               value={form.cardNo} 
@@ -67,22 +62,15 @@ function IssueDesk() {
             />
           </div>
           <div style={styles.field}>
-            <label style={styles.label}>Book ISBN</label>
+            <label>Book ISBN</label>
             <input 
-              style={styles.input} 
+              className="input"
               type="text" 
               placeholder="e.g. 9781234567897"
               value={form.isbn} 
               onChange={e => setForm({...form, isbn: e.target.value})} 
             />
           </div>
-
-          {(error || success) && (
-            <div style={error ? styles.errorAlert : styles.successAlert}>
-              {error ? <WarningCircle size={16} /> : <CheckCircle size={16} />}
-              {error || success}
-            </div>
-          )}
 
           <button 
             type="submit" 
@@ -100,26 +88,20 @@ function IssueDesk() {
 
 function ReturnDesk() {
   const [form, setForm] = useState({ cardNo: '', isbn: '' })
-  const [success, setSuccess] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-
   const mutation = useMutation({
     mutationFn: returnBook,
     onSuccess: () => {
-      setSuccess('Book returned successfully!')
-      setError(null)
+      toast.success('Book returned successfully!')
       setForm({ cardNo: '', isbn: '' })
-      setTimeout(() => setSuccess(null), 3000)
     },
     onError: (err: any) => {
-      setError(err.response?.data?.message || 'Failed to return book.')
-      setSuccess(null)
+      toast.error(err.response?.data?.message || 'Failed to return book.')
     }
   })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!form.cardNo || !form.isbn) return setError('Please fill all fields.')
+    if (!form.cardNo || !form.isbn) return toast.error('Please fill all fields.')
     mutation.mutate(form)
   }
 
@@ -136,9 +118,9 @@ function ReturnDesk() {
       <div style={styles.cardBody}>
         <form onSubmit={handleSubmit} style={styles.form}>
           <div style={styles.field}>
-            <label style={styles.label}>Student Card No</label>
+            <label>Student Card No</label>
             <input 
-              style={styles.input} 
+              className="input"
               type="text" 
               placeholder="e.g. LIB-STU-123"
               value={form.cardNo} 
@@ -146,22 +128,15 @@ function ReturnDesk() {
             />
           </div>
           <div style={styles.field}>
-            <label style={styles.label}>Book ISBN</label>
+            <label>Book ISBN</label>
             <input 
-              style={styles.input} 
+              className="input"
               type="text" 
               placeholder="e.g. 9781234567897"
               value={form.isbn} 
               onChange={e => setForm({...form, isbn: e.target.value})} 
             />
           </div>
-
-          {(error || success) && (
-            <div style={error ? styles.errorAlert : styles.successAlert}>
-              {error ? <WarningCircle size={16} /> : <CheckCircle size={16} />}
-              {error || success}
-            </div>
-          )}
 
           <button 
             type="submit" 
@@ -235,29 +210,6 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     flexDirection: 'column',
     gap: '1.25rem',
-  },
-  field: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem',
-  },
-  label: {
-    fontFamily: 'var(--font-mono)',
-    fontSize: '12px',
-    color: 'var(--color-text-muted)',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-  },
-  input: {
-    backgroundColor: 'var(--color-bg-base)',
-    border: '1px solid var(--color-border)',
-    borderRadius: '4px',
-    padding: '10px 12px',
-    color: 'var(--color-text-primary)',
-    fontFamily: 'var(--font-sans)',
-    fontSize: '14px',
-    width: '100%',
-    transition: 'border-color 200ms ease',
   },
   errorAlert: {
     display: 'flex',

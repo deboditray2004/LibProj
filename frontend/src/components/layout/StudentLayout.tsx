@@ -46,7 +46,6 @@ export default function StudentLayout() {
               <span style={styles.brandText}>Student Portal</span>
             </div>
           )}
-          {collapsed && <div style={styles.brandLogo}>Lib</div>}
           <button 
             onClick={() => setCollapsed(!collapsed)} 
             style={styles.collapseBtn}
@@ -80,8 +79,8 @@ export default function StudentLayout() {
         <div style={{ ...styles.userSection, flexDirection: collapsed ? 'column' : 'row', padding: collapsed ? '1.25rem 0' : '1.25rem', gap: collapsed ? '1rem' : '0' }}>
           {!collapsed && (
             <div style={styles.userInfo}>
-              <p style={styles.userName}>{state.user?.name || 'Student'}</p>
-              <p style={styles.userRole}>Card: {state.user?.cardNo}</p>
+              <p style={styles.userName}>Name: {state.user?.name || (state.user as any)?.student?.name || 'Student'}</p>
+              <p style={styles.userRole}>Card: {state.user?.cardNo || (state.user as any)?.student?.cardNo || 'N/A'}</p>
             </div>
           )}
           <button onClick={handleLogout} style={styles.logoutBtn} aria-label="Logout" title="Logout">
