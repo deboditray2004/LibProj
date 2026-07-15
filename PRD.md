@@ -113,6 +113,7 @@
 | POST | `/api/books/request` | Student | Request a new book order |
 | GET | `/api/books/requests/aggregated` | Employee | View aggregated student requests |
 | POST | `/api/books/requests/reject` | Employee | Reject a student book request |
+| GET  | `/api/books/orders` | Employee | Get all orders (newest first) |
 | POST | `/api/books/orders/place` | Employee | Place an order via Google Books API |
 | POST | `/api/books/orders/manual` | Employee | Place a manual order |
 | POST | `/api/books/orders/receive/:orderId` | Employee | Mark an order as received |

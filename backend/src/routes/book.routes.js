@@ -7,7 +7,8 @@ import {
     manualOrder, 
     receiveOrder, 
     getAllBooks, 
-    getBookById 
+    getBookById,
+    getAllOrders
 } from "../controllers/book.controller.js"
 import { verifyStudent, verifyEmployee } from "../middlewares/auth.middleware.js"
 import { validate } from "../middlewares/validate.middleware.js"
@@ -25,6 +26,7 @@ router.route("/request").post(verifyStudent, validate(requestBookSchema), reques
 // Employee Routes
 router.route("/requests/aggregated").get(verifyEmployee, getAggregatedRequests)
 router.route("/requests/reject").post(verifyEmployee, validate(rejectRequestSchema), rejectBookRequest)
+router.route("/orders").get(verifyEmployee, getAllOrders)
 router.route("/orders/place").post(verifyEmployee, validate(placeOrderSchema), placeOrder)
 router.route("/orders/manual").post(verifyEmployee, validate(manualOrderSchema), manualOrder)
 router.route("/orders/receive/:orderId").post(verifyEmployee, receiveOrder)

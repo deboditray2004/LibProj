@@ -179,6 +179,13 @@ const getBookById = asyncHandler(async (req, res) => {
     )
 })
 
+const getAllOrders = asyncHandler(async (req, res) => {
+    const orders = await Order.find({}).sort({ createdAt: -1 })
+    return res.status(200).json(
+        new ApiResponse(200, orders, "Orders fetched successfully")
+    )
+})
+
 export {
     requestBook,
     getAggregatedRequests,
@@ -187,5 +194,6 @@ export {
     manualOrder,
     receiveOrder,
     getAllBooks,
-    getBookById
+    getBookById,
+    getAllOrders
 }
