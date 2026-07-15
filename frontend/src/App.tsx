@@ -18,6 +18,7 @@ import StudentHistoryPage from './pages/student/StudentHistoryPage'
 
 // Employee Pages
 import EmployeeLayout from './components/layout/EmployeeLayout'
+import EmployeeDashboard from './pages/employee/EmployeeDashboard'
 import PendingStudentsPage from './pages/employee/PendingStudentsPage'
 import PendingEditsPage from './pages/employee/PendingEditsPage'
 import BookRequestsPage from './pages/employee/BookRequestsPage'
@@ -68,10 +69,11 @@ export default function App() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<Navigate to="pending-students" replace />} />
-        <Route path="pending-students" element={<PendingStudentsPage />} />
-        <Route path="pending-edits" element={<PendingEditsPage />} />
-        <Route path="book-requests" element={<BookRequestsPage />} />
+        <Route index element={<Navigate to="dashboard" replace />} />
+        <Route path="dashboard" element={<EmployeeDashboard />} />
+        <Route path="students/pending" element={<PendingStudentsPage />} />
+        <Route path="edits/pending" element={<PendingEditsPage />} />
+        <Route path="requests" element={<BookRequestsPage />} />
         <Route path="catalogue" element={<EmployeeCataloguePage />} />
         <Route path="orders" element={<OrdersPage />} />
       </Route>

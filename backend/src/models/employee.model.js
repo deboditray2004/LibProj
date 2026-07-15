@@ -36,7 +36,8 @@ const employeeSchema =new Schema({
     }
 },
 {
-    timestamps: true
+    timestamps: true,
+    optimisticConcurrency: true
 })
 
 employeeSchema.pre("save", async function () {

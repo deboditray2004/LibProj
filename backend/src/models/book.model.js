@@ -1,5 +1,4 @@
 import mongoose, { Schema } from "mongoose"
-import { updateIfCurrentPlugin } from "mongoose-update-if-current"
 /*
  Added `index: true` to fields like title, authors, and category because they are frequently searched.
  
@@ -49,9 +48,8 @@ const bookSchema= new Schema({
     }
 },
 {
-    timestamps: true
-}) 
-
-bookSchema.plugin(updateIfCurrentPlugin)
+    timestamps: true,
+    optimisticConcurrency: true
+})
 
 export const Book= mongoose.model("Book",bookSchema)

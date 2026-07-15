@@ -34,11 +34,7 @@ const registerStudent = asyncHandler( async (req, res) => {
     throw new ApiError(409, "Student already registered")
     
 
-    const photoLocalPath = req.files?.photo?.[0]?.path
-    let photo
-    if (photoLocalPath)
-    photo = await uploadOnCloudinary(photoLocalPath)
-    
+
 
     const govtIdLocalPath = req.files?.govtId?.[0]?.path
     let g_id
@@ -53,7 +49,6 @@ const registerStudent = asyncHandler( async (req, res) => {
 
     const student = new Student({
         name,
-        photo: photo?.url || "",
         govtId: g_id.url,
         dept,
         rollNo,

@@ -58,7 +58,6 @@ export default function RegisterPage() {
     formData.append('email', data.email)
     formData.append('password', data.password)
     formData.append('department', data.department)
-    formData.append('photo', data.photo[0])
     formData.append('govtId', data.govtId[0])
     mutation.mutate(formData)
   }
@@ -164,20 +163,6 @@ export default function RegisterPage() {
 
             {/* Step 2: Uploads */}
             <div style={{ display: step === 2 ? 'flex' : 'none', flexDirection: 'column', gap: '1.25rem' }}>
-              <div style={styles.field}>
-                <label>Profile Photo</label>
-                <div style={styles.fileUpload}>
-                  <UploadSimple size={20} color="var(--color-text-muted)" />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    {...register('photo')}
-                    style={styles.fileInput}
-                  />
-                </div>
-                {errors.photo && <span className="field-error">{errors.photo?.message as string}</span>}
-              </div>
-
               <div style={styles.field}>
                 <label>Government ID (Proof of Identity)</label>
                 <div style={styles.fileUpload}>

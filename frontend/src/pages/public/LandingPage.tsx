@@ -83,8 +83,9 @@ export default function LandingPage() {
           style={{
             fontFamily: 'var(--font-sans)',
             fontSize: 'clamp(3rem, 8vw, 6rem)',
-            fontWeight: 300,
-            letterSpacing: '-0.03em',
+            fontWeight: 800,
+            letterSpacing: '-0.05em',
+            textTransform: 'uppercase',
             color: 'var(--color-text-primary)',
             lineHeight: 1,
             margin: 0,
@@ -112,13 +113,9 @@ export default function LandingPage() {
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-          gap: '1px',
+          gap: '2rem',
           width: '100%',
-          maxWidth: '860px',
-          backgroundColor: 'var(--color-border)',
-          borderRadius: 'var(--radius-lg)',
-          overflow: 'hidden',
-          border: '1px solid var(--color-border)',
+          maxWidth: '900px',
         }}
       >
         {cards.map((card) => {
@@ -128,18 +125,19 @@ export default function LandingPage() {
               key={card.id}
               variants={item}
               onClick={() => navigate(card.href)}
-              whileHover={{ backgroundColor: card.accentDim }}
+              whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px #111111' }}
               transition={{ duration: 0.15 }}
               style={{
                 backgroundColor: 'var(--color-bg-card)',
-                border: 'none',
+                border: '2px solid var(--color-border)',
+                boxShadow: '4px 4px 0px 0px #111111',
                 padding: '2.5rem 2rem',
                 cursor: 'pointer',
                 textAlign: 'left',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '1rem',
-                transition: 'background-color 200ms ease',
+                transition: 'all 150ms ease',
               }}
             >
               {/* Icon */}

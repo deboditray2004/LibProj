@@ -2,7 +2,6 @@ import mongoose, { Schema } from "mongoose"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import crypto from "crypto"
-import { updateIfCurrentPlugin } from "mongoose-update-if-current"
 const studentSchema =new Schema({
 
     cardNo:{
@@ -36,9 +35,6 @@ const studentSchema =new Schema({
     govtId:{
         type:String,
         required:true
-    },
-    photo:{
-        type:String
     },
     dept:{
         type:String,
@@ -80,10 +76,9 @@ const studentSchema =new Schema({
 
 },
 {
-    timestamps: true
+    timestamps: true,
+    optimisticConcurrency: true
 })
-
-studentSchema.plugin(updateIfCurrentPlugin)
 
 studentSchema.pre("save", async function () {
     if (!this.isModified("password")) return;

@@ -13,30 +13,33 @@
   --font-mono: 'Roboto Mono', monospace;
 
   /* --- Background Layers --- */
-  --color-bg-base: #0c0c0d;
-  --color-bg-surface: #141415;
-  --color-bg-card: #1a1a1b;
-  --color-bg-hover: #202022;
+  --color-bg-base: #f5f4ef;
+  --color-bg-surface: #ffffff;
+  --color-bg-card: #ffffff;
+  --color-bg-hover: #ebeae5;
 
   /* --- Borders --- */
-  --color-border: #2a2a2c;
-  --color-border-subtle: #1e1e20;
+  --color-border: #111111;
+  --color-border-subtle: #737373;
 
   /* --- Typography --- */
-  --color-text-primary: #f0ede8;
-  --color-text-secondary: #a0a0a0;
-  --color-text-muted: #606060;
-  --color-text-dim: #383838;
+  --color-text-primary: #111111;
+  --color-text-secondary: #4a4a4a;
+  --color-text-muted: #737373;
+  --color-text-dim: #a3a3a3;
 
-  /* --- Pastel Accents (used ONLY for interactive/data highlights) --- */
-  --color-accent-rose: #d4a0a0;       /* fines, alerts, overdue */
-  --color-accent-rose-dim: #3a2020;   /* rose tinted backgrounds */
-  --color-accent-seafoam: #8fbfb0;    /* available, success, confirmed */
-  --color-accent-seafoam-dim: #1a2e28;
-  --color-accent-lavender: #a8a0c8;   /* links, interactive, primary CTA */
-  --color-accent-lavender-dim: #201e30;
-  --color-accent-amber: #c4a85a;      /* warnings, due-soon, pending */
-  --color-accent-amber-dim: #2a2010;
+  /* --- Brutalist Accents --- */
+  --color-accent-rose: #e63946;       /* fines, alerts, overdue */
+  --color-accent-rose-dim: #ffccd0;   /* rose tinted backgrounds */
+  --color-accent-seafoam: #2a9d8f;    /* available, success, confirmed */
+  --color-accent-seafoam-dim: #cceae5;
+  --color-accent-lavender: #f97316;   /* Orange is the primary CTA now */
+  --color-accent-lavender-dim: #ffedd5;
+  --color-accent-amber: #e9c46a;      /* warnings, due-soon, pending */
+  --color-accent-amber-dim: #fbf3d3;
+  
+  --shadow-brutal: 4px 4px 0px 0px #111111;
+  --shadow-brutal-hover: 2px 2px 0px 0px #111111;
 
   /* --- Spacing Scale --- */
   --spacing-xs: 4px;
@@ -47,9 +50,9 @@
   --spacing-2xl: 64px;
 
   /* --- Radius --- */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
 
   /* --- Transitions --- */
   --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
@@ -76,6 +79,10 @@ html, body, #root {
 body {
   font-family: var(--font-sans);
   background-color: var(--color-bg-base);
+  background-image: 
+    linear-gradient(to right, #e2e1dc 1px, transparent 1px),
+    linear-gradient(to bottom, #e2e1dc 1px, transparent 1px);
+  background-size: 20px 20px;
   color: var(--color-text-primary);
   font-size: 15px;
   line-height: 1.6;
@@ -104,19 +111,21 @@ body {
 
 .card {
   background-color: var(--color-bg-card);
-  border: 1px solid var(--color-border);
+  border: 2px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
-  transition: border-color var(--duration-default) var(--ease-default);
+  box-shadow: var(--shadow-brutal);
+  transition: box-shadow var(--duration-fast) var(--ease-default), transform var(--duration-fast) var(--ease-default);
 }
 
 .card:hover {
-  border-color: #3a3a3d;
+  box-shadow: var(--shadow-brutal-hover);
+  transform: translate(2px, 2px);
 }
 
 .surface {
   background-color: var(--color-bg-surface);
-  border: 1px solid var(--color-border-subtle);
+  border: 2px solid var(--color-border);
   border-radius: var(--radius-md);
 }
 
@@ -135,39 +144,47 @@ body {
   font-weight: 500;
   letter-spacing: 0.01em;
   cursor: pointer;
-  transition: all var(--duration-default) var(--ease-default);
-  border: 1px solid transparent;
+  transition: box-shadow var(--duration-fast) var(--ease-default), transform var(--duration-fast) var(--ease-default), background-color var(--duration-fast) var(--ease-default);
+  border: 2px solid var(--color-border);
   text-decoration: none;
   white-space: nowrap;
+  box-shadow: 2px 2px 0px 0px #111111;
+}
+
+.btn:hover {
+  box-shadow: 0px 0px 0px 0px #111111;
+  transform: translate(2px, 2px);
+}
+
+.btn:active {
+  box-shadow: 0px 0px 0px 0px #111111;
+  transform: translate(2px, 2px);
 }
 
 .btn-primary {
   background-color: var(--color-accent-lavender);
-  color: var(--color-bg-base);
-  border-color: var(--color-accent-lavender);
+  color: #111111;
+  border-color: var(--color-border);
 }
 
 .btn-primary:hover {
-  background-color: #bdb5d8;
-  border-color: #bdb5d8;
-  transform: scale(1.01);
+  background-color: #f79043;
 }
 
 .btn-secondary {
-  background-color: transparent;
+  background-color: var(--color-bg-surface);
   color: var(--color-text-primary);
   border-color: var(--color-border);
 }
 
 .btn-secondary:hover {
   background-color: var(--color-bg-hover);
-  border-color: #3a3a3d;
 }
 
 .btn-danger {
-  background-color: transparent;
+  background-color: var(--color-bg-surface);
   color: var(--color-accent-rose);
-  border-color: var(--color-accent-rose-dim);
+  border-color: var(--color-border);
 }
 
 .btn-danger:hover {
@@ -175,9 +192,9 @@ body {
 }
 
 .btn-success {
-  background-color: transparent;
+  background-color: var(--color-bg-surface);
   color: var(--color-accent-seafoam);
-  border-color: var(--color-accent-seafoam-dim);
+  border-color: var(--color-border);
 }
 
 .btn-success:hover {
@@ -185,9 +202,9 @@ body {
 }
 
 .btn-warn {
-  background-color: transparent;
+  background-color: var(--color-bg-surface);
   color: var(--color-accent-amber);
-  border-color: var(--color-accent-amber-dim);
+  border-color: var(--color-border);
 }
 
 .btn-warn:hover {

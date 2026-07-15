@@ -38,7 +38,7 @@ const borrowBook = asyncHandler(async (req, res) => {
         return transaction
     })
     
-    return res.status(201).json(new ApiResponse(201, "Book borrowed successfully", transactionResult))
+    return res.status(201).json(new ApiResponse(201, transactionResult, "Book borrowed successfully"))
 })
 
 const returnBook = asyncHandler(async (req, res) => {
@@ -69,7 +69,7 @@ const returnBook = asyncHandler(async (req, res) => {
         await transaction.save({ session })
     })
     
-    return res.status(200).json(new ApiResponse(200, "Book returned successfully", transaction))
+    return res.status(200).json(new ApiResponse(200, transaction, "Book returned successfully"))
 })
 
 const renewBook = asyncHandler(async (req, res) => {
@@ -90,7 +90,7 @@ const renewBook = asyncHandler(async (req, res) => {
     transaction.renewalCnt += 1
     transaction.dueDate = new Date(now + RENEWAL_PERIOD_MS)
     await transaction.save()
-    return res.status(200).json(new ApiResponse(200,"Book renewed successfully",transaction))
+    return res.status(200).json(new ApiResponse(200, transaction, "Book renewed successfully"))
 })
 
 const getTransactionHistory = asyncHandler(async (req, res) => {
@@ -112,7 +112,7 @@ const getTransactionHistory = asyncHandler(async (req, res) => {
         obj.totalFine = obj.frozenFine + activeFine
         return obj
     })
-    return res.status(200).json(new ApiResponse(200,"Transactions fetched successfully",updatedTransactions))
+    return res.status(200).json(new ApiResponse(200, updatedTransactions, "Transactions fetched successfully"))
 })
 
 const payFine = asyncHandler(async (req, res) => {
@@ -145,7 +145,7 @@ const payFine = asyncHandler(async (req, res) => {
         })
         
         return res.status(200).json(
-            new ApiResponse(200, `Successfully paid ₹${totalPaid} for all eligible transactions.`, null)
+            new ApiResponse(200, null, `Successfully paid ₹${totalPaid} for all eligible transactions.`)
         )
     }
 
@@ -167,7 +167,7 @@ const payFine = asyncHandler(async (req, res) => {
     transaction.frozenFine = 0
     await transaction.save()
     return res.status(200).json(
-        new ApiResponse(200, `Successfully paid ₹${totalOwed} for this transaction.`, transaction)
+        new ApiResponse(200, transaction, `Successfully paid ₹${totalOwed} for this transaction.`)
     )
 })
 

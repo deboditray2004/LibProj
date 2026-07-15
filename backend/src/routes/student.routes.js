@@ -16,7 +16,6 @@ const router = Router()
 
 router.route("/register").post(
     upload.fields([
-        { name: "photo", maxCount: 1 },
         { name: "govtId", maxCount: 1 }
     ]),
     validate(registerStudentSchema),
