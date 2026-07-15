@@ -2,7 +2,6 @@
 
 **Project Overview:** A full-stack, enterprise-grade Library Management System designed to handle complex business logic. The system strictly separates users into two independent roles: **Students** and **Library Management (Employees)**, and features robust concurrency control, automated penalty calculations, an intelligent digital inventory, and a secure password reset pipeline.
 
-**Backend Status:** ✅ Complete & Deployed
 
 ---
 
