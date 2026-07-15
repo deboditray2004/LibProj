@@ -7,9 +7,7 @@ import { Notification } from "../models/notification.model.js"
 const submitFeedback = asyncHandler(async (req, res) => {
 
     const { msg } = req.body
-    if(!msg?.trim())
-    throw new ApiError(400,"Message is required")
-    
+
     const feedback = new Feedback({
         s_id:req.student._id,
         msg
@@ -48,9 +46,6 @@ const getEmployeeInbox = asyncHandler(async (req, res) => {
 const replyToFeedback = asyncHandler(async (req, res) => {
 
     const {feedBackId, replyMsg} = req.body
-    if(!feedBackId || !replyMsg?.trim())
-    throw new ApiError(400, "Missing required fields")
-
     const feedback = await Feedback.findById(feedBackId)
     if(!feedback)
     throw new ApiError(404, "Feedback not found")

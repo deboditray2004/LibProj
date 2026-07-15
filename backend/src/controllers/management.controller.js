@@ -49,7 +49,6 @@ const rejectStudent = asyncHandler(async (req, res) => {
 
     const { studentId, reason } = req.body
 
-    if (!reason) throw new ApiError(400, "Rejection reason is required")
 
     const student = await Student.findById(studentId)
     if (!student) throw new ApiError(404, "Student not found")
@@ -112,8 +111,6 @@ const approveProfileEdit = asyncHandler(async (req, res) => {
 
 const rejectProfileEdit = asyncHandler(async (req, res) => {
     const { studentId, reason } = req.body
-
-    if (!reason) throw new ApiError(400, "Rejection reason is required")
 
     const student = await Student.findById(studentId)
     if (!student) throw new ApiError(404, "Student not found")
