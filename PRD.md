@@ -23,7 +23,6 @@
 - **Fine Payment:** Students can settle their outstanding fine balance directly from the dashboard.
 - **Book Renewal:** Students can renew an active borrowing directly from their dashboard.
 - **Borrowing Constraints (Business Logic):**
-  - **Financial Block:** If total unpaid fines exceed **₹500**, the system automatically blocks new borrowing until the balance is cleared.
   - **Renewal Limits:** Students can renew a borrowed book a maximum of **2 consecutive times**. After the second renewal, physical return is mandatory.
 
 ### 1.3 Digital Catalogue
