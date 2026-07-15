@@ -50,6 +50,7 @@ const registerStudent = asyncHandler( async (req, res) => {
         govtId: g_id.url,
         dept,
         rollNo,
+        dob,
         addr,
         email, 
         password,

@@ -1,0 +1,27 @@
+[
+  {
+    "studentRollNo": 101,
+    "globalBookId": "OL27329598M",
+    "borrowDateOffsetDays": 0,
+    "dueDateOffsetDays": 15,
+    "status": "Borrowed",
+    "renewalCnt": 0
+  },
+  {
+    "studentRollNo": 101,
+    "globalBookId": "OL27329599M",
+    "borrowDateOffsetDays": -20,
+    "dueDateOffsetDays": -5,
+    "status": "Borrowed",
+    "renewalCnt": 0
+  },
+  {
+    "studentRollNo": 102,
+    "globalBookId": "OL27329600M",
+    "borrowDateOffsetDays": -30,
+    "dueDateOffsetDays": -15,
+    "rtrnDateOffsetDays": -10,
+    "fine": 50,
+    "status": "Returned"
+  }
+]

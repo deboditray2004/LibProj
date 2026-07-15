@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
 import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js"
 import { Book } from "../models/book.model.js"
+import { Transaction } from "../models/transaction.model.js"
 import { BookRequest } from "../models/bookRequest.model.js"
 import { Order } from "../models/order.model.js"
 import { searchGlobalBook } from "../utils/googleBooksAPI.js"
@@ -156,10 +157,24 @@ const getAllBooks = asyncHandler(async (req, res) => {
     
     if (category)
     query.category = { $regex: category, $options: "i" }
-    const books = await Book.find(query)
+    let books = await Book.find(query).lean()
     if (!books || books.length === 0) {
         throw new ApiError(404, "No books found matching your criteria")
     }
+    
+    books = await Promise.all(books.map(async (book) => {
+        if (book.avl === 0) {
+            const activeTransactions = await Transaction.find({ 
+                b_id: book._id, 
+                rtrnDate: { $exists: false } 
+            }).sort({ dueDate: 1 }).limit(1)
+            
+            if (activeTransactions.length > 0) {
+                book.expectedReturnDate = activeTransactions[0].dueDate
+            }
+        }
+        return book
+    }))
     
     return res.status(200).json(
         new ApiResponse(200, books, "Books fetched successfully")

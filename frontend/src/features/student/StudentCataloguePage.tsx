@@ -107,7 +107,14 @@ export default function StudentCataloguePage() {
                       <div style={styles.bookFooter}>
                         <div>
                           {isOutOfStock ? (
-                            <span className="badge badge-rose">Out of Stock</span>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                              <span className="badge badge-rose">Out of Stock</span>
+                              {book.expectedReturnDate && (
+                                <span style={styles.copiesText}>
+                                  Expected Return: {new Date(book.expectedReturnDate).toLocaleDateString()}
+                                </span>
+                              )}
+                            </div>
                           ) : (
                             <span className="badge badge-seafoam">Available</span>
                           )}

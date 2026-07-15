@@ -16,6 +16,9 @@ const schema = z.object({
   email: z.string().email('Valid email is required'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   department: z.string().min(2, 'Department is required'),
+  rollNo: z.string().min(1, 'Roll No is required'),
+  dob: z.string().min(1, 'Date of Birth is required'),
+  addr: z.string().min(5, 'Address must be at least 5 characters'),
   photo: z
     .any()
     .refine((files) => files?.length == 1, 'Photo is required.')
@@ -62,13 +65,16 @@ export default function RegisterPage() {
     formData.append('name', data.name)
     formData.append('email', data.email)
     formData.append('password', data.password)
-    formData.append('department', data.department)
+    formData.append('dept', data.department)
+    formData.append('rollNo', data.rollNo)
+    formData.append('dob', data.dob)
+    formData.append('addr', data.addr)
     formData.append('govtId', data.govtId[0])
     mutation.mutate(formData)
   }
 
   const handleNextStep = async () => {
-    const isStep1Valid = await trigger(['name', 'email', 'password', 'department'])
+    const isStep1Valid = await trigger(['name', 'email', 'password', 'department', 'rollNo', 'dob', 'addr'])
     if (isStep1Valid) {
       setStep(2)
     }
@@ -154,6 +160,41 @@ export default function RegisterPage() {
                   {...register('department')}
                 />
                 {errors.department && <span className="field-error">{errors.department.message}</span>}
+              </div>
+
+              <div style={styles.field}>
+                <label htmlFor="rollNo">Roll Number</label>
+                <input
+                  id="rollNo"
+                  type="number"
+                  placeholder="101"
+                  className={`input ${errors.rollNo ? 'input-error' : ''}`}
+                  {...register('rollNo')}
+                />
+                {errors.rollNo && <span className="field-error">{errors.rollNo.message}</span>}
+              </div>
+
+              <div style={styles.field}>
+                <label htmlFor="dob">Date of Birth</label>
+                <input
+                  id="dob"
+                  type="date"
+                  className={`input ${errors.dob ? 'input-error' : ''}`}
+                  {...register('dob')}
+                />
+                {errors.dob && <span className="field-error">{errors.dob.message}</span>}
+              </div>
+
+              <div style={styles.field}>
+                <label htmlFor="addr">Address</label>
+                <textarea
+                  id="addr"
+                  placeholder="123 College St"
+                  className={`input ${errors.addr ? 'input-error' : ''}`}
+                  style={{ minHeight: '60px', resize: 'vertical' }}
+                  {...register('addr')}
+                />
+                {errors.addr && <span className="field-error">{errors.addr.message}</span>}
               </div>
 
               <button

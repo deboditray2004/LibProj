@@ -3,28 +3,29 @@ import { Toaster } from 'react-hot-toast'
 import { useAuth } from './context/AuthContext'
 
 // Public Pages
-import LandingPage from './pages/public/LandingPage'
-import StudentLoginPage from './pages/public/StudentLoginPage'
-import EmployeeLoginPage from './pages/public/EmployeeLoginPage'
-import RegisterPage from './pages/public/RegisterPage'
-import ForgotPasswordPage from './pages/public/ForgotPasswordPage'
-import ResetPasswordPage from './pages/public/ResetPasswordPage'
-import CataloguePage from './pages/public/CataloguePage'
+import LandingPage from './features/public/LandingPage'
+import StudentLoginPage from './features/auth/StudentLoginPage'
+import EmployeeLoginPage from './features/auth/EmployeeLoginPage'
+import RegisterPage from './features/auth/RegisterPage'
+import ForgotPasswordPage from './features/auth/ForgotPasswordPage'
+import ResetPasswordPage from './features/auth/ResetPasswordPage'
+import CataloguePage from './features/public/CataloguePage'
 
 // Student Pages
 import StudentLayout from './components/layout/StudentLayout'
-import StudentDashboard from './pages/student/StudentDashboard'
-import StudentCataloguePage from './pages/student/StudentCataloguePage'
-import StudentHistoryPage from './pages/student/StudentHistoryPage'
+import StudentDashboard from './features/student/StudentDashboard'
+import StudentCataloguePage from './features/student/StudentCataloguePage'
+import StudentHistoryPage from './features/student/StudentHistoryPage'
 
 // Employee Pages
 import EmployeeLayout from './components/layout/EmployeeLayout'
-import EmployeeDashboard from './pages/employee/EmployeeDashboard'
-import PendingStudentsPage from './pages/employee/PendingStudentsPage'
-import PendingEditsPage from './pages/employee/PendingEditsPage'
-import BookRequestsPage from './pages/employee/BookRequestsPage'
-import EmployeeCataloguePage from './pages/employee/EmployeeCataloguePage'
-import OrdersPage from './pages/employee/OrdersPage'
+import EmployeeDashboard from './features/employee/EmployeeDashboard'
+import PendingStudentsPage from './features/employee/PendingStudentsPage'
+import PendingEditsPage from './features/employee/PendingEditsPage'
+import BookRequestsPage from './features/employee/BookRequestsPage'
+import EmployeeCataloguePage from './features/employee/EmployeeCataloguePage'
+import OrdersPage from './features/employee/OrdersPage'
+import FloatingContactBtn from './components/FloatingContactBtn'
 
 function ProtectedRoute({ children, role }: { children: React.ReactNode; role: 'student' | 'employee' }) {
   const { state } = useAuth()
@@ -109,6 +110,7 @@ export default function App() {
         },
       }}
     />
+    <FloatingContactBtn />
     </>
   )
 }

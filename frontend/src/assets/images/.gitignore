@@ -1,0 +1,10 @@
+# Ignore everything in this directory
+*
+# Except these specific image formats for physical assets
+!*.png
+!*.jpg
+!*.jpeg
+!*.svg
+!*.gif
+# Keep this file itself
+!.gitignore
