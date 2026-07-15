@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
+import crypto from "crypto"
 import { updateIfCurrentPlugin } from "mongoose-update-if-current"
 const studentSchema =new Schema({
 
@@ -68,6 +69,12 @@ const studentSchema =new Schema({
     },
     refreshToken: {
         type: String
+    },
+    forgotPasswordToken: {
+        type: String
+    },
+    forgotPasswordExpiry: {
+        type: Date
     }
 
 
@@ -116,6 +123,13 @@ studentSchema.methods.generateRefreshToken = function(){
             expiresIn: process.env.REFRESH_TOKEN_EXPIRY
         }
     )
+}
+
+studentSchema.methods.createPasswordResetToken = function() {
+    const resetToken = crypto.randomBytes(32).toString("hex")
+    this.forgotPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex")
+    this.forgotPasswordExpiry = Date.now() + 15 * 60 * 1000 // 15 minutes
+    return resetToken
 }
 
 export const Student= mongoose.model("Student",studentSchema)

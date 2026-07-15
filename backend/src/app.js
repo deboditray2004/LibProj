@@ -21,7 +21,7 @@ import employeeRouter from "./routes/employee.routes.js"
 import managementRouter from "./routes/management.routes.js"
 import bookRouter from "./routes/book.routes.js"
 import transactionRouter from "./routes/transaction.routes.js"
-import communicationRouter from "./routes/communication.routes.js"
+import authRouter from "./routes/auth.routes.js"
 
 //mount routes
 app.use("/api/students", studentRouter)
@@ -29,7 +29,7 @@ app.use("/api/employees", employeeRouter)
 app.use("/api/management", managementRouter)
 app.use("/api/books", bookRouter)
 app.use("/api/transactions", transactionRouter)
-app.use("/api/communication", communicationRouter)
+app.use("/api/auth", authRouter)
 
 //global Error Handler
 app.use((err, req, res, next) => {
