@@ -6,7 +6,7 @@ import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js
 import { Book } from "../models/book.model.js"
 import { BookRequest } from "../models/bookRequest.model.js"
 import { Order } from "../models/order.model.js"
-import { searchGlobalBook, fetchAndFormatBookData } from "../utils/googleBooksAPI.js"
+import { searchGlobalBook } from "../utils/googleBooksAPI.js"
 
 const requestBook = asyncHandler(async (req, res) => {
 
