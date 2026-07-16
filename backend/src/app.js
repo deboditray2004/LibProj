@@ -5,6 +5,9 @@ import mongoose from "mongoose"
 
 const app = express()
 
+// Trust the reverse proxy (Render) so secure cookies are set correctly
+app.set("trust proxy", 1)
+
 app.use(cors({
     origin: function (origin, callback) {
         if (!origin || origin.startsWith("http://localhost:") || origin === process.env.CORS_ORIGIN) {
