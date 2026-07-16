@@ -93,7 +93,8 @@ const loginStudent= asyncHandler(async(req, res) =>{
     
     const options = {
         httpOnly: true,
-        secure: true
+        secure: true,
+        sameSite: "none"
     }
 
     return res
@@ -128,7 +129,8 @@ const logoutStudent = asyncHandler(async(req,res) =>{
 
     const options ={
         httpOnly:true,
-        secure:true
+        secure:true,
+        sameSite: "none"
     }
 
     return res
