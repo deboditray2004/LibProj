@@ -13,7 +13,7 @@ const borrowBook = asyncHandler(async (req, res) => {
     const student = await Student.findOne({ cardNo })
     if (!student) throw new ApiError(404, "Student not found with this Card Number")
 
-    const book = await Book.findOne({ isbn })
+    const book = await Book.findOne({ globalBookId: isbn })
     if (!book || book.avl <= 0) throw new ApiError(404, "Book not available or not found")
 
     const activeTxn = await Transaction.findOne({
@@ -47,7 +47,7 @@ const returnBook = asyncHandler(async (req, res) => {
     const student = await Student.findOne({ cardNo })
     if (!student) throw new ApiError(404, "Student not found with this Card Number")
 
-    const book = await Book.findOne({ isbn })
+    const book = await Book.findOne({ globalBookId: isbn })
     if (!book) throw new ApiError(404, "Book not found with this ISBN")
 
     const transaction = await Transaction.findOne({

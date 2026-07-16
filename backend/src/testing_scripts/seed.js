@@ -5,18 +5,19 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import { Book } from './src/models/book.model.js';
-import { Student } from './src/models/student.model.js';
-import { Employee } from './src/models/employee.model.js';
-import { Transaction } from './src/models/transaction.model.js';
-
-dotenv.config();
+import { Book } from '../models/book.model.js';
+import { Student } from '../models/student.model.js';
+import { Employee } from '../models/employee.model.js';
+import { Transaction } from '../models/transaction.model.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+
+
 
 async function loadJSON(filename) {
-  const filePath = path.join(__dirname, 'src', 'db', 'data', filename);
+  const filePath = path.join(__dirname, '..', 'db', 'data', filename);
   if (!fs.existsSync(filePath)) return [];
   const data = fs.readFileSync(filePath, 'utf-8');
   return JSON.parse(data);

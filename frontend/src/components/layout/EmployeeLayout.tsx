@@ -131,7 +131,7 @@ const styles: Record<string, React.CSSProperties> = {
     fontFamily: 'var(--font-sans)',
     fontWeight: 700,
     fontSize: '14px',
-    borderRadius: '4px',
+    borderRadius: 0,
     flexShrink: 0,
   },
   brandText: {

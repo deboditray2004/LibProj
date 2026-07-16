@@ -158,9 +158,8 @@ export default function PendingEditsPage() {
 
 const styles: Record<string, React.CSSProperties> = {
   page: {
-    padding: '2rem',
-    maxWidth: '1200px',
-    margin: '0 auto',
+    padding: '2rem 8rem 2rem 3rem',
+    width: '100%',
   },
   center: {
     height: '100%',

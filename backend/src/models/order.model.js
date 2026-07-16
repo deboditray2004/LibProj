@@ -28,10 +28,7 @@ const orderSchema = new Schema({
         type: Number,
         default: 1
     },
-    requesters: [{
-        type: Schema.Types.ObjectId,
-        ref: "Student"
-    }],
+
     status: {
         type: String,
         enum: ["Pending Delivery", "Received"],

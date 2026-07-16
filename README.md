@@ -136,3 +136,107 @@ LibProj/
     ├── scripts/              # God-mode Administrative CLI tools
     └── utils/                # Cloudinary uploaders, mailer, and error handlers
 ```
+
+---
+
+## 9. Entity-Relationship & Data Flow Diagrams
+
+### Entity-Relationship (ER) Diagram
+```mermaid
+erDiagram
+    STUDENT {
+        ObjectId _id
+        number cardNo
+        string name
+        date dob
+        string addr
+        string email
+        string govtId
+        string photo
+        string dept
+        number rollNo
+        number tot_fine
+        mixed pendingEdits
+        string status
+    }
+    EMPLOYEE {
+        ObjectId _id
+        number empId
+        string name
+        string email
+    }
+    BOOK {
+        ObjectId _id
+        string globalBookId
+        string title
+        string coverImg
+        array authors
+        array category
+        number total
+        number avl
+    }
+    BOOKREQUEST {
+        ObjectId _id
+        ObjectId s_id
+        string isbn
+    }
+    ORDER {
+        ObjectId _id
+        string globalBookId
+        string orderTitle
+        array authors
+        string coverImg
+        array category
+        number copiesOrdered
+        string status
+    }
+    TRANSACTION {
+        ObjectId _id
+        ObjectId s_id
+        ObjectId b_id
+        date brwDate
+        date dueDate
+        date rtrnDate
+        number renewalCnt
+        number frozenFine
+        number amountCollected
+    }
+    FEEDBACK {
+        ObjectId _id
+        ObjectId s_id
+        string msg
+        string status
+        string reply
+    }
+    NOTIFICATION {
+        ObjectId _id
+        ObjectId s_id
+        string msg
+        string status
+    }
+
+    STUDENT ||--o{ TRANSACTION : "has"
+    STUDENT ||--o{ FEEDBACK : "submits"
+    STUDENT ||--o{ NOTIFICATION : "receives"
+    STUDENT ||--o{ BOOKREQUEST : "requests"
+    BOOK ||--o{ TRANSACTION : "involved in"
+    ORDER }o--|| BOOK : "supplies"
+```
+
+### High-Level Data Flow
+```mermaid
+flowchart TD
+    S([Student]) --> |Submits| BR[Book Request]
+    S --> |Creates| T[Transaction]
+    S --> |Submits| F[Feedback]
+    
+    E([Employee]) --> |Approves/Reviews| BR
+    E --> |Places| O[Order]
+    E --> |Replies to| F
+    
+    O --> |Restocks| B([Book])
+    B --> |Borrowed in| T
+    
+    Sys((System Automations)) -.-> |Sends| N[Notification]
+    N -.-> |Alerts| S
+```

@@ -77,13 +77,13 @@ export const rejectEdit = (data: { studentId: string; reason: string }) =>
 export const getAggregatedRequests = () =>
   api.get('/books/requests/aggregated').then((r) => r.data)
 
-export const rejectBookRequest = (data: { requestIds: string[] }) =>
+export const rejectBookRequest = (data: { isbn: string }) =>
   api.post('/books/requests/reject', data).then((r) => r.data)
 
 export const getAllOrders = () =>
   api.get('/books/orders').then((r) => r.data)
 
-export const placeOrder = (data: { isbn: string; copiesOrdered: number; requestIds: string[] }) =>
+export const placeOrder = (data: { isbn: string; copiesOrdered: number }) =>
   api.post('/books/orders/place', data).then((r) => r.data)
 
 export const manualOrder = (data: { isbn: string; copiesOrdered: number }) =>

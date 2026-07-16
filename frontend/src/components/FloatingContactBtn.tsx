@@ -30,7 +30,7 @@ export default function FloatingContactBtn() {
             name: state.user.name || state.user.email,
             email: state.user.email,
             ...(state.user.rollNo ? { 'Roll Number': state.user.rollNo } : {})
-          }, function(error: any) {})
+          }, function() {})
         }
       }
 
@@ -47,7 +47,7 @@ export default function FloatingContactBtn() {
         }
       }
     }
-  }, [isEmployee])
+  }, [isEmployee, state.user])
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault()

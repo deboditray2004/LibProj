@@ -1,10 +1,18 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { searchBooks, getCategories, requestBook } from '../../api'
-import { MagnifyingGlass, BookOpen, WarningCircle } from '@phosphor-icons/react'
+import { MagnifyingGlass, BookOpen, WarningCircle, CaretLeft, CaretRight } from '@phosphor-icons/react'
 
 export default function StudentCataloguePage() {
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 200
+      scrollContainerRef.current.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' })
+    }
+  }
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('')
 
@@ -39,13 +47,19 @@ export default function StudentCataloguePage() {
         </div>
       </header>
 
-      <main className="flex flex-col flex-1 w-full py-8 gap-8 items-start pb-24 pl-8 pr-24">
+      <main className="flex flex-col flex-1 w-full py-8 gap-8 items-start pl-8 pr-32">
         
         {/* Horizontal Filters Bar */}
         <div className="w-full flex flex-col md:flex-row items-center justify-between gap-4 border-b border-[var(--color-border)] pb-6">
-          <div className="flex flex-row overflow-x-auto gap-2 w-full md:w-auto flex-1 items-center pb-2 md:pb-0">
-            <span style={{...styles.filterTitle, marginBottom: 0, marginRight: '0.5rem'}}>Categories:</span>
-            {categoriesList.map((cat) => (
+          <div className="flex flex-row items-center gap-2 w-full md:w-auto flex-1 min-w-0 pb-2 md:pb-0">
+            <span style={{...styles.filterTitle, marginBottom: 0, marginRight: '0.5rem', flexShrink: 0}}>Categories:</span>
+            
+            <button onClick={() => scroll('left')} className="p-1 hover:bg-[var(--color-bg-surface)] rounded-full text-[var(--color-text-secondary)] transition-colors flex-shrink-0">
+              <CaretLeft size={20} weight="bold" />
+            </button>
+            
+            <div ref={scrollContainerRef} className="flex flex-row overflow-x-auto gap-2 items-center flex-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              {categoriesList.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setCategory(cat)}
@@ -53,8 +67,8 @@ export default function StudentCataloguePage() {
                   ...styles.filterBtn,
                   padding: '6px 16px',
                   borderRadius: '999px',
-                  backgroundColor: category === cat ? 'var(--color-text-primary)' : 'transparent',
-                  color: category === cat ? 'var(--color-bg-base)' : 'var(--color-text-secondary)',
+                  backgroundColor: category === cat ? 'var(--color-bg-surface)' : 'transparent',
+                  color: category === cat ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
                   fontWeight: category === cat ? 600 : 400,
                   whiteSpace: 'nowrap',
                   border: category === cat ? '1px solid var(--color-text-primary)' : '1px solid var(--color-border)'
@@ -62,7 +76,12 @@ export default function StudentCataloguePage() {
               >
                 {cat === '' ? 'All' : cat}
               </button>
-            ))}
+              ))}
+            </div>
+
+            <button onClick={() => scroll('right')} className="p-1 hover:bg-[var(--color-bg-surface)] rounded-full text-[var(--color-text-secondary)] transition-colors flex-shrink-0">
+              <CaretRight size={20} weight="bold" />
+            </button>
           </div>
 
           <div style={{ ...styles.searchBox, marginBottom: 0 }} className="w-full md:w-[300px] flex-shrink-0">
@@ -180,17 +199,6 @@ const styles: Record<string, React.CSSProperties> = {
     color: 'var(--color-text-primary)',
     margin: 0,
   },
-  main: {
-    display: 'flex',
-    flex: 1,
-    gap: '3rem',
-    alignItems: 'flex-start',
-  },
-  sidebar: {
-    width: '240px',
-    position: 'sticky',
-    top: '2rem',
-  },
   searchBox: {
     position: 'relative',
     marginBottom: '2rem',
@@ -207,11 +215,7 @@ const styles: Record<string, React.CSSProperties> = {
     outline: 'none',
     transition: 'border-color 150ms ease',
   },
-  filterGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem',
-  },
+
   filterTitle: {
     fontFamily: 'var(--font-mono)',
     fontSize: '11px',

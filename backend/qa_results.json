@@ -1,0 +1,465 @@
+{
+  "summary": {
+    "passed": 22,
+    "failed": 38,
+    "partial": 16
+  },
+  "results": [
+    {
+      "section": "2a",
+      "test": "Employee login wrong password → 401",
+      "status": "FAIL",
+      "detail": "status=404, msg=\"undefined\""
+    },
+    {
+      "section": "2a",
+      "test": "Employee login correct credentials → 200",
+      "status": "FAIL",
+      "detail": "status=404, token=MISSING"
+    },
+    {
+      "section": "2a",
+      "test": "Student login wrong credentials → 404",
+      "status": "PASS",
+      "detail": "status=404, msg=\"undefined\""
+    },
+    {
+      "section": "2a",
+      "test": "Student login correct credentials → 200",
+      "status": "FAIL",
+      "detail": "status=404, cardNo=1012, token=MISSING"
+    },
+    {
+      "section": "2a",
+      "test": "Pending student login → 404/403 blocked",
+      "status": "PASS",
+      "detail": "status=404, msg=\"undefined\""
+    },
+    {
+      "section": "2a",
+      "test": "Student access employee-only route → 401/403",
+      "status": "FAIL",
+      "detail": "status=404, msg=\"undefined\""
+    },
+    {
+      "section": "2a",
+      "test": "Employee access student-only route → 401/403",
+      "status": "FAIL",
+      "detail": "status=404, msg=\"undefined\""
+    },
+    {
+      "section": "2a",
+      "test": "Unauthenticated access to protected route → 401",
+      "status": "FAIL",
+      "detail": "status=404"
+    },
+    {
+      "section": "2a",
+      "test": "Forgot password → 200 (email trigger)",
+      "status": "PARTIAL",
+      "detail": "status=404, msg=\"undefined\""
+    },
+    {
+      "section": "2a",
+      "test": "Reset with invalid token → 400",
+      "status": "PASS",
+      "detail": "status=404"
+    },
+    {
+      "section": "2b",
+      "test": "Public catalogue fetch (unauthenticated) → 200",
+      "status": "FAIL",
+      "detail": "status=404, count=undefined"
+    },
+    {
+      "section": "2b",
+      "test": "Search by title \"python\" → results",
+      "status": "FAIL",
+      "detail": "status=404, matches=undefined"
+    },
+    {
+      "section": "2b",
+      "test": "Search by author \"Cormen\" → results",
+      "status": "FAIL",
+      "detail": "status=404, matches=undefined"
+    },
+    {
+      "section": "2b",
+      "test": "Filter by category \"Machine Learning\" → results",
+      "status": "FAIL",
+      "detail": "status=404, matches=undefined"
+    },
+    {
+      "section": "2b",
+      "test": "Search no results → 404",
+      "status": "PASS",
+      "detail": "status=404, msg=\"undefined\""
+    },
+    {
+      "section": "2b",
+      "test": "Get all categories → 200 with list",
+      "status": "FAIL",
+      "detail": "status=404, categories=undefined"
+    },
+    {
+      "section": "2b",
+      "test": "Search \"Engineering\" at 143 books (response time <2s)",
+      "status": "PARTIAL",
+      "detail": "status=404, time=1ms, matches=undefined"
+    },
+    {
+      "section": "2b",
+      "test": "Get book by ID → 200",
+      "status": "FAIL",
+      "detail": "status=404, title=\"undefined\""
+    },
+    {
+      "section": "2b",
+      "test": "Zero-avl book returns expectedReturnDate",
+      "status": "PARTIAL",
+      "detail": "zeroAvlBook found=false, expectedReturnDate=undefined"
+    },
+    {
+      "section": "2c",
+      "test": "Employee borrows book → 201 + avl decrements",
+      "status": "FAIL",
+      "detail": "status=404, msg=\"undefined\""
+    },
+    {
+      "section": "2c",
+      "test": "Borrow last copy → 201",
+      "status": "FAIL",
+      "detail": "status=404, bookTitle=\"Design Patterns\""
+    },
+    {
+      "section": "2c",
+      "test": "Borrow when avl=0 → 404 blocked",
+      "status": "PASS",
+      "detail": "status=404, msg=\"undefined\""
+    },
+    {
+      "section": "2c",
+      "test": "Overdue return fine crystallization",
+      "status": "PARTIAL",
+      "detail": "No suitable overdue active transaction found for test"
+    },
+    {
+      "section": "2c",
+      "test": "Pay on borrowed not-yet-due (fine=0) → 400 no fine / not blocked for being overdue",
+      "status": "PARTIAL",
+      "detail": "status=404, msg=\"undefined\""
+    },
+    {
+      "section": "2c",
+      "test": "payAll with mix → 200 or 400 all-overdue",
+      "status": "FAIL",
+      "detail": "status=404, msg=\"undefined\""
+    },
+    {
+      "section": "2c",
+      "test": "Employee waives fine → 200",
+      "status": "FAIL",
+      "detail": "status=404, waivedAmount=undefined"
+    },
+    {
+      "section": "2c",
+      "test": "Student waive fine → 401/403 BLOCKED",
+      "status": "FAIL",
+      "detail": "status=404"
+    },
+    {
+      "section": "2c",
+      "test": "First renewal → 200 + renewalCnt=1",
+      "status": "FAIL",
+      "detail": "status=404, renewalCnt=undefined"
+    },
+    {
+      "section": "2c",
+      "test": "Third renewal on renewalCnt=2 → 400 Max renewals",
+      "status": "FAIL",
+      "detail": "status=404, msg=\"undefined\""
+    },
+    {
+      "section": "2c",
+      "test": "Renew returned book → 400 Cannot renew returned",
+      "status": "FAIL",
+      "detail": "status=404, msg=\"undefined\""
+    },
+    {
+      "section": "2c",
+      "test": "Transaction history (performance <3s)",
+      "status": "PARTIAL",
+      "detail": "status=404, count=undefined, time=1ms"
+    },
+    {
+      "section": "2d",
+      "test": "Student requests 0-avl book → 201",
+      "status": "FAIL",
+      "detail": "status=404, msg=\"undefined\""
+    },
+    {
+      "section": "2d",
+      "test": "Employee gets aggregated book requests → 200",
+      "status": "FAIL",
+      "detail": "status=404, count=undefined"
+    },
+    {
+      "section": "2d",
+      "test": "Pending orders exist in DB",
+      "status": "PASS",
+      "detail": "orderId=6a58b2bb33db3271120eab82, title=\"Advanced React Patterns\""
+    },
+    {
+      "section": "2d",
+      "test": "Employee marks order Received → 200",
+      "status": "FAIL",
+      "detail": "status=404, msg=\"undefined\""
+    },
+    {
+      "section": "2d",
+      "test": "High-demand order email fan-out",
+      "status": "PARTIAL",
+      "detail": "No high-demand pending order found to test; check email catch in receiveOrder"
+    },
+    {
+      "section": "2d",
+      "test": "Email dispatch wrapped in .catch (partial failure tolerant)",
+      "status": "PASS",
+      "detail": "Confirmed: receiveOrder uses forEach+.catch per student — stock update is outside the email loop, so email failure cannot roll back stock"
+    },
+    {
+      "section": "2d",
+      "test": "Reject book requests → 200",
+      "status": "FAIL",
+      "detail": "status=404"
+    },
+    {
+      "section": "2d",
+      "test": "Get all orders (employee) → 200",
+      "status": "FAIL",
+      "detail": "status=404, count=undefined"
+    },
+    {
+      "section": "2e",
+      "test": "Notifications seeded in DB (target ~200)",
+      "status": "PASS",
+      "detail": "count=300"
+    },
+    {
+      "section": "2e",
+      "test": "Notifications created by workflow triggers (approval, fine waive, book available)",
+      "status": "PARTIAL",
+      "detail": "Notification.create calls not observed in management/transaction controllers. Notifications were seeded directly. Needs UI verification."
+    },
+    {
+      "section": "2f",
+      "test": "Pending students queue → 200 with records",
+      "status": "FAIL",
+      "detail": "status=404, pendingCount=undefined"
+    },
+    {
+      "section": "2f",
+      "test": "Pending profile edits → 200 with records",
+      "status": "FAIL",
+      "detail": "status=404, editsCount=undefined"
+    },
+    {
+      "section": "2f",
+      "test": "Approve student → 200 + cardNo assigned",
+      "status": "FAIL",
+      "detail": "status=404, cardNo=undefined"
+    },
+    {
+      "section": "2f",
+      "test": "Student status updated to Approved in DB",
+      "status": "FAIL",
+      "detail": "status=Pending, cardNo=undefined"
+    },
+    {
+      "section": "2f",
+      "test": "Reject student → 200 + record deleted",
+      "status": "FAIL",
+      "detail": "status=404"
+    },
+    {
+      "section": "2f",
+      "test": "Rejected student deleted from DB",
+      "status": "FAIL",
+      "detail": "found=true"
+    },
+    {
+      "section": "2f",
+      "test": "Approve already-approved student → 400",
+      "status": "FAIL",
+      "detail": "status=404, msg=\"undefined\""
+    },
+    {
+      "section": "2f",
+      "test": "Approve profile edit → 200 + pendingEdits cleared",
+      "status": "FAIL",
+      "detail": "status=404"
+    },
+    {
+      "section": "2f",
+      "test": "pendingEdits cleared in DB after approval",
+      "status": "FAIL",
+      "detail": "pendingEdits={\"addr\":\"Updated Address, Nagpur\",\"dept\":\"Physics\"}"
+    },
+    {
+      "section": "2g",
+      "test": "Borrow with non-existent cardNo → 404",
+      "status": "PASS",
+      "detail": "status=404"
+    },
+    {
+      "section": "2g",
+      "test": "Return with non-existent cardNo → 404",
+      "status": "PASS",
+      "detail": "status=404"
+    },
+    {
+      "section": "2g",
+      "test": "Renew non-existent transaction → 404",
+      "status": "PASS",
+      "detail": "status=404"
+    },
+    {
+      "section": "2g",
+      "test": "Pay fine non-existent transaction → 404",
+      "status": "PASS",
+      "detail": "status=404"
+    },
+    {
+      "section": "2g",
+      "test": "Fine boundary edge case: daysLate=1 (expected 1 for ~24h past due)",
+      "status": "PASS",
+      "detail": "daysLate=1, dueDate=Wed Jul 15 2026 15:59:52 GMT+0530 (India Standard Time)"
+    },
+    {
+      "section": "2g",
+      "test": "payAll all-overdue test",
+      "status": "PARTIAL",
+      "detail": "No student with only overdue+frozenFine transactions found"
+    },
+    {
+      "section": "2g",
+      "test": "Optimistic concurrency conflict raises VersionError",
+      "status": "PASS",
+      "detail": "error=\"VersionError: No matching document found for id \"6a57ca1a1a17325422381de3\" version 1 modifiedP\""
+    },
+    {
+      "section": "2g",
+      "test": "Book search index usage (11 docs examined, 11 returned)",
+      "status": "PASS",
+      "detail": "stage=FETCH, docsExamined=11, docsReturned=11"
+    },
+    {
+      "section": "2g",
+      "test": "Unicode/long-name student stored correctly",
+      "status": "PASS",
+      "detail": "name=\"Venkatanarasimharajuvaripeta Subramaniam...\""
+    },
+    {
+      "section": "Phase3",
+      "test": "Catalogue full load (undefined books) time",
+      "status": "PASS",
+      "detail": "2ms"
+    },
+    {
+      "section": "Phase3",
+      "test": "Book search \"python\" response time",
+      "status": "PASS",
+      "detail": "1ms, results=undefined"
+    },
+    {
+      "section": "Phase3",
+      "test": "Category filter \"Computer Science\" response time",
+      "status": "PASS",
+      "detail": "2ms, results=undefined"
+    },
+    {
+      "section": "Phase3",
+      "test": "Pending students list at volume (undefined students)",
+      "status": "PASS",
+      "detail": "1ms"
+    },
+    {
+      "section": "Phase3",
+      "test": "Orders list load time",
+      "status": "PASS",
+      "detail": "2ms, count=undefined"
+    },
+    {
+      "section": "Phase3",
+      "test": "DB size: 143 books, 1863 txns, 491 students",
+      "status": "PASS",
+      "detail": "Books=143, Transactions=1863, Students=491"
+    },
+    {
+      "section": "Phase4",
+      "test": "borrowBook uses `isbn` field but Book model has `globalBookId` (no `isbn` field)",
+      "status": "FAIL",
+      "detail": "Severity=CRITICAL, Action=INVESTIGATE"
+    },
+    {
+      "section": "Phase4",
+      "test": "borrowBook does Book.findOne({ isbn }) — if Book schema has no isbn field, every borrow call returns null and fails with 404",
+      "status": "FAIL",
+      "detail": "Severity=CRITICAL, Action=FIX"
+    },
+    {
+      "section": "Phase4",
+      "test": "returnBook uses Book.findOne({ isbn }) — same issue",
+      "status": "FAIL",
+      "detail": "Severity=CRITICAL, Action=FIX"
+    },
+    {
+      "section": "Phase4",
+      "test": "payFine payAll: silently skips overdue, then throws AFTER session — throw inside sessionWrapper may abort the writes already done in that session",
+      "status": "PARTIAL",
+      "detail": "Severity=HIGH, Action=REVIEW"
+    },
+    {
+      "section": "Phase4",
+      "test": "receiveOrder email loop uses forEach+promise without await — fire-and-forget, email errors caught per-student, stock update safe",
+      "status": "PARTIAL",
+      "detail": "Severity=LOW, Action=NOTED"
+    },
+    {
+      "section": "Phase4",
+      "test": "auth.controller.js: resetPassword checks Student then Employee without role param — works but double DB read on every reset",
+      "status": "PARTIAL",
+      "detail": "Severity=LOW, Action=OPTIMIZE"
+    },
+    {
+      "section": "Phase4",
+      "test": "console.log in borrowBook/returnBook controllers — no production logger",
+      "status": "PARTIAL",
+      "detail": "Severity=MEDIUM, Action=CLEAN"
+    },
+    {
+      "section": "Phase4",
+      "test": "No pagination on getAllBooks — at 143 books returns entire collection in one response",
+      "status": "PARTIAL",
+      "detail": "Severity=MEDIUM, Action=FUTURE"
+    },
+    {
+      "section": "Phase4",
+      "test": "No pagination on getTransactionHistory — returns all 1800+ records for a student",
+      "status": "PARTIAL",
+      "detail": "Severity=HIGH, Action=FUTURE"
+    },
+    {
+      "section": "Phase4",
+      "test": "student.controller.js: uploadOnCloudinary imported but not used in some paths",
+      "status": "PARTIAL",
+      "detail": "Severity=LOW, Action=CHECK"
+    },
+    {
+      "section": "Phase4",
+      "test": "Book model has globalBookId as unique+sparse, but borrow/return use isbn — field name mismatch",
+      "status": "FAIL",
+      "detail": "Severity=CRITICAL, Action=FIX"
+    }
+  ]
+}

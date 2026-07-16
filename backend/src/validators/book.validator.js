@@ -5,13 +5,12 @@ export const requestBookSchema = z.object({
 })
 
 export const rejectRequestSchema = z.object({
-    requestIds: z.array(z.string()).min(1, "Please provide an array of request IDs to reject")
+    isbn: z.string().min(1, "ISBN is required")
 })
 
 export const placeOrderSchema = z.object({
     isbn: z.string().min(1, "ISBN is required"),
-    copiesOrdered: z.number().int().positive("Copies ordered must be a positive integer"),
-    requestIds: z.array(z.string()).min(1, "Please provide an array of request IDs to fulfill")
+    copiesOrdered: z.number().int().positive("Copies ordered must be a positive integer")
 })
 
 export const manualOrderSchema = z.object({

@@ -186,7 +186,12 @@ export default function StudentDashboard() {
                         )}
                         <div style={styles.fineItemInfo}>
                           <p style={styles.fineItemTitle}>{txn.b_id?.title}</p>
-                          <p style={styles.fineItemAmount}>₹{txn.totalFine} {isReturned ? '(Frozen)' : '(Active)'}</p>
+                          <p style={styles.fineItemAmount}>
+                            {isReturned 
+                              ? `₹${txn.frozenFine} (Frozen)` 
+                              : `₹${txn.totalFine} ${txn.frozenFine > 0 ? `(₹${txn.frozenFine} Frozen + ₹${txn.activeFine} Active)` : '(Active)'}`
+                            }
+                          </p>
                         </div>
                       </div>
                       <div style={styles.fineItemRight}>
@@ -232,7 +237,7 @@ export default function StudentDashboard() {
         </div>
 
         
-        <div className="card" style={{ ...styles.card, gridColumn: '1 / -1' }}>
+        <div className="card" style={{ ...styles.card, flex: '1 1 100%' }}>
           <div style={styles.cardHeader}>
             <Books size={24} color="var(--color-accent-amber)" />
             <h2 style={styles.cardTitle}>Currently Borrowed Books</h2>
@@ -256,7 +261,7 @@ export default function StudentDashboard() {
                         )}
                         <div style={styles.bookInfo}>
                           <p style={styles.bookTitle}>{txn.b_id?.title || 'Unknown Book'}</p>
-                          <p style={styles.bookMeta}>Borrowed: {new Date(txn.borrowDate).toLocaleDateString()}</p>
+                          <p style={styles.bookMeta}>Borrowed: {new Date(txn.brwDate).toLocaleDateString()}</p>
                         </div>
                       </div>
                       <div style={styles.bookStatus}>
@@ -279,11 +284,11 @@ export default function StudentDashboard() {
 
 const styles: Record<string, React.CSSProperties> = {
   page: {
-    padding: '2rem 3rem',
+    padding: '2rem 8rem 2rem 3rem',
     display: 'flex',
     flexDirection: 'column',
     gap: '2.5rem',
-    maxWidth: '1200px',
+    width: '100%',
   },
   loadingState: {
     display: 'flex',
@@ -314,11 +319,13 @@ const styles: Record<string, React.CSSProperties> = {
     margin: 0,
   },
   grid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+    display: 'flex',
+    flexWrap: 'wrap',
     gap: '1.5rem',
+    alignItems: 'flex-start',
   },
   card: {
+    flex: '1 1 400px',
     backgroundColor: 'var(--color-bg-card)',
     border: '2px solid var(--color-border)',
     boxShadow: '4px 4px 0px 0px #111111',

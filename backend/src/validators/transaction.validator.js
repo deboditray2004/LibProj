@@ -15,9 +15,8 @@ export const renewBookSchema = z.object({
 })
 
 export const payFineSchema = z.object({
-    transactionId: z.string().min(1, "Transaction ID is required"),
+    transactionId: z.string().optional(),
     payAll: z.boolean({
-        required_error: "payAll flag is required",
         invalid_type_error: "payAll must be a boolean"
-    })
+    }).optional()
 })

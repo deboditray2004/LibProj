@@ -56,7 +56,7 @@ export default function StudentHistoryPage() {
                     <td style={styles.td}>
                       <span style={styles.bookTitle}>{txn.b_id?.title || 'Unknown Book'}</span>
                     </td>
-                    <td style={styles.td}>{new Date(txn.borrowDate).toLocaleDateString()}</td>
+                    <td style={styles.td}>{new Date(txn.brwDate).toLocaleDateString()}</td>
                     <td style={styles.td}>
                       {new Date(txn.dueDate).toLocaleDateString()}
                     </td>
@@ -85,11 +85,11 @@ export default function StudentHistoryPage() {
 
 const styles: Record<string, React.CSSProperties> = {
   page: {
-    padding: '2rem 3rem',
+    padding: '2rem 8rem 2rem 3rem',
     display: 'flex',
     flexDirection: 'column',
     gap: '2.5rem',
-    maxWidth: '1200px',
+    width: '100%',
   },
   header: {
     display: 'flex',
