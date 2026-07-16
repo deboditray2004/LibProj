@@ -11,6 +11,13 @@ import { upload } from "../middlewares/multer.middleware.js"
 import { verifyStudent } from "../middlewares/auth.middleware.js"
 import { validate } from "../middlewares/validate.middleware.js"
 import { registerStudentSchema, loginStudentSchema, updateProfileSchema } from "../validators/student.validator.js"
+import rateLimit from "express-rate-limit"
+
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    message: { success: false, message: "Too many attempts, please try again after 15 minutes" }
+})
 
 const router = Router()
 
@@ -22,7 +29,7 @@ router.route("/register").post(
     registerStudent
 )
 
-router.route("/login").post(validate(loginStudentSchema), loginStudent)
+router.route("/login").post(authLimiter, validate(loginStudentSchema), loginStudent)
 
 // Secured routes
 router.route("/logout").post(verifyStudent, logoutStudent)

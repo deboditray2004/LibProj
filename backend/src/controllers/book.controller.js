@@ -8,6 +8,7 @@ import { Transaction } from "../models/transaction.model.js"
 import { BookRequest } from "../models/bookRequest.model.js"
 import { Order } from "../models/order.model.js"
 import { searchGlobalBook } from "../utils/googleBooksAPI.js"
+import { sendMail } from "../utils/mailer.js"
 
 const requestBook = asyncHandler(async (req, res) => {
 
@@ -61,13 +62,17 @@ const placeOrder = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Book not found in global catalogue")
 
     const orderResult = await sessionWrapper(async (session) => {
+        const requests = await BookRequest.find({ _id: { $in: requestIds } }).session(session)
+        const requesters = requests.map(req => req.s_id)
+
         const order = new Order({
             globalBookId: match.globalBookId,
             orderTitle: match.orderTitle,
             authors: match.authors,
             coverImg: match.coverImg,
             category: match.category,
-            copiesOrdered
+            copiesOrdered,
+            requesters
         })
         await order.save({ session })
         
@@ -88,13 +93,17 @@ const manualOrder = asyncHandler(async (req, res) => {
 
 
     const orderResult = await sessionWrapper(async (session) => {
+        const requests = await BookRequest.find({ isbn }).session(session)
+        const requesters = requests.map(req => req.s_id)
+
         const order = new Order({
             globalBookId: match.globalBookId,
             orderTitle: match.orderTitle,
             authors: match.authors,
             coverImg: match.coverImg,
             category: match.category,
-            copiesOrdered
+            copiesOrdered,
+            requesters
         })
         await order.save({ session })
         
@@ -111,7 +120,7 @@ const receiveOrder = asyncHandler(async (req, res) => {
     const {orderId} = req.params
     if(!orderId)
     throw new ApiError(400, "Missing order ID")
-    const order = await Order.findById(orderId)
+    const order = await Order.findById(orderId).populate("requesters", "email name")
     if(!order)
     throw new ApiError(404, "Order not found")
     const existingBook = await Book.findOne({ globalBookId: order.globalBookId })
@@ -139,6 +148,16 @@ const receiveOrder = asyncHandler(async (req, res) => {
         order.status = "Received"
         await order.save({ session })
     })
+
+    if (order.requesters && order.requesters.length > 0) {
+        order.requesters.forEach(student => {
+            sendMail(
+                student.email,
+                "Book Now Available",
+                `<p>Hello ${student.name},</p><p>The book <strong>${order.orderTitle}</strong> that you requested is now available at the library!</p><p>Please visit the library to borrow it.</p>`
+            ).catch(err => console.error("Failed to send Book Available email", err))
+        })
+    }
     
     return res.status(200).json(
         new ApiResponse(200, order, "Order received successfully")

@@ -171,10 +171,27 @@ const payFine = asyncHandler(async (req, res) => {
     )
 })
 
+const waiveFine = asyncHandler(async (req, res) => {
+    const { transactionId } = req.body
+    if (!transactionId) throw new ApiError(400, "Transaction ID is required")
+
+    const transaction = await Transaction.findById(transactionId)
+    if (!transaction) throw new ApiError(404, "Transaction not found")
+
+    const waivedAmount = transaction.frozenFine
+    transaction.frozenFine = 0
+    await transaction.save()
+    
+    return res.status(200).json(
+        new ApiResponse(200, transaction, `Successfully waived ₹${waivedAmount} for this transaction.`)
+    )
+})
+
 export {
     borrowBook,
     returnBook,
     renewBook,
     getTransactionHistory,
-    payFine
+    payFine,
+    waiveFine
 }

@@ -3,10 +3,17 @@ import { loginEmployee, logoutEmployee } from "../controllers/employee.controlle
 import { verifyEmployee } from "../middlewares/auth.middleware.js"
 import { validate } from "../middlewares/validate.middleware.js"
 import { loginEmployeeSchema } from "../validators/employee.validator.js"
+import rateLimit from "express-rate-limit"
+
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    message: { success: false, message: "Too many attempts, please try again after 15 minutes" }
+})
 
 const router = Router()
 
-router.route("/login").post(validate(loginEmployeeSchema), loginEmployee)
+router.route("/login").post(authLimiter, validate(loginEmployeeSchema), loginEmployee)
 
 // Secured routes
 router.route("/logout").post(verifyEmployee, logoutEmployee)

@@ -6,7 +6,13 @@ import mongoose from "mongoose"
 const app = express()
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: function (origin, callback) {
+        if (!origin || origin.startsWith("http://localhost:") || origin === process.env.CORS_ORIGIN) {
+            callback(null, true)
+        } else {
+            callback(new Error("Not allowed by CORS"))
+        }
+    },
     credentials: true
 }))
 

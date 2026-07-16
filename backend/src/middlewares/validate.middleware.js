@@ -6,7 +6,7 @@ export const validate = (schema) => async (req, res, next) => {
         req.body = parseResult
         next()
     } catch (error) {
-        const errorMessages = error.errors.map((err) => `${err.path.join('.')}: ${err.message}`)
-        throw new ApiError(400, "Validation Error", errorMessages)
+        const errorMessages = error.errors?.map((err) => `${err.path.join('.')}: ${err.message}`) ?? []
+        throw new ApiError(400, errorMessages[0] || "Validation Error", null, errorMessages)
     }
 }

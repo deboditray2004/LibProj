@@ -4,7 +4,8 @@ import {
     returnBook, 
     renewBook, 
     getTransactionHistory, 
-    payFine 
+    payFine,
+    waiveFine
 } from "../controllers/transaction.controller.js"
 import { verifyStudent, verifyEmployee } from "../middlewares/auth.middleware.js"
 import { validate } from "../middlewares/validate.middleware.js"
@@ -15,6 +16,7 @@ const router = Router()
 // Employee Routes
 router.route("/borrow").post(verifyEmployee, validate(borrowBookSchema), borrowBook)
 router.route("/return").post(verifyEmployee, validate(returnBookSchema), returnBook)
+router.route("/waive-fine").post(verifyEmployee, waiveFine)
 
 // Student Routes
 router.route("/renew").post(verifyStudent, validate(renewBookSchema), renewBook)
