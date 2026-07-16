@@ -10,7 +10,7 @@ app.set("trust proxy", 1)
 
 app.use(cors({
     origin: function (origin, callback) {
-        if (!origin || origin.startsWith("http://localhost:") || origin === process.env.CORS_ORIGIN) {
+        if (!origin || origin.startsWith("http://localhost:") || origin === process.env.CORS_ORIGIN || origin.endsWith(".vercel.app")) {
             callback(null, true)
         } else {
             callback(new Error("Not allowed by CORS"))
