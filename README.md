@@ -1,207 +1,139 @@
 # Library Management System
 
-> An industry-grade, domain-driven Library Management System built with the MERN stack (MongoDB, Express, React, Node.js) and TypeScript. Designed with a Neo-Brutalist aesthetic and robust God-mode administrative tools.
-
-## Tech Stack
-
-### Frontend
-- **Framework:** React 18 with Vite
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS + Custom Neo-Brutalist CSS tokens (`index.css`)
-- **Animation:** Framer Motion
-- **Icons:** Phosphor Icons
-- **State Management & Routing:** React Context API, React Router DOM v6
-- **Integrations:** Tawk.to Helpdesk
-
-### Backend
-- **Runtime:** Node.js
-- **Framework:** Express.js
-- **Database:** MongoDB (via Mongoose)
-- **Authentication:** JWT, bcrypt
-- **Cloud Storage:** Cloudinary (for image uploads)
-- **External APIs:** OpenLibrary API
+## 1. Brief Summary of the Project
+An industry-grade, domain-driven Library Management System built with the MERN stack and TypeScript. It features distinct, secure portals for Students and Library Staff, automated fine tracking, real-time inventory management, email notifications, and a highly structured Neo-Brutalist user interface.
 
 ---
 
-## Core Features & Functionality
+## 2. Capabilities & Interactions
 
-### Role-Based Access Control (RBAC)
-- **Secure Authentication:** JWT-based stateless authentication with robust bcrypt password hashing.
-- **Dual Portals:** Distinct, separated React routes and navigation hierarchies for `Students` and `Employees` ensuring zero accidental privilege escalation.
+### What you can do as a Student:
+- **Live Interactive Catalogue:** Browse books and track real-time inventory.
+- **Smart Availability:** View dynamically calculated "Expected Return Dates" for books currently out of stock.
+- **Borrowing Dashboard:** Track active borrowed books, historical borrowing data, and upcoming due dates.
+- **Fine Management:** Monitor algorithmically calculated overdue fines, which freeze upon book return until fully paid.
+- **Book Requests:** Request new books that the library does not currently own.
+- **Live Support:** Connect instantly to library staff via a floating Tawk.to live chat widget.
 
-### Student Portal
-- **Live Interactive Catalogue:** Browse the library's entire collection with real-time inventory tracking (`Available` vs `Total` stock).
-- **Smart Availability:** If a book is completely checked out (0 copies available), the system automatically calculates and displays the exact "Expected Return Date" based on active transactions.
-- **Personal Borrowing Dashboard:** Track current borrowed books, upcoming due dates, and past return history.
-- **Automated Fine Tracking:** The system algorithmically calculates overdue fines based on elapsed days. Fines are securely "frozen" the moment a book is returned until the student pays.
-- **Direct Support Helpdesk:** An integrated Tawk.to floating widget allowing direct, live chat with library staff. 
+### What you can do as an Employee (Admin):
+- **Inventory Management:** Add new books by dynamically scraping metadata and cover images via the OpenLibrary API.
+- **Student Verification:** Review, approve, or reject student registrations by validating their Cloudinary-hosted Government IDs and Avatars.
+- **Request Pipeline:** Review student book requests and formally log physical orders.
+- **Order Fulfillment:** Mark physical shipments as "Received," which instantly updates local stock and resolves student waitlists.
+- **Override Authority:** Manually waive overdue fines, force-renew items, and log offline physical returns.
+- **Support Dashboard:** Handle incoming student chat tickets in real-time via the Tawk.to shared inbox.
 
-### Employee (Admin) Portal
-- **God-Mode Inventory Management:** Add new books quickly by scraping metadata and cover images dynamically via the OpenLibrary API. Support for manual overrides.
-- **Student Verification:** Review incoming student registrations. Approve/Reject workflows with Cloudinary-hosted Government ID and Avatar validations.
-- **Book Request Pipeline:** Students can request books the library doesn't own. Employees manage these requests (Approve, Reject, Order Pending).
-- **Physical Order Tracking:** When physical shipments arrive, employees mark "Order Received," which instantly updates local stock, fulfills the related student requests, and triggers automated email alerts to waiting students.
-- **Transaction Overrides:** Manual authority to waive overdue fines, force-renew items, or manually log offline returns.
-- **Shared Inbox Dashboard:** A dedicated Helpdesk button that instantly launches the Tawk.to employee dashboard to handle incoming student tickets in real-time.
-
-### Automated Notification Engine
-- **SMTP/Nodemailer Integration:** Automated email dispatches triggered by critical database events.
-- **Alerts Include:** "Registration Approved", "Book Now Available", and "Overdue Warnings".
-
----
-
-## Architecture Overview
-
-The application follows a strictly separated architecture to ensure scalability and maintainability.
-
-### Frontend Structure (Domain-Driven)
-```text
-frontend/src/
-├── api/                  # Axios clients and interceptors
-├── assets/images/        # Physical Assets
-│   ├── books/            # Book cover images
-│   ├── avatars/          # User profile pictures
-│   └── branding/         # Logos and placeholder assets
-├── components/           # Shared, global components
-│   ├── layout/           # Navigation, sidebars, page wrappers
-│   └── ui/               # Base UI elements (buttons, inputs)
-├── context/              # Global state providers (AuthContext)
-├── features/             # Domain-driven modules
-│   ├── auth/             # Login, Registration, Password Reset pages
-│   ├── employee/         # Admin dashboards, request management
-│   ├── public/           # Landing page, public catalogue
-│   └── student/          # Student portal, borrowing history
-└── types/                # TypeScript interface definitions
-```
-
-### Backend Structure
-```text
-backend/src/
-├── controllers/          # Request handlers and business logic
-├── db/                   # Database connections and seed data
-│   └── data/             # JSON mock data (books, students, employees)
-├── middlewares/          # JWT auth, multer upload interceptors
-├── models/               # Mongoose schemas
-├── routes/               # Express routing endpoints
-├── scripts/              # Administrative CLI tools
-└── utils/                # Standardized API response classes, error handlers
-```
+### Student ↔ Employee Interactions:
+- **Registration Workflow:** Students submit their IDs $\rightarrow$ Employees manually verify them $\rightarrow$ System automatically emails the student upon approval.
+- **Waitlist Fulfillment:** Students request books $\rightarrow$ Employees place the order $\rightarrow$ When employees mark the order "Received," the system automatically emails all waiting students that the book is available.
+- **Fine Resolution:** Students accrue dynamic fines $\rightarrow$ Employees have the authority to waive them or accept physical payment to clear them from the ledger.
+- **Live Helpdesk:** Direct, real-time chat routing from the Student UI widget to the Employee dashboard.
 
 ---
 
-## Local Environment Setup
-
-### 1. Clone & Install
-```bash
-git clone <repository_url>
-cd LibProj
-
-# Install Backend Dependencies
-cd backend
-npm install
-
-# Install Frontend Dependencies
-cd ../frontend
-npm install
-```
-
-### 2. Environment Variables
-Create a `.env` file in the **backend**:
-```env
-PORT=8000
-MONGODB_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/library
-CORS_ORIGIN=http://localhost:5173
-ACCESS_TOKEN_SECRET=your_super_secret_key
-CLOUDINARY_CLOUD_NAME=your_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-```
-
-Create a `.env` file in the **frontend**:
-```env
-VITE_API_URL=http://localhost:8000/api/v1
-VITE_TAWKTO_PROPERTY_ID=your_property_id
-```
-
-### 3. Run Development Servers
-Open two terminal instances:
-```bash
-# Terminal 1: Backend
-cd backend
-npm run dev
-
-# Terminal 2: Frontend
-cd frontend
-npm run dev
-```
+## 3. Capabilities of the God Mode CLI
+The CLI (`backend/src/scripts/adminSetup.js`) is an elevated administrative tool operating outside the UI. It provides direct, raw manipulation of the MongoDB database for super-admins:
+- **Seed the Database:** Safely inserts dummy data (`--seed`) from local JSON files, gracefully skipping duplicates to establish a working environment instantly.
+- **Add Entity:** Inject raw JSON directly into the database (`--add student '{"name": "John"}'`).
+- **Remove Entity:** Delete documents by exact ObjectId (`--remove book <id>`).
+- **Database Flush (DANGER):** Wipes the entire database clean in a single command (`--flush`).
 
 ---
 
-## God-Mode Administrative CLI
+## 4. Technicalities (Tech Stack & Services)
 
-The backend includes a powerful, terminal-based CLI script for raw database manipulation without needing to spin up the UI.
+**Frontend:** 
+- React 18, Vite, TypeScript
+- Tailwind CSS with custom Neo-Brutalist CSS tokens
+- Framer Motion (Animations)
+- React Router DOM v6, React Context API
 
-**Location:** `backend/src/scripts/adminSetup.js`
+**Backend:**
+- Node.js, Express.js
+- MongoDB (via Mongoose)
+- JWT (Stateless Authentication), bcrypt (Password Hashing)
+- Multer (File Upload Interception), node-cron (Scheduled Tasks)
 
-### Usage Instructions
+**External Services:**
+- **OpenLibrary API:** Fetches book metadata and cover art dynamically.
+- **Cloudinary:** Cloud storage for avatar and Government ID image uploads.
+- **Nodemailer / SMTP:** Automated email dispatching engine for alerts and warnings.
+- **Tawk.to:** Live chat widget and helpdesk portal integration.
 
-Open a terminal in the `backend/` directory:
+---
 
-1. **Seed the Database (Safe/Append-Only):**
-   Reads from `src/db/data/*.json` and gracefully inserts records, skipping duplicates.
+## 5. Design Inspiration, Sources, & Icons
+- **Aesthetic:** The application utilizes a **Neo-Brutalist** design system characterized by stark borders, flat pastel accents, and high-contrast brutalist shadows. It draws heavy inspiration from modern brutalist web trends (e.g., rustic.ai, karolbinkow.ski).
+- **Typography:** *Plus Jakarta Sans* is used for clean, highly legible body text, paired with *Roboto Mono* for structured metadata, badges, and tables.
+- **Icons & Assets:** All crisp UI symbology is powered entirely by **Phosphor Icons** (`@phosphor-icons/react`). Because the system utilizes lightweight SVG React components and Cloudinary for user images, it is completely devoid of heavy, locally stored physical assets.
+
+---
+
+## 6. How to Use the App & Seed Features
+
+### Environment Setup
+1. Clone the repository and install dependencies in both folders:
+   ```bash
+   cd backend && npm install
+   cd ../frontend && npm install
+   ```
+2. Create a `.env` file in the **backend**:
+   ```env
+   PORT=8000
+   MONGODB_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/library
+   CORS_ORIGIN=http://localhost:5173
+   ACCESS_TOKEN_SECRET=your_super_secret_key
+   CLOUDINARY_CLOUD_NAME=your_name
+   CLOUDINARY_API_KEY=your_api_key
+   CLOUDINARY_API_SECRET=your_api_secret
+   SMTP_USER=your_email@gmail.com
+   SMTP_PASS=your_app_password
+   ```
+3. Create a `.env` file in the **frontend**:
+   ```env
+   VITE_API_URL=http://localhost:8000/api
+   VITE_TAWKTO_PROPERTY_ID=your_property_id
+   ```
+
+### Running and Seeding
+1. Start both servers:
+   ```bash
+   # Terminal 1
+   cd backend && npm run dev
+   # Terminal 2
+   cd frontend && npm run dev
+   ```
+2. **Seeding the App:** To test the application immediately without manually registering users, open a terminal in the `backend/` directory and run:
    ```bash
    node src/scripts/adminSetup.js --seed
    ```
-
-2. **Add an Entity manually:**
-   ```bash
-   node src/scripts/adminSetup.js --add student '{"name": "John", "rollNo": 123}'
-   ```
-
-3. **Remove an Entity manually:**
-   ```bash
-   node src/scripts/adminSetup.js --remove book 64b5f9...
-   ```
-
-4. **Flush Database (DANGER):**
-   Wipes the *entire* database clean.
-   ```bash
-   node src/scripts/adminSetup.js --flush
-   ```
+   This will populate your database with books, mock transactions, approved students, and an initial employee account (e.g., `empId: 1001`, `password: password123`), allowing you to log into the Employee portal right away.
 
 ---
 
-## Physical Asset Management
+## 7. File Structure
+The application follows a strictly separated, domain-driven architecture:
 
-All static physical assets (e.g., specific book covers that aren't fetched via the OpenLibrary API, or custom student avatars) should be managed directly in the `frontend/src/assets/images/` directory.
-
-When referencing these assets in your JSON seed data, use root-relative paths that resolve from the `public/` directory during build, or import them directly in React if statically assigned. 
-
-*Example Seed Data Reference:*
-```json
-{
-  "globalBookId": "OL27329598M",
-  "coverImg": "/assets/images/books/clean-code.jpg"
-}
-```
-
----
-
-## Production Deployment
-
-This project uses Vite to bundle the React SPA. 
-
-### Netlify Deployment
-If deploying to Netlify, you must create a `_redirects` file in the `frontend/public/` directory to handle React Router's client-side routing.
-
-**`frontend/public/_redirects`**
 ```text
-/*    /index.html   200
+LibProj/
+├── frontend/src/
+│   ├── api/                  # Axios clients and interceptors
+│   ├── components/           # Shared, global components (layout, ui)
+│   ├── context/              # Global state providers (AuthContext)
+│   ├── features/             # Domain-driven modules
+│   │   ├── auth/             # Login, Registration, Password Reset
+│   │   ├── employee/         # Admin dashboards, request management
+│   │   ├── public/           # Landing page, public catalogue
+│   │   └── student/          # Student portal, borrowing history
+│   └── types/                # TypeScript interface definitions
+│
+└── backend/src/
+    ├── controllers/          # Request handlers and core business logic
+    ├── cron/                 # Scheduled tasks (overdue warnings)
+    ├── db/                   # Database connections and mock JSON seed data
+    ├── middlewares/          # JWT auth, Multer upload interceptors
+    ├── models/               # Mongoose schemas
+    ├── routes/               # Express routing endpoints
+    ├── scripts/              # God-mode Administrative CLI tools
+    └── utils/                # Cloudinary uploaders, mailer, and error handlers
 ```
-
-### Build Command
-```bash
-cd frontend
-npm run build
-```
-This generates an optimized `dist/` folder ready for production static hosting.
