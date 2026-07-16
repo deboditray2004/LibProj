@@ -1,6 +1,7 @@
 import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
+import fs from "fs"
 import mongoose from "mongoose"
 
 const app = express()
@@ -43,6 +44,20 @@ app.use("/api/auth", authRouter)
 //global Error Handler
 app.use((err, req, res, next) => {
     
+    // cleanup uploaded files on error
+    if (req.files) {
+        Object.values(req.files).forEach(fileArray => {
+            fileArray.forEach(file => {
+                if (fs.existsSync(file.path)) {
+                    fs.unlinkSync(file.path)
+                }
+            })
+        })
+    }
+    if (req.file && fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path)
+    }
+
     // mongoose OCC VersionError
     if (err instanceof mongoose.Error.VersionError) {
         return res.status(409).json({

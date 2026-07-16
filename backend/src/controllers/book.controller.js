@@ -24,7 +24,7 @@ const requestBook = asyncHandler(async (req, res) => {
 
 const getAggregatedRequests = asyncHandler(async (req, res) => {
 
-    const requests = await BookRequest.find().sort({ requestCount: -1 })
+    const requests = await BookRequest.find().sort({ requestCount: -1 }).limit(500)
     
     const aggregatedRequests = requests.map(r => ({
         _id: r.isbn,
@@ -152,7 +152,7 @@ const getAllBooks = asyncHandler(async (req, res) => {
     
     if (category)
     query.category = { $regex: category, $options: "i" }
-    let books = await Book.find(query).lean()
+    let books = await Book.find(query).limit(500).lean()
     if (!books || books.length === 0) {
         throw new ApiError(404, "No books found matching your criteria")
     }
@@ -197,7 +197,7 @@ const getBookById = asyncHandler(async (req, res) => {
 })
 
 const getAllOrders = asyncHandler(async (req, res) => {
-    const orders = await Order.find({}).sort({ createdAt: -1 })
+    const orders = await Order.find({}).sort({ createdAt: -1 }).limit(500)
     return res.status(200).json(
         new ApiResponse(200, orders, "Orders fetched successfully")
     )

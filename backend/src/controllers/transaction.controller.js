@@ -95,7 +95,7 @@ const renewBook = asyncHandler(async (req, res) => {
 
 const getTransactionHistory = asyncHandler(async (req, res) => {
     
-    const transactions = await Transaction.find({s_id:req.student._id})
+    const transactions = await Transaction.find({s_id:req.student._id}).limit(500)
     .populate("b_id", "title coverImg") 
     .sort({brwDate:-1})
     const now = Date.now()
@@ -122,7 +122,7 @@ const payFine = asyncHandler(async (req, res) => {
         const transactions = await Transaction.find({
             s_id: req.student._id,
             frozenFine: { $gt: 0 }
-        })
+        }).limit(500)
         if (transactions.length === 0) {
             throw new ApiError(400, "No frozen fines pending to be paid.")
         }

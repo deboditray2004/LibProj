@@ -55,7 +55,14 @@ const registerStudent = asyncHandler( async (req, res) => {
         email, 
         password,
     })
-    await student.save()
+    try {
+        await student.save()
+    } catch (error) {
+        if (g_id && g_id.url) {
+            await deleteFromCloudinary(g_id.url)
+        }
+        throw error
+    }
 
 
     const createdStudent = await Student.findById(student._id).select(
