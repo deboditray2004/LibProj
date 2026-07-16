@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
-/* ============================================================
-   DESIGN SYSTEM — Library Management System
-   Aesthetic: Dark charcoal base, muted pastel accents
-   Fonts: Plus Jakarta Sans (body) + Roboto Mono (metadata)
-   Reference: rustic.ai, karolbinkow.ski
-   ============================================================ */
+/*
+ * DESIGN SYSTEM — Library Management System
+ * Aesthetic: Dark charcoal base, muted pastel accents
+ * Fonts: Plus Jakarta Sans (body) + Roboto Mono (metadata)
+ * Reference: rustic.ai, karolbinkow.ski
+ */
 
 @theme {
   /* --- Fonts --- */
@@ -60,9 +60,9 @@
   --duration-default: 120ms;
 }
 
-/* ============================================================
-   GLOBAL RESET & BASE STYLES
-   ============================================================ */
+/*
+ * GLOBAL RESET & BASE STYLES
+ */
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -88,9 +88,9 @@ body {
   line-height: 1.6;
 }
 
-/* ============================================================
-   TYPOGRAPHY UTILITIES
-   ============================================================ */
+/*
+ * TYPOGRAPHY UTILITIES
+ */
 
 .font-mono {
   font-family: var(--font-mono);
@@ -105,9 +105,9 @@ body {
 .text-lavender   { color: var(--color-accent-lavender); }
 .text-amber      { color: var(--color-accent-amber); }
 
-/* ============================================================
-   CARD & SURFACE UTILITIES
-   ============================================================ */
+/*
+ * CARD & SURFACE UTILITIES
+ */
 
 .card {
   background-color: var(--color-bg-card);
@@ -129,9 +129,9 @@ body {
   border-radius: var(--radius-md);
 }
 
-/* ============================================================
-   BUTTON SYSTEM
-   ============================================================ */
+/*
+ * BUTTON SYSTEM
+ */
 
 .btn {
   display: inline-flex;
@@ -217,9 +217,9 @@ body {
   transform: none !important;
 }
 
-/* ============================================================
-   INPUT SYSTEM
-   ============================================================ */
+/*
+ * INPUT SYSTEM
+ */
 
 .input {
   width: 100%;
@@ -264,9 +264,9 @@ label {
   font-family: var(--font-mono);
 }
 
-/* ============================================================
-   BADGE SYSTEM
-   ============================================================ */
+/*
+ * BADGE SYSTEM
+ */
 
 .badge {
   display: inline-flex;
@@ -286,9 +286,9 @@ label {
 .badge-lavender { background: var(--color-accent-lavender-dim); color: #111111; border: 1px solid var(--color-border); }
 .badge-muted    { background: var(--color-bg-surface); color: var(--color-text-primary); border: 1px solid var(--color-border); }
 
-/* ============================================================
-   DIVIDER
-   ============================================================ */
+/*
+ * DIVIDER
+ */
 
 hr {
   border: none;
@@ -296,9 +296,9 @@ hr {
   margin: var(--spacing-lg) 0;
 }
 
-/* ============================================================
-   TABLE SYSTEM
-   ============================================================ */
+/*
+ * TABLE SYSTEM
+ */
 
 .table-container {
   width: 100%;
@@ -332,9 +332,9 @@ tr:last-child td {
   border-bottom: none;
 }
 
-/* ============================================================
-   MODAL SYSTEM
-   ============================================================ */
+/*
+ * MODAL SYSTEM
+ */
 
 .modal-overlay {
   position: fixed;
@@ -359,9 +359,9 @@ tr:last-child td {
   max-width: 500px;
 }
 
-/* ============================================================
-   PAGINATION
-   ============================================================ */
+/*
+ * PAGINATION
+ */
 
 .pagination {
   display: flex;
@@ -400,18 +400,18 @@ tr:last-child td {
   text-align: center;
 }
 
-/* ============================================================
-   SCROLLBAR
-   ============================================================ */
+/*
+ * SCROLLBAR
+ */
 
 ::-webkit-scrollbar        { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track  { background: var(--color-bg-base); }
 ::-webkit-scrollbar-thumb  { background: var(--color-border); border-radius: 999px; }
 ::-webkit-scrollbar-thumb:hover { background: #3a3a3d; }
 
-/* ============================================================
-   MOUNT ANIMATION
-   ============================================================ */
+/*
+ * MOUNT ANIMATION
+ */
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(6px); }
