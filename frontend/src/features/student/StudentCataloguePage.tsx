@@ -28,9 +28,7 @@ export default function StudentCataloguePage() {
     }
   })
 
-  // Ensure books is always an array. API error 404 is thrown if empty.
   const books = data?.data || []
-  // Filter out empty strings from categories list and prepend '' (All Categories)
   const categoriesList = ['', ...(catData?.data?.filter((c: string) => c) || [])]
 
   return (
@@ -41,7 +39,7 @@ export default function StudentCataloguePage() {
       </header>
 
       <div style={styles.main}>
-        {/* Sidebar / Filters */}
+        
         <aside style={styles.sidebar}>
           <div style={styles.searchBox}>
             <MagnifyingGlass size={16} color="var(--color-text-muted)" style={{ position: 'absolute', left: 12, top: 12 }} />
@@ -72,7 +70,7 @@ export default function StudentCataloguePage() {
           </div>
         </aside>
 
-        {/* Content */}
+        
         <section style={styles.content}>
           {isLoading ? (
             <div style={styles.stateCenter}>Loading...</div>
@@ -133,7 +131,7 @@ export default function StudentCataloguePage() {
                         )}
                       </div>
 
-                      {/* Removed inline feedback for request */}
+                      
                     </div>
                   </div>
                 )

@@ -95,7 +95,7 @@ export default function ResetPasswordPage() {
               )}
             </div>
 
-            {/* Removed inline error block */}
+            
 
             <button
               type="submit"

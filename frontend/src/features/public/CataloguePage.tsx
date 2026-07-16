@@ -18,14 +18,12 @@ export default function CataloguePage() {
     queryFn: getCategories,
   })
 
-  // Ensure books is always an array. API error 404 is thrown if empty.
   const books = data?.data || []
-  // Filter out empty strings from categories list and prepend '' (All Categories)
   const categoriesList = ['', ...(catData?.data?.filter((c: string) => c) || [])]
 
   return (
     <div style={styles.page}>
-      {/* Header */}
+      
       <header style={styles.header}>
         <div style={styles.headerLeft}>
           <Link to="/" style={styles.backLink}>
@@ -37,9 +35,9 @@ export default function CataloguePage() {
         </div>
       </header>
 
-      {/* Main Layout */}
+      
       <main style={styles.main}>
-        {/* Sidebar / Filters */}
+        
         <aside style={styles.sidebar}>
           <div style={styles.searchBox}>
             <MagnifyingGlass size={16} color="var(--color-text-muted)" style={{ position: 'absolute', left: 12, top: 12 }} />
@@ -70,7 +68,7 @@ export default function CataloguePage() {
           </div>
         </aside>
 
-        {/* Content */}
+        
         <section style={styles.content}>
           {isLoading ? (
             <div style={styles.stateCenter}>Loading...</div>

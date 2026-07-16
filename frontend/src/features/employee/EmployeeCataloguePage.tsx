@@ -36,7 +36,6 @@ export default function EmployeeCataloguePage() {
     }
   })
 
-  // Ensure books is always an array. API error 404 is thrown if empty.
   const books = data?.data || []
   const categoriesList = ['', ...(catData?.data?.filter((c: string) => c) || [])]
 
@@ -57,16 +56,16 @@ export default function EmployeeCataloguePage() {
 
   return (
     <div style={styles.page}>
-      {/* Header */}
+      
       <header style={styles.header}>
         <div style={styles.headerLeft}>
           <h1 style={styles.headerTitle}>Library Catalogue</h1>
         </div>
       </header>
 
-      {/* Main Layout */}
+      
       <main style={styles.main}>
-        {/* Sidebar / Filters */}
+        
         <aside style={styles.sidebar}>
           <div style={styles.searchBox}>
             <MagnifyingGlass size={16} color="var(--color-text-muted)" style={{ position: 'absolute', left: 12, top: 12 }} />
@@ -97,7 +96,7 @@ export default function EmployeeCataloguePage() {
           </div>
         </aside>
 
-        {/* Content */}
+        
         <section style={styles.content}>
           {isLoading ? (
             <div style={styles.stateCenter}>Loading...</div>
@@ -152,7 +151,7 @@ export default function EmployeeCataloguePage() {
         </section>
       </main>
 
-      {/* Order Modal */}
+      
       {orderModalOpen && (
         <div className="modal-overlay" onClick={() => setOrderModalOpen(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>

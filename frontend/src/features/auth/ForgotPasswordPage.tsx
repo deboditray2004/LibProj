@@ -42,7 +42,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <div style={styles.page}>
-      {/* Back link */}
+      
       <div className="animate-in" style={styles.backRow}>
         <Link to="/login/student" style={styles.backLink}>
           <ArrowLeft size={14} />
@@ -50,7 +50,7 @@ export default function ForgotPasswordPage() {
         </Link>
       </div>
 
-      {/* Card */}
+      
       <div className="animate-in" style={styles.card}>
         <div style={styles.cardHeader}>
           <p style={styles.eyebrow}>Account Recovery</p>
@@ -121,7 +121,7 @@ export default function ForgotPasswordPage() {
               )}
             </div>
 
-            {/* Removed inline error */}
+            
 
             <button
               type="submit"

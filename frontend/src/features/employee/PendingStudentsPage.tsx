@@ -112,7 +112,7 @@ export default function PendingStudentsPage() {
         </div>
       )}
 
-      {/* Reject Modal */}
+      
       {rejectModalOpen && <div className="modal-overlay" onClick={() => setRejectModalOpen(false)}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
               <h3 style={styles.modalTitle}>Reject Application</h3>

@@ -36,7 +36,6 @@ export default function StudentDashboard() {
   const profile = profileData?.data
   const transactions = historyData?.data || []
 
-  // Derived state
   const activeBorrows = transactions.filter((t: any) => !t.rtrnDate)
   const finedTransactions = transactions.filter((t: any) => t.totalFine > 0)
   const totalFrozenFine = transactions.reduce((sum: number, t: any) => sum + (t.frozenFine || 0), 0)
@@ -85,7 +84,7 @@ export default function StudentDashboard() {
       </header>
 
       <div style={styles.grid}>
-        {/* Profile Card */}
+        
         <div className="card" style={styles.card}>
           <div style={styles.cardHeader}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -162,7 +161,7 @@ export default function StudentDashboard() {
           </div>
         </div>
 
-        {/* Fines Card */}
+        
         <div className="card" style={styles.card}>
           <div style={styles.cardHeader}>
             <Receipt size={24} color="var(--color-accent-rose)" />
@@ -228,11 +227,11 @@ export default function StudentDashboard() {
               </button>
             )}
 
-            {/* Removed inline pay fines success/error */}
+            
           </div>
         </div>
 
-        {/* Books Borrowed Widget */}
+        
         <div className="card" style={{ ...styles.card, gridColumn: '1 / -1' }}>
           <div style={styles.cardHeader}>
             <Books size={24} color="var(--color-accent-amber)" />

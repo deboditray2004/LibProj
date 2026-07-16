@@ -3,7 +3,6 @@ import { ChatCircleDots, EnvelopeSimple } from '@phosphor-icons/react'
 import { useAuth } from '../context/AuthContext'
 import toast from 'react-hot-toast'
 
-// Add Tawk_API to global window object for TypeScript
 declare global {
   interface Window {
     Tawk_API?: any;
@@ -16,18 +15,15 @@ export default function FloatingContactBtn() {
   const isEmployee = state.user?.role === 'employee'
 
   useEffect(() => {
-    // Only inject Tawk.to script for non-employees (students/public)
     if (!isEmployee) {
       const propertyId = import.meta.env.VITE_TAWKTO_PROPERTY_ID
       
-      // If no ID is provided, we won't inject the script and will fallback to a toast
       if (!propertyId) return
 
       window.Tawk_API = window.Tawk_API || {}
       window.Tawk_LoadStart = new Date()
       
       window.Tawk_API.onLoad = function() {
-        // Hide the default Tawk.to widget so we can use our custom Neo-Brutalist button
         window.Tawk_API.hideWidget()
       }
 
@@ -50,10 +46,8 @@ export default function FloatingContactBtn() {
     e.preventDefault()
     
     if (isEmployee) {
-      // Employees open the Tawk.to dashboard (Shared Inbox)
       window.open('https://dashboard.tawk.to/', '_blank')
     } else {
-      // Students open the chat widget
       if (window.Tawk_API && typeof window.Tawk_API.toggle === 'function') {
         window.Tawk_API.toggle()
       } else {

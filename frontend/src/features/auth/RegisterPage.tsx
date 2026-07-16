@@ -112,7 +112,7 @@ export default function RegisterPage() {
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} style={styles.form} noValidate>
             
-            {/* Step 1: Personal Info */}
+            
             <div style={{ display: step === 1 ? 'flex' : 'none', flexDirection: 'column', gap: '1.25rem' }}>
               <div style={styles.field}>
                 <label htmlFor="name">Full Name</label>
@@ -207,7 +207,7 @@ export default function RegisterPage() {
               </button>
             </div>
 
-            {/* Step 2: Uploads */}
+            
             <div style={{ display: step === 2 ? 'flex' : 'none', flexDirection: 'column', gap: '1.25rem' }}>
               <div style={styles.field}>
                 <label>Government ID (Proof of Identity)</label>
@@ -223,7 +223,7 @@ export default function RegisterPage() {
                 {errors.govtId && <span className="field-error">{errors.govtId?.message as string}</span>}
               </div>
 
-              {/* Removed inline API error block */}
+              
 
               <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
                 <button

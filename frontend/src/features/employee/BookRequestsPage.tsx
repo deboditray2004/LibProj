@@ -11,11 +11,8 @@ export default function BookRequestsPage() {
   
   const [selectedGroup, setSelectedGroup] = useState<any>(null)
   
-  // For Order
   const [copiesOrdered, setCopiesOrdered] = useState(1)
   
-  // For Reject (backend takes requestIds array, but doesn't take a reason string currently)
-  // Let's just pass the requestIds.
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['aggregatedRequests'],
@@ -129,7 +126,7 @@ export default function BookRequestsPage() {
         </div>
       )}
 
-      {/* Reject Modal */}
+      
       {rejectModalOpen && (
         <div className="modal-overlay" onClick={() => setRejectModalOpen(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
@@ -145,7 +142,7 @@ export default function BookRequestsPage() {
         </div>
       )}
 
-      {/* Order Modal */}
+      
       {orderModalOpen && (
         <div className="modal-overlay" onClick={() => setOrderModalOpen(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>

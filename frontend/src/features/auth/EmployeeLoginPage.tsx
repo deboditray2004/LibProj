@@ -44,7 +44,7 @@ export default function EmployeeLoginPage() {
 
   return (
     <div style={styles.page}>
-      {/* Back link */}
+      
       <div className="animate-in" style={styles.backRow}>
         <Link to="/" style={styles.backLink}>
           <ArrowLeft size={14} />
@@ -52,21 +52,21 @@ export default function EmployeeLoginPage() {
         </Link>
       </div>
 
-      {/* Card */}
+      
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
         style={styles.card}
       >
-        {/* Header */}
+        
         <div style={styles.cardHeader}>
           <p style={styles.eyebrow}>Employee Portal</p>
           <h1 style={styles.title}>Sign in</h1>
           <p style={styles.subtitle}>Enter your employee ID and password.</p>
         </div>
 
-        {/* Form */}
+        
         <form onSubmit={handleSubmit(onSubmit)} style={styles.form} noValidate>
           <div style={styles.field}>
             <label htmlFor="empId">Employee ID</label>
@@ -96,7 +96,7 @@ export default function EmployeeLoginPage() {
             )}
           </div>
 
-          {/* Removed API Error Block */}
+          
 
           <button
             type="submit"
@@ -108,7 +108,7 @@ export default function EmployeeLoginPage() {
           </button>
         </form>
 
-        {/* Footer */}
+        
         <div style={styles.footerLinks}>
           <Link to="/forgot-password" style={styles.link}>
             Forgot password?

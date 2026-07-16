@@ -57,14 +57,14 @@ export default function LandingPage() {
         padding: '2rem',
       }}
     >
-      {/* Header */}
+      
       <motion.div
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
         style={{ textAlign: 'center', marginBottom: '4rem' }}
       >
-        {/* Eyebrow label */}
+        
         <p
           style={{
             fontFamily: 'var(--font-mono)',
@@ -78,7 +78,7 @@ export default function LandingPage() {
           Library Management System
         </p>
 
-        {/* Main title */}
+        
         <h1
           style={{
             fontFamily: 'var(--font-sans)',
@@ -94,7 +94,7 @@ export default function LandingPage() {
           Library
         </h1>
 
-        {/* Thin rule below title */}
+        
         <div
           style={{
             width: '40px',
@@ -105,7 +105,7 @@ export default function LandingPage() {
         />
       </motion.div>
 
-      {/* Cards */}
+      
       <motion.div
         variants={container}
         initial="hidden"
@@ -139,7 +139,7 @@ export default function LandingPage() {
                 gap: '1rem',
               }}
             >
-              {/* Icon */}
+              
               <div
                 style={{
                   width: '40px',
@@ -154,7 +154,7 @@ export default function LandingPage() {
                 <Icon size={20} color={card.accent} weight="light" />
               </div>
 
-              {/* Label */}
+              
               <p
                 style={{
                   fontFamily: 'var(--font-sans)',
@@ -168,7 +168,7 @@ export default function LandingPage() {
                 {card.label}
               </p>
 
-              {/* Description */}
+              
               <p
                 style={{
                   fontFamily: 'var(--font-sans)',
@@ -181,7 +181,7 @@ export default function LandingPage() {
                 {card.description}
               </p>
 
-              {/* Arrow */}
+              
               <span
                 style={{
                   fontFamily: 'var(--font-mono)',
@@ -198,7 +198,7 @@ export default function LandingPage() {
         })}
       </motion.div>
 
-      {/* Footer */}
+      
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

@@ -8,7 +8,6 @@ export default function StudentLayout() {
   const { state, dispatch } = useAuth()
   const navigate = useNavigate()
   
-  // Auto-collapse on small screens
   const [collapsed, setCollapsed] = useState(window.innerWidth < 768)
 
   useEffect(() => {

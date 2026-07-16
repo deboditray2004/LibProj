@@ -45,7 +45,7 @@ export default function StudentLoginPage() {
 
   return (
     <div style={styles.page}>
-      {/* Back link */}
+      
       <div className="animate-in" style={styles.backRow}>
         <Link to="/" style={styles.backLink}>
           <ArrowLeft size={14} />
@@ -53,21 +53,21 @@ export default function StudentLoginPage() {
         </Link>
       </div>
 
-      {/* Card */}
+      
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
         style={styles.card}
       >
-        {/* Header */}
+        
         <div style={styles.cardHeader}>
           <p style={styles.eyebrow}>Student Portal</p>
           <h1 style={styles.title}>Sign in</h1>
           <p style={styles.subtitle}>Enter your library card number and password.</p>
         </div>
 
-        {/* Form */}
+        
         <form onSubmit={handleSubmit(onSubmit)} style={styles.form} noValidate>
           <div style={styles.field}>
             <label htmlFor="cardNo">Library Card No.</label>
@@ -97,7 +97,7 @@ export default function StudentLoginPage() {
             )}
           </div>
 
-          {/* Removed API Error Block */}
+          
 
           <button
             type="submit"
@@ -109,7 +109,7 @@ export default function StudentLoginPage() {
           </button>
         </form>
 
-        {/* Footer links */}
+        
         <div style={styles.footerLinks}>
           <Link to="/forgot-password" style={styles.link}>
             Forgot password?

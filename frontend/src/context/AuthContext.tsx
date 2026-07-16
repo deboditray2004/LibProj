@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useReducer } from 'react'
 import type { AuthUser } from '../types/auth'
 
-// --- Types ---
 interface AuthState {
   user: AuthUser | null
   isAuthenticated: boolean
@@ -11,7 +10,6 @@ type AuthAction =
   | { type: 'LOGIN'; payload: AuthUser }
   | { type: 'LOGOUT' }
 
-// --- Reducer ---
 function authReducer(state: AuthState, action: AuthAction): AuthState {
   switch (action.type) {
     case 'LOGIN':
@@ -23,7 +21,6 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
   }
 }
 
-// --- Context ---
 interface AuthContextValue {
   state: AuthState
   dispatch: React.Dispatch<AuthAction>

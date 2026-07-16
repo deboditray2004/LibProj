@@ -9,7 +9,6 @@ export default function StudentHistoryPage() {
     queryFn: getTransactionHistory,
   })
 
-  // Only show returned books in history
   const transactions = (data?.data || []).filter((txn: any) => !!txn.rtrnDate)
 
   if (isLoading) {
@@ -71,7 +70,7 @@ export default function StudentHistoryPage() {
                       <span className="badge badge-muted">Returned</span>
                     </td>
                     <td style={styles.td}>
-                      {/* No actions for returned books currently */}
+                      
                     </td>
                   </tr>
                 )
