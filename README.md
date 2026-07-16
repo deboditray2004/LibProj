@@ -10,27 +10,8 @@ A professional, modern Library Management System built with the MERN stack (Mong
 - **Email Notifications:** Automated alerts for successful registrations and book availability.
 - **Administrative CLI:** A dedicated testing tool for quick database seeding and bulk data management.
 
-## 3. System Architecture & Data Flow
+## 3. Entity-Relationship Diagram
 
-### High-Level System Flow
-```mermaid
-flowchart TD
-    S([Student]) --> |Submits| BR[Book Request]
-    S --> |Creates| T[Transaction]
-    S --> |Submits| F[Feedback]
-    
-    E([Employee]) --> |Approves/Reviews| BR
-    E --> |Places| O[Order]
-    E --> |Replies to| F
-    
-    O --> |Restocks| B([Book])
-    B --> |Borrowed in| T
-    
-    Sys((System Automations)) -.-> |Sends| N[Notification]
-    N -.-> |Alerts| S
-```
-
-### Entity-Relationship Diagram
 ```mermaid
 erDiagram
     STUDENT {
@@ -157,7 +138,12 @@ The project includes a command-line tool (`backend/src/testing_scripts/adminSetu
 - `node adminSetup.js --remove-employee <id>` : Removes an employee.
 - `node adminSetup.js --flush` : Wipes the entire database clean.
 
-## 5. Technology Stack
+## 5. Design & UI Acknowledgements
+- **Aesthetic:** The application utilizes a **Neo-Brutalist** design system characterized by stark borders, flat pastel accents, and high-contrast brutalist shadows. It draws heavy inspiration from modern brutalist web trends.
+- **Typography:** *Plus Jakarta Sans* is used for clean, highly legible body text, paired with *Roboto Mono* for structured metadata, badges, and tables.
+- **Icons & Assets:** All crisp UI symbology is powered entirely by **Phosphor Icons** (`@phosphor-icons/react`). The system utilizes lightweight SVG React components and Cloudinary for user images to remain fast and devoid of heavy local assets.
+
+## 6. Technology Stack
 - **Frontend:** React 18, Vite, TypeScript, Tailwind CSS, Framer Motion
 - **Backend:** Node.js, Express.js
 - **Database:** MongoDB (Mongoose)
