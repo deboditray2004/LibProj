@@ -1,18 +1,18 @@
 # Library Management System
 
 ## 1. Overview
-A professional, modern Library Management System built with the MERN stack (MongoDB, Express, React, Node.js). It provides distinct portals for Students and Library Staff, automated fine tracking, real-time inventory management, and email notifications, all wrapped in a clean, user-friendly interface.
+A Library Management System built with the MERN stack (MongoDB, Express, React, Node.js). Features include portals for Students and Library Staff, fine tracking, inventory management, and email notifications.
 
 **Live Demo:**
 - [https://library-eight-steel.vercel.app](https://library-eight-steel.vercel.app)
 
 
 ## 2. Core Features
-- **Dual Portals:** Dedicated, secure interfaces for Students and Library Staff with strict access controls.
-- **Automated Fine Tracking:** Dynamic late fee calculations that automatically freeze upon book return, allowing for transparent payments or staff waivers.
-- **Inventory Management:** Real-time tracking of book availability, waitlists, and new book orders.
-- **Email Notifications:** Automated alerts for successful registrations and book availability.
-- **Administrative CLI:** A dedicated testing tool for quick database seeding and bulk data management.
+- **Dual Portals:** Separate interfaces for Students and Library Staff.
+- **Fine Tracking:** Calculates late fees automatically based on due dates.
+- **Inventory Management:** Track book availability and manage waitlists.
+- **Email Notifications:** Alerts for registrations and book availability.
+- **Administrative CLI:** CLI scripts for seeding the database.
 
 ## 3. Entity-Relationship Diagram
 
@@ -142,10 +142,9 @@ The project includes a command-line tool (`backend/src/testing_scripts/adminSetu
 - `node adminSetup.js --remove-employee <id>` : Removes an employee.
 - `node adminSetup.js --flush` : Wipes the entire database clean.
 
-## 5. Design & UI Acknowledgements
-- **Aesthetic:** The application utilizes a **Neo-Brutalist** design system characterized by stark borders, flat pastel accents, and high-contrast brutalist shadows. It draws heavy inspiration from modern brutalist web trends.
-- **Typography:** *Plus Jakarta Sans* is used for clean, highly legible body text, paired with *Roboto Mono* for structured metadata, badges, and tables.
-- **Icons & Assets:** All crisp UI symbology is powered entirely by **Phosphor Icons** (`@phosphor-icons/react`). The system utilizes lightweight SVG React components and Cloudinary for user images to remain fast and devoid of heavy local assets.
+## 5. Design & UI
+- **Typography:** Plus Jakarta Sans for body text, Roboto Mono for metadata.
+- **Icons:** Phosphor Icons.
 
 ## 6. Technology Stack
 - **Frontend:** React 18, Vite, TypeScript, Tailwind CSS, Framer Motion
@@ -155,7 +154,7 @@ The project includes a command-line tool (`backend/src/testing_scripts/adminSetu
 - **External Services:** Google Books API, Cloudinary (File Storage), Nodemailer (Emails), Tawk.to (Live Chat)
 
 ## 7. Deployment
-The application is fully configured for continuous deployment (CD):
-- **Frontend (Vercel):** The React application is hosted on Vercel. Any pushes to the `main` branch automatically trigger a new production build.
-- **Backend (Render):** The Node.js/Express server is hosted on Render. It connects to a MongoDB Atlas cluster and is configured to accept cross-origin requests and secure cross-site cookies from the frontend.
-- **Database (MongoDB Atlas):** A cloud-hosted MongoDB cluster stores all persistent data, enabling seamless synchronization between local testing scripts and the live production environment.
+Deployment setup:
+- **Frontend:** Hosted on Vercel.
+- **Backend:** Hosted on Render.
+- **Database:** MongoDB Atlas cluster.

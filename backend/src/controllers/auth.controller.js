@@ -13,18 +13,13 @@ export const forgotPassword = asyncHandler(async (req, res) => {
     const user = await Model.findOne({ email })
 
     if (!user) {
-        // We throw a generic error to prevent email enumeration, 
-        // but for usability we can just say "User not found"
         throw new ApiError(404, "User with this email does not exist")
     }
 
     const resetToken = user.createPasswordResetToken()
     
-    // Save the user with the new token fields, but disable validation because 
-    // some fields might be required during normal creation but not updates
     await user.save({ validateBeforeSave: false })
 
-    // In a real app, this would point to the frontend React URL
     const resetUrl = `http://localhost:5173/reset-password/${resetToken}`
 
     const message = `
@@ -58,10 +53,8 @@ export const resetPassword = asyncHandler(async (req, res) => {
     const { token } = req.params
     const { password } = req.body
 
-    // Hash the token from the URL to compare with the DB hash
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex")
 
-    // Find a student or employee with this token and a valid expiry
     let user = await Student.findOne({
         forgotPasswordToken: hashedToken,
         forgotPasswordExpiry: { $gt: Date.now() }
@@ -78,10 +71,8 @@ export const resetPassword = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Token is invalid or has expired")
     }
 
-    // Update password (pre-save hook will bcrypt it)
     user.password = password
     
-    // Clear the reset token fields
     user.forgotPasswordToken = undefined
     user.forgotPasswordExpiry = undefined
     
