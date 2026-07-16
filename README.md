@@ -3,6 +3,10 @@
 ## 1. Overview
 A professional, modern Library Management System built with the MERN stack (MongoDB, Express, React, Node.js). It provides distinct portals for Students and Library Staff, automated fine tracking, real-time inventory management, and email notifications, all wrapped in a clean, user-friendly interface.
 
+**Live Demo:**
+- [https://library-eight-steel.vercel.app](https://library-eight-steel.vercel.app)
+
+
 ## 2. Core Features
 - **Dual Portals:** Dedicated, secure interfaces for Students and Library Staff with strict access controls.
 - **Automated Fine Tracking:** Dynamic late fee calculations that automatically freeze upon book return, allowing for transparent payments or staff waivers.
@@ -149,3 +153,9 @@ The project includes a command-line tool (`backend/src/testing_scripts/adminSetu
 - **Database:** MongoDB (Mongoose)
 - **Authentication:** JWT, bcrypt
 - **External Services:** Google Books API, Cloudinary (File Storage), Nodemailer (Emails), Tawk.to (Live Chat)
+
+## 7. Deployment
+The application is fully configured for continuous deployment (CD):
+- **Frontend (Vercel):** The React application is hosted on Vercel. Any pushes to the `main` branch automatically trigger a new production build.
+- **Backend (Render):** The Node.js/Express server is hosted on Render. It connects to a MongoDB Atlas cluster and is configured to accept cross-origin requests and secure cross-site cookies from the frontend.
+- **Database (MongoDB Atlas):** A cloud-hosted MongoDB cluster stores all persistent data, enabling seamless synchronization between local testing scripts and the live production environment.
