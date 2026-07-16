@@ -49,7 +49,7 @@ export default function CataloguePage() {
         {/* Horizontal Filters Bar */}
         <div className="w-full flex flex-col md:flex-row items-center justify-between gap-4 border-b border-[var(--color-border)] pb-6">
           <div className="flex flex-row items-center gap-2 w-full md:w-auto flex-1 min-w-0 pb-2 md:pb-0">
-            <span style={{...styles.filterTitle, marginBottom: 0, marginRight: '0.5rem', flexShrink: 0}}>Categories:</span>
+
             
             <button onClick={() => scroll('left')} className="p-1 hover:bg-[var(--color-bg-surface)] rounded-full text-[var(--color-text-secondary)] transition-colors flex-shrink-0">
               <CaretLeft size={20} weight="bold" />

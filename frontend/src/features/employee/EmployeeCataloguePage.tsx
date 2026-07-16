@@ -99,7 +99,7 @@ export default function EmployeeCataloguePage() {
             >
               New Book
             </button>
-            <span style={{...styles.filterTitle, marginBottom: 0, marginRight: '0.5rem', flexShrink: 0}}>Categories:</span>
+
             
             <button onClick={() => scroll('left')} className="p-1 hover:bg-[var(--color-bg-surface)] rounded-full text-[var(--color-text-secondary)] transition-colors flex-shrink-0">
               <CaretLeft size={20} weight="bold" />
