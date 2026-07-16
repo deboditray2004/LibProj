@@ -36,11 +36,34 @@ export default function CataloguePage() {
       </header>
 
       
-      <main className="flex flex-col md:flex-row flex-1 w-full max-w-[1200px] mx-auto py-8 gap-8 md:gap-12 items-start pb-24 px-8 md:px-0">
+      <main className="flex flex-col flex-1 w-full py-8 gap-8 items-start pb-24 pl-8 pr-24">
         
-        <aside className="w-full md:w-[240px] md:sticky md:top-24 flex-shrink-0">
-          <div style={styles.searchBox}>
-            <MagnifyingGlass size={16} color="var(--color-text-muted)" style={{ position: 'absolute', left: 12, top: 12 }} />
+        {/* Horizontal Filters Bar */}
+        <div className="w-full flex flex-col md:flex-row items-center justify-between gap-4 border-b border-[var(--color-border)] pb-6">
+          <div className="flex flex-row overflow-x-auto gap-2 w-full md:w-auto flex-1 items-center pb-2 md:pb-0">
+            <span style={{...styles.filterTitle, marginBottom: 0, marginRight: '0.5rem'}}>Categories:</span>
+            {categoriesList.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setCategory(cat)}
+                style={{
+                  ...styles.filterBtn,
+                  padding: '6px 16px',
+                  borderRadius: '999px',
+                  backgroundColor: category === cat ? 'var(--color-text-primary)' : 'transparent',
+                  color: category === cat ? 'var(--color-bg-base)' : 'var(--color-text-secondary)',
+                  fontWeight: category === cat ? 600 : 400,
+                  whiteSpace: 'nowrap',
+                  border: category === cat ? '1px solid var(--color-text-primary)' : '1px solid var(--color-border)'
+                }}
+              >
+                {cat === '' ? 'All' : cat}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ ...styles.searchBox, marginBottom: 0 }} className="w-full md:w-[300px] flex-shrink-0">
+            <MagnifyingGlass size={16} color="var(--color-text-muted)" style={{ position: 'absolute', left: 12, top: 10 }} />
             <input
               type="text"
               placeholder="Search title or author..."
@@ -49,30 +72,9 @@ export default function CataloguePage() {
               style={styles.searchInput}
             />
           </div>
+        </div>
 
-          <div style={styles.filterGroup}>
-            <p style={styles.filterTitle}>Category</p>
-            <div className="flex flex-row overflow-x-auto md:flex-col gap-2 pb-2 md:pb-0">
-            {categoriesList.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setCategory(cat)}
-                style={{
-                  ...styles.filterBtn,
-                  color: category === cat ? 'var(--color-accent-lavender)' : 'var(--color-text-secondary)',
-                  fontWeight: category === cat ? 600 : 400,
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                {cat === '' ? 'All Categories' : cat}
-              </button>
-            ))}
-            </div>
-          </div>
-        </aside>
-
-        
-        <section style={styles.content}>
+        <section style={styles.content} className="w-full">
           {isLoading ? (
             <div style={styles.stateCenter}>Loading...</div>
           ) : isError || books.length === 0 ? (
@@ -81,7 +83,7 @@ export default function CataloguePage() {
               <p style={{ color: 'var(--color-text-secondary)' }}>No books found.</p>
             </div>
           ) : (
-            <div style={styles.grid}>
+            <div className="w-full" style={styles.grid}>
               {books.map((book: any) => (
                 <div key={book._id} className="card" style={styles.bookCard}>
                   {book.coverImg ? (
@@ -234,7 +236,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
   grid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
     gap: '1.5rem',
   },
   bookCard: {
@@ -246,13 +248,13 @@ const styles: Record<string, React.CSSProperties> = {
   },
   bookCover: {
     width: '100%',
-    height: '180px',
+    height: '160px',
     objectFit: 'cover',
     borderBottom: '1px solid var(--color-border)',
   },
   bookCoverPlaceholder: {
     width: '100%',
-    height: '180px',
+    height: '160px',
     backgroundColor: 'var(--color-bg-surface)',
     borderBottom: '1px solid var(--color-border)',
     display: 'flex',

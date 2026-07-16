@@ -8,7 +8,7 @@ An industry-grade, domain-driven Library Management System built with the MERN s
 ## 2. System Control Flow & Edge Case Handling
 The application abandons traditional, static feature lists in favor of interconnected, state-driven domain workflows between Students and the Library Staff.
 
-- **The Registration Pipeline:** When a student registers, their account is placed in a pending state. They cannot log in immediately. Their uploaded Government ID and Avatar are beamed to Cloudinary, and the URL references are stored. An employee must manually review and `approve` the registration in their dashboard. 
+- **The Registration Pipeline:** When a student registers, their account is placed in a pending state. They cannot log in immediately. Their uploaded Government ID is beamed to Cloudinary, and the URL reference is stored. An employee must manually review and `approve` the registration in their dashboard. 
   - *Edge Case Handled:* If a student tries to register with a duplicate Roll Number, the MongoDB uniqueness constraint triggers a clean `409 Conflict` error on the frontend, gracefully prompting the user to log in instead of crashing the server. Upon employee approval, the system fires an automated Nodemailer SMTP email welcoming the student.
 
 - **The Waitlist & Order Fulfillment Loop:** If a student cannot find a book, they issue a formal "Book Request". This places a ticket in the Employee dashboard. The employee can then order the physical copies.
@@ -17,19 +17,16 @@ The application abandons traditional, static feature lists in favor of interconn
 - **Dynamic Fine Algorithm & Waivers:** Fines are not statically saved every day via a cron job (which is prone to failure). Instead, they are calculated completely dynamically upon request (`activeFine`). 
   - *Edge Case Handled:* A student cannot pay an active fine while they still hold the book, as the fine is continuously growing. Only when the physical book is returned does the active fine crystallize into a `frozenFine` on the transaction record. From there, the student can pay it off, or an Employee can utilize their elevated RBAC override to manually waive the fine (zeroing the ledger).
 
-- **Automated Overdue Enforcement:** A background `node-cron` daemon runs at 09:00 AM daily. It queries the database for all active transactions (no return date) where the `dueDate` has elapsed, automatically blasting "Overdue Warning" emails to offenders. 
-  - *Edge Case Handled:* The system gracefully checks for missing emails or malformed student references before dispatching to prevent cron-job crashes.
 
 ---
 
 ## 3. Standout Features for Engineering Teams
-This project was engineered to demonstrate senior-level architectural foresight, moving beyond standard CRUD applications to showcase robust, production-ready design decisions:
 
-- **Strict Role-Based Access Control (RBAC):** There is absolute segregation between the Student and Employee scopes. Employee API routes are heavily protected by `verifyEmployee` middlewares. Stress tests confirm that injecting a valid Student JWT into an Employee route yields a hard `401 Unauthorized`.
-- **Stateless & Scalable Auth:** Authentication relies exclusively on HTTP-only JWTs and bcrypt hashing. No sessions are stored in the database, reducing memory overhead and allowing the Node.js instances to scale horizontally.
-- **Defensive API Design:** The backend is fortified with `express-rate-limit` (capping bursts to prevent brute force), `multer` with strict `fileFilter` extensions (rejecting masked `.exe` payloads disguised as images), and global error handling interceptors that guarantee consistent JSON API responses.
-- **Neo-Brutalist UX:** The frontend breaks away from generic component libraries (like Bootstrap/Material). It features a bespoke Neo-Brutalist design system using custom CSS variables, raw borders, high-contrast states, and fluid Framer Motion micro-interactions, ensuring a premium, highly engaging user experience.
-- **The "God Mode" CLI:** A custom terminal-based script (`adminSetup.js`) allows developers to bypass the UI entirely to execute raw database seeding, entity injections, and destructive flushes—proving an understanding of DX (Developer Experience) and staging environment setups.
+- **Strict RBAC:** Absolute segregation between Student and Employee scopes with dedicated middlewares to prevent privilege escalation.
+- **Stateless Auth:** Scalable authentication using HTTP-only JWTs and bcrypt, eliminating database session overhead.
+- **Defensive API Design:** Protected by rate limiting, strict file upload validation, and global error handling for consistent responses.
+- **Neo-Brutalist UX:** A bespoke design system built from scratch with custom CSS and Framer Motion, avoiding generic component libraries.
+- **Custom CLI Tool:** An `adminSetup.js` script bypassing the UI for rapid database seeding, data injection, and staging environment setups.
 
 ---
 
@@ -54,11 +51,11 @@ The CLI (`backend/src/scripts/adminSetup.js`) is an elevated administrative tool
 - Node.js, Express.js
 - MongoDB (via Mongoose)
 - JWT (Stateless Authentication), bcrypt (Password Hashing)
-- Multer (File Upload Interception), node-cron (Scheduled Tasks)
+- Multer (File Upload Interception)
 
 **External Services:**
 - **Google Books API:** Fetches book metadata and cover art dynamically.
-- **Cloudinary:** Cloud storage for avatar and Government ID image uploads.
+- **Cloudinary:** Cloud storage for Government ID image uploads.
 - **Nodemailer / SMTP:** Automated email dispatching engine for alerts and warnings.
 - **Tawk.to:** Live chat widget and helpdesk portal integration.
 
@@ -131,7 +128,7 @@ LibProj/
 │
 └── backend/src/
     ├── controllers/          # Request handlers and core business logic
-    ├── cron/                 # Scheduled tasks (overdue warnings)
+
     ├── db/                   # Database connections and mock JSON seed data
     ├── middlewares/          # JWT auth, Multer upload interceptors
     ├── models/               # Mongoose schemas

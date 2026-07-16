@@ -25,6 +25,13 @@ export default function FloatingContactBtn() {
       
       window.Tawk_API.onLoad = function() {
         window.Tawk_API.hideWidget()
+        if (state.user) {
+          window.Tawk_API.setAttributes({
+            name: state.user.name || state.user.email,
+            email: state.user.email,
+            ...(state.user.rollNo ? { 'Roll Number': state.user.rollNo } : {})
+          }, function(error: any) {})
+        }
       }
 
       const script = document.createElement('script')
@@ -58,6 +65,46 @@ export default function FloatingContactBtn() {
     }
   }
 
+  if (isEmployee) {
+    return (
+      <a
+        href="https://dashboard.tawk.to/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="floating-contact-btn"
+        style={{
+          position: 'fixed',
+          bottom: '2rem',
+          right: '2rem',
+          backgroundColor: 'var(--color-bg-inverse)',
+          color: 'var(--color-text-inverse)',
+          width: '56px',
+          height: '56px',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '4px 4px 0px 0px #111111',
+          border: '2px solid #111111',
+          cursor: 'pointer',
+          transition: 'transform 150ms ease, box-shadow 150ms ease',
+          zIndex: 1000,
+        }}
+        title="Open Shared Inbox"
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translate(-2px, -2px)'
+          e.currentTarget.style.boxShadow = '6px 6px 0px 0px #111111'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translate(0px, 0px)'
+          e.currentTarget.style.boxShadow = '4px 4px 0px 0px #111111'
+        }}
+      >
+        <EnvelopeSimple size={24} weight="bold" />
+      </a>
+    )
+  }
+
   return (
     <button
       onClick={handleClick}
@@ -80,7 +127,7 @@ export default function FloatingContactBtn() {
         transition: 'transform 150ms ease, box-shadow 150ms ease',
         zIndex: 1000,
       }}
-      title={isEmployee ? "Open Shared Inbox" : "Contact Support"}
+      title="Contact Support"
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translate(-2px, -2px)'
         e.currentTarget.style.boxShadow = '6px 6px 0px 0px #111111'
@@ -90,7 +137,7 @@ export default function FloatingContactBtn() {
         e.currentTarget.style.boxShadow = '4px 4px 0px 0px #111111'
       }}
     >
-      {isEmployee ? <EnvelopeSimple size={24} weight="bold" /> : <ChatCircleDots size={24} weight="bold" />}
+      <ChatCircleDots size={24} weight="bold" />
     </button>
   )
 }
