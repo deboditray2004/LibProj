@@ -13,6 +13,10 @@ export default function EmployeeCataloguePage() {
   const [selectedBook, setSelectedBook] = useState<any>(null)
   const [copiesOrdered, setCopiesOrdered] = useState(1)
 
+  const [extModalOpen, setExtModalOpen] = useState(false)
+  const [extIsbn, setExtIsbn] = useState('')
+  const [extCopies, setExtCopies] = useState(1)
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ['books', search, category],
     queryFn: () => searchBooks({ search, category }),
@@ -48,9 +52,21 @@ export default function EmployeeCataloguePage() {
   const submitOrder = () => {
     if (selectedBook && copiesOrdered > 0) {
       orderMutation.mutate({
-        isbn: selectedBook._id,
+        isbn: selectedBook.globalBookId,
         copiesOrdered
       })
+    }
+  }
+
+  const submitExtOrder = () => {
+    if (extIsbn && extCopies > 0) {
+      orderMutation.mutate({
+        isbn: extIsbn,
+        copiesOrdered: extCopies
+      })
+      setExtModalOpen(false)
+      setExtIsbn('')
+      setExtCopies(1)
     }
   }
 
@@ -64,9 +80,15 @@ export default function EmployeeCataloguePage() {
       </header>
 
       
-      <main style={styles.main}>
+      <main className="flex flex-col md:flex-row flex-1 w-full max-w-[1200px] mx-auto py-8 gap-8 md:gap-12 items-start pb-24 px-8 md:px-0">
         
-        <aside style={styles.sidebar}>
+        <aside className="w-full md:w-[240px] md:sticky md:top-24 flex-shrink-0">
+          <button 
+            className="btn btn-primary w-full mb-6"
+            onClick={() => setExtModalOpen(true)}
+          >
+            + Order External Book
+          </button>
           <div style={styles.searchBox}>
             <MagnifyingGlass size={16} color="var(--color-text-muted)" style={{ position: 'absolute', left: 12, top: 12 }} />
             <input
@@ -80,6 +102,7 @@ export default function EmployeeCataloguePage() {
 
           <div style={styles.filterGroup}>
             <p style={styles.filterTitle}>Category</p>
+            <div className="flex flex-row overflow-x-auto md:flex-col gap-2 pb-2 md:pb-0">
             {categoriesList.map((cat) => (
               <button
                 key={cat}
@@ -88,11 +111,13 @@ export default function EmployeeCataloguePage() {
                   ...styles.filterBtn,
                   color: category === cat ? 'var(--color-accent-lavender)' : 'var(--color-text-secondary)',
                   fontWeight: category === cat ? 600 : 400,
+                  whiteSpace: 'nowrap'
                 }}
               >
                 {cat === '' ? 'All Categories' : cat}
               </button>
             ))}
+            </div>
           </div>
         </aside>
 
@@ -152,6 +177,41 @@ export default function EmployeeCataloguePage() {
       </main>
 
       
+      {extModalOpen && (
+        <div className="modal-overlay" onClick={() => setExtModalOpen(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <h3 style={styles.modalTitle}>Order External Book</h3>
+            <p style={styles.modalDesc}>Enter the ISBN (e.g., Google Books ID) to procure a new book.</p>
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>ISBN / Book ID</label>
+              <input 
+                className="input"
+                type="text" 
+                value={extIsbn}
+                onChange={e => setExtIsbn(e.target.value)}
+                placeholder="e.g., 9780132350884"
+              />
+            </div>
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Copies</label>
+              <input 
+                className="input"
+                type="number" 
+                min={1}
+                value={extCopies}
+                onChange={e => setExtCopies(parseInt(e.target.value) || 1)}
+              />
+            </div>
+            <div style={styles.modalActions}>
+              <button className="btn btn-secondary" onClick={() => setExtModalOpen(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={submitExtOrder} disabled={orderMutation.isPending || extCopies < 1 || !extIsbn}>
+                {orderMutation.isPending ? 'Ordering...' : 'Confirm Order'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {orderModalOpen && (
         <div className="modal-overlay" onClick={() => setOrderModalOpen(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>

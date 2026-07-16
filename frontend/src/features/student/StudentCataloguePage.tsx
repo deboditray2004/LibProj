@@ -38,9 +38,9 @@ export default function StudentCataloguePage() {
         <p style={styles.subtitle}>Browse and request books.</p>
       </header>
 
-      <div style={styles.main}>
+      <div className="flex flex-col md:flex-row flex-1 w-full gap-8 md:gap-12 items-start pb-24">
         
-        <aside style={styles.sidebar}>
+        <aside className="w-full md:w-[240px] md:sticky md:top-24 flex-shrink-0">
           <div style={styles.searchBox}>
             <MagnifyingGlass size={16} color="var(--color-text-muted)" style={{ position: 'absolute', left: 12, top: 12 }} />
             <input
@@ -54,6 +54,7 @@ export default function StudentCataloguePage() {
 
           <div style={styles.filterGroup}>
             <p style={styles.filterTitle}>Category</p>
+            <div className="flex flex-row overflow-x-auto md:flex-col gap-2 pb-2 md:pb-0">
             {categoriesList.map((cat) => (
               <button
                 key={cat}
@@ -62,11 +63,13 @@ export default function StudentCataloguePage() {
                   ...styles.filterBtn,
                   color: category === cat ? 'var(--color-accent-lavender)' : 'var(--color-text-secondary)',
                   fontWeight: category === cat ? 600 : 400,
+                  whiteSpace: 'nowrap'
                 }}
               >
                 {cat === '' ? 'All Categories' : cat}
               </button>
             ))}
+            </div>
           </div>
         </aside>
 
