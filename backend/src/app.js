@@ -53,6 +53,27 @@ app.use((err, req, res, next) => {
         })
     }
 
+    // Mongoose Validation Error
+    if (err.name === 'ValidationError') {
+        const messages = Object.values(err.errors).map(val => val.message)
+        return res.status(400).json({
+            statusCode: 400,
+            message: messages.join(', '),
+            success: false,
+            errors: messages
+        })
+    }
+
+    // Mongoose CastError (Invalid ID)
+    if (err.name === 'CastError') {
+        return res.status(400).json({
+            statusCode: 400,
+            message: `Invalid ${err.path}: ${err.value}`,
+            success: false,
+            errors: []
+        })
+    }
+
     //default ApiError format or fallback
     const statusCode = err.statusCode || 500
     const message = err.message || "Something went wrong on the server"

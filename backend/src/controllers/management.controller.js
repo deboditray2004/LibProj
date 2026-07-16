@@ -38,10 +38,10 @@ const approveStudent = asyncHandler(async (req, res) => {
         <p>Your Library Card Number is: <strong>${cardNo}</strong></p>
         <p>You can now use this card number to log into your dashboard and borrow books.</p>
     `
-    await sendMail(student.email, "Library Registration Approved", emailHtml)
+    const mailResult = await sendMail(student.email, "Library Registration Approved", emailHtml)
 
     return res.status(200).json(
-        new ApiResponse(200, { cardNo }, "Student approved successfully")
+        new ApiResponse(200, { cardNo }, mailResult.success ? "Student approved successfully" : "Student approved, but welcome email failed to send")
     )
 })
 
@@ -90,8 +90,11 @@ const approveProfileEdit = asyncHandler(async (req, res) => {
 
     //merge edits
     const edits = student.pendingEdits
-    Object.keys(edits).forEach(key => {
-        student[key] = edits[key]
+    const allowedFields = ['name', 'dob', 'addr', 'email', 'dept', 'rollNo']
+    allowedFields.forEach(key => {
+        if (edits[key] !== undefined) {
+            student[key] = edits[key]
+        }
     })
     
     student.pendingEdits = null

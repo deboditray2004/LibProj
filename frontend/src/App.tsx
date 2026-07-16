@@ -2,26 +2,28 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { useAuth } from './context/AuthContext'
 
-import LandingPage from './features/public/LandingPage'
-import StudentLoginPage from './features/auth/StudentLoginPage'
-import EmployeeLoginPage from './features/auth/EmployeeLoginPage'
-import RegisterPage from './features/auth/RegisterPage'
-import ForgotPasswordPage from './features/auth/ForgotPasswordPage'
-import ResetPasswordPage from './features/auth/ResetPasswordPage'
-import CataloguePage from './features/public/CataloguePage'
+import React, { Suspense, lazy } from 'react'
 
-import StudentLayout from './components/layout/StudentLayout'
-import StudentDashboard from './features/student/StudentDashboard'
-import StudentCataloguePage from './features/student/StudentCataloguePage'
-import StudentHistoryPage from './features/student/StudentHistoryPage'
+const LandingPage = lazy(() => import('./features/public/LandingPage'))
+const StudentLoginPage = lazy(() => import('./features/auth/StudentLoginPage'))
+const EmployeeLoginPage = lazy(() => import('./features/auth/EmployeeLoginPage'))
+const RegisterPage = lazy(() => import('./features/auth/RegisterPage'))
+const ForgotPasswordPage = lazy(() => import('./features/auth/ForgotPasswordPage'))
+const ResetPasswordPage = lazy(() => import('./features/auth/ResetPasswordPage'))
+const CataloguePage = lazy(() => import('./features/public/CataloguePage'))
 
-import EmployeeLayout from './components/layout/EmployeeLayout'
-import EmployeeDashboard from './features/employee/EmployeeDashboard'
-import PendingStudentsPage from './features/employee/PendingStudentsPage'
-import PendingEditsPage from './features/employee/PendingEditsPage'
-import BookRequestsPage from './features/employee/BookRequestsPage'
-import EmployeeCataloguePage from './features/employee/EmployeeCataloguePage'
-import OrdersPage from './features/employee/OrdersPage'
+const StudentLayout = lazy(() => import('./components/layout/StudentLayout'))
+const StudentDashboard = lazy(() => import('./features/student/StudentDashboard'))
+const StudentCataloguePage = lazy(() => import('./features/student/StudentCataloguePage'))
+const StudentHistoryPage = lazy(() => import('./features/student/StudentHistoryPage'))
+
+const EmployeeLayout = lazy(() => import('./components/layout/EmployeeLayout'))
+const EmployeeDashboard = lazy(() => import('./features/employee/EmployeeDashboard'))
+const PendingStudentsPage = lazy(() => import('./features/employee/PendingStudentsPage'))
+const PendingEditsPage = lazy(() => import('./features/employee/PendingEditsPage'))
+const BookRequestsPage = lazy(() => import('./features/employee/BookRequestsPage'))
+const EmployeeCataloguePage = lazy(() => import('./features/employee/EmployeeCataloguePage'))
+const OrdersPage = lazy(() => import('./features/employee/OrdersPage'))
 import FloatingContactBtn from './components/FloatingContactBtn'
 
 function ProtectedRoute({ children, role }: { children: React.ReactNode; role: 'student' | 'employee' }) {
@@ -35,6 +37,7 @@ function ProtectedRoute({ children, role }: { children: React.ReactNode; role: '
 export default function App() {
   return (
     <>
+    <Suspense fallback={<div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-secondary)' }}>Loading...</div>}>
     <Routes>
       
       <Route path="/" element={<LandingPage />} />
@@ -81,6 +84,7 @@ export default function App() {
       
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </Suspense>
     <Toaster 
       position="bottom-right"
       toastOptions={{
