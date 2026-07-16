@@ -6,5 +6,6 @@ export interface AuthUser {
   cardNo?: number
   empId?: number
   email?: string
+  rollNo?: number
   role: Role
 }
