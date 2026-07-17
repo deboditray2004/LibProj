@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { CaretDown, Check } from '@phosphor-icons/react'
 
 interface CategoryDropdownProps {
