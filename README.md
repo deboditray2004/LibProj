@@ -10,7 +10,6 @@ A Library Management System built with the MERN stack (MongoDB, Express, React, 
 <div align="center">
   <img src="./screenshots/dashboard.png" alt="Dashboard View" width="45%">
   &nbsp;
-  <img src="./screenshots/catalogue.png" alt="Catalogue View" width="45%">
 </div>
 <br/>
 
