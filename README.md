@@ -170,6 +170,9 @@ Deployment setup:
 - **Backend:** Hosted on Render.
 - **Database:** MongoDB Atlas cluster.
 
+**Keeping the Free Tier Awake:**
+Since Render spins down free-tier instances after 15 minutes of inactivity (causing 30-60 second "cold starts"), the backend exposes an ultra-lightweight `/api/health` endpoint. You can plug this URL into a free pinging service like [cron-job.org](https://cron-job.org) or [UptimeRobot](https://uptimerobot.com) to ping the server every 10 minutes, preventing the cold starts entirely.
+
 ## 8. Security & Edge Case Handling
 This project has been heavily audited and refactored for enterprise-grade resilience:
 - **NoSQL Injection Prevention**: Edit payloads are explicitly whitelisted.
