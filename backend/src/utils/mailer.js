@@ -2,6 +2,9 @@ import nodemailer from 'nodemailer'
 import fs from 'fs'
 import path from 'path'
 import os from 'os'
+import dns from 'dns'
+
+dns.setDefaultResultOrder('ipv4first')
 
 let transporter = null
 
