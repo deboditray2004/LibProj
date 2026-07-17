@@ -17,23 +17,11 @@ export const sendMail = async (to, subject, htmlContent, replyTo = null) => {
 
         if (!transporter) {
             const port = parseInt(process.env.SMTP_PORT || '587', 10)
-            const targetHost = process.env.SMTP_HOST || 'smtp.gmail.com'
             
-            // Manually resolve to IPv4 to bypass any IPv6 routing bugs in Node 18+ or Nodemailer
-            const resolvedIp = await new Promise((resolve, reject) => {
-                dns.lookup(targetHost, { family: 4 }, (err, address) => {
-                    if (err) reject(err)
-                    else resolve(address)
-                })
-            })
-
             transporter = nodemailer.createTransport({
-                host: resolvedIp,
+                host: process.env.SMTP_HOST || 'smtp.gmail.com',
                 port: port,
                 secure: port === 465, 
-                tls: {
-                    servername: targetHost
-                },
                 auth: {
                     user: process.env.SMTP_USER,
                     pass: process.env.SMTP_PASS
