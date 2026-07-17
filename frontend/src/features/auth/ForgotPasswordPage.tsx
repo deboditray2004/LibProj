@@ -95,8 +95,8 @@ export default function ForgotPasswordPage() {
                       onClick={() => field.onChange('employee')}
                       style={{
                         ...styles.roleBtn,
-                        borderColor: field.value === 'employee' ? 'var(--color-accent-seafoam)' : 'var(--color-border)',
-                        color: field.value === 'employee' ? 'var(--color-accent-seafoam)' : 'var(--color-text-secondary)',
+                        borderColor: field.value === 'employee' ? 'var(--color-accent-lavender)' : 'var(--color-border)',
+                        color: field.value === 'employee' ? 'var(--color-accent-lavender)' : 'var(--color-text-secondary)',
                       }}
                     >
                       Employee

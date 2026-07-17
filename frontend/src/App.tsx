@@ -24,7 +24,6 @@ const PendingEditsPage = lazy(() => import('./features/employee/PendingEditsPage
 const BookRequestsPage = lazy(() => import('./features/employee/BookRequestsPage'))
 const EmployeeCataloguePage = lazy(() => import('./features/employee/EmployeeCataloguePage'))
 const OrdersPage = lazy(() => import('./features/employee/OrdersPage'))
-import FloatingContactBtn from './components/FloatingContactBtn'
 import ErrorBoundary from './components/ErrorBoundary'
 
 function ProtectedRoute({ children, role }: { children: React.ReactNode; role: 'student' | 'employee' }) {
@@ -114,7 +113,6 @@ export default function App() {
         },
       }}
     />
-    <FloatingContactBtn />
     </>
   )
 }

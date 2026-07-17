@@ -58,8 +58,8 @@ erDiagram
     }
     BOOKREQUEST {
         ObjectId _id
-        ObjectId s_id
         string isbn
+        number requestCount
     }
     ORDER {
         ObjectId _id
@@ -83,7 +83,6 @@ erDiagram
         number amountCollected
     }
     STUDENT ||--o{ TRANSACTION : "has"
-    STUDENT ||--o{ BOOKREQUEST : "requests"
     BOOK ||--o{ TRANSACTION : "involved in"
     ORDER }o--|| BOOK : "supplies"
 ```

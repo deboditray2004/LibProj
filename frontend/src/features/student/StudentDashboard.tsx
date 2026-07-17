@@ -12,9 +12,6 @@ export default function StudentDashboard() {
   const [editForm, setEditForm] = useState<any>({})
   const [updateStatus, setUpdateStatus] = useState({ loading: false, error: null as string | null, success: false })
 
-  const [pwdEditMode, setPwdEditMode] = useState(false)
-  const [pwdForm, setPwdForm] = useState({ oldPassword: '', newPassword: '' })
-  const [pwdStatus, setPwdStatus] = useState({ loading: false, error: null as string | null, success: false })
 
   const { data: profileData, isLoading: profileLoading } = useQuery({
     queryKey: ['studentProfile'],
@@ -76,21 +73,6 @@ export default function StudentDashboard() {
     }
   }
 
-  const handlePasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setPwdStatus({ loading: true, error: null, success: false })
-    try {
-      const { changePassword } = await import('../../api')
-      await changePassword(pwdForm)
-      setPwdStatus({ loading: false, error: null, success: true })
-      toast.success('Password changed successfully!')
-      setPwdEditMode(false)
-      setPwdForm({ oldPassword: '', newPassword: '' })
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to change password')
-      setPwdStatus({ loading: false, error: null, success: false })
-    }
-  }
 
   if (profileLoading || historyLoading) {
     return <div style={styles.loadingState}>Loading dashboard...</div>
@@ -177,46 +159,6 @@ export default function StudentDashboard() {
                   <span style={styles.infoValue}>{new Date(profile?.dob).toLocaleDateString()}</span>
                 </div>
               </>
-            )}
-          </div>
-        </div>
-
-        <div className="card" style={styles.card}>
-          <div style={styles.cardHeader}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <User size={24} color="var(--color-accent-lavender)" />
-              <h2 style={styles.cardTitle}>Security</h2>
-            </div>
-            {!pwdEditMode && (
-              <button
-                className="btn btn-secondary"
-                style={{ marginLeft: 'auto', padding: '6px 12px', fontSize: '12px' }}
-                onClick={() => setPwdEditMode(true)}
-              >
-                Change Password
-              </button>
-            )}
-          </div>
-          <div style={styles.cardBody}>
-            {pwdEditMode ? (
-              <form onSubmit={handlePasswordSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={styles.infoRow}>
-                  <label style={styles.infoLabel}>Old Password</label>
-                  <input style={styles.input} type="password" required value={pwdForm.oldPassword} onChange={e => setPwdForm({...pwdForm, oldPassword: e.target.value})} />
-                </div>
-                <div style={styles.infoRow}>
-                  <label style={styles.infoLabel}>New Password</label>
-                  <input style={styles.input} type="password" required minLength={6} value={pwdForm.newPassword} onChange={e => setPwdForm({...pwdForm, newPassword: e.target.value})} />
-                </div>
-                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
-                  <button type="button" className="btn btn-secondary" onClick={() => { setPwdEditMode(false); setPwdForm({ oldPassword: '', newPassword: '' }); }}>Cancel</button>
-                  <button type="submit" className="btn btn-primary" disabled={pwdStatus.loading}>
-                    {pwdStatus.loading ? 'Updating...' : 'Update Password'}
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <p style={styles.emptyState}>Manage your account security here.</p>
             )}
           </div>
         </div>

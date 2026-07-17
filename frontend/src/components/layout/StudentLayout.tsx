@@ -3,6 +3,7 @@ import { House, BookOpen, ClockCounterClockwise } from '@phosphor-icons/react'
 import { useAuth } from '../../context/AuthContext'
 import { studentLogout } from '../../api'
 import SidebarLayout from './SidebarLayout'
+import FloatingContactBtn from '../FloatingContactBtn'
 
 export default function StudentLayout() {
   const { state, dispatch } = useAuth()
@@ -26,12 +27,15 @@ export default function StudentLayout() {
   ]
 
   return (
-    <SidebarLayout
-      navItems={navItems}
-      brandText="Student Portal"
-      userDisplayName={state.user?.name || (state.user as any)?.student?.name || 'Student'}
-      userSubtext={`Card: ${state.user?.cardNo || (state.user as any)?.student?.cardNo || 'N/A'}`}
-      onLogout={handleLogout}
-    />
+    <>
+      <SidebarLayout
+        navItems={navItems}
+        brandText="Student Portal"
+        userDisplayName={state.user?.name || (state.user as any)?.student?.name || 'Student'}
+        userSubtext={`Card: ${state.user?.cardNo || (state.user as any)?.student?.cardNo || 'N/A'}`}
+        onLogout={handleLogout}
+      />
+      <FloatingContactBtn />
+    </>
   )
 }
