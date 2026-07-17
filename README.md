@@ -17,7 +17,7 @@ A Library Management System built with the MERN stack (MongoDB, Express, React, 
 ## 2. Core Features
 - **Dual Portals:** Separate interfaces for Students and Library Staff.
 - **Fine Tracking:** Calculates late fees automatically based on due dates.
-- **Inventory Management:** Track book availability and manage waitlists.
+- **Inventory Management:** Track book availability and manage waitlists. Features a multi-select category filtering system that seamlessly synchronizes with the Google Books API.
 - **Email Notifications & Support:** Automated alerts for registrations/edits, and a native in-app Support Mailer that uses the Gmail REST API (bypassing strict SMTP port blocking) to route student queries directly to the management inbox.
 - **Administrative CLI:** CLI scripts for seeding the database.
 
