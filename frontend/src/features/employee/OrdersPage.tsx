@@ -60,7 +60,7 @@ export default function OrdersPage() {
                       {order.status}
                     </span>
                     <span style={styles.dateText}>
-                      {new Date(order.orderDate).toLocaleDateString()}
+                      {new Date(order.createdAt).toLocaleDateString()}
                     </span>
                   </div>
                 </div>

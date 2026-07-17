@@ -2,7 +2,8 @@ import { Router } from "express"
 import { 
     requestBook, 
     getAggregatedRequests, 
-    rejectBookRequest, 
+    rejectBookRequest,
+    rejectAllBookRequests,
     placeOrder, 
     manualOrder, 
     receiveOrder, 
@@ -28,6 +29,7 @@ router.route("/request").post(verifyStudent, validate(requestBookSchema), reques
 // Employee Routes
 router.route("/requests/aggregated").get(verifyEmployee, getAggregatedRequests)
 router.route("/requests/reject").post(verifyEmployee, validate(rejectRequestSchema), rejectBookRequest)
+router.route("/requests/reject-all").post(verifyEmployee, rejectAllBookRequests)
 router.route("/orders").get(verifyEmployee, getAllOrders)
 router.route("/orders/place").post(verifyEmployee, validate(placeOrderSchema), placeOrder)
 router.route("/orders/manual").post(verifyEmployee, validate(manualOrderSchema), manualOrder)

@@ -4,13 +4,14 @@ import {
     loginStudent, 
     logoutStudent, 
     getStudentProfile, 
-    requestProfileUpdate 
+    requestProfileUpdate,
+    changePassword
 } from "../controllers/student.controller.js"
 
 import { upload } from "../middlewares/multer.middleware.js"
 import { verifyStudent } from "../middlewares/auth.middleware.js"
 import { validate } from "../middlewares/validate.middleware.js"
-import { registerStudentSchema, loginStudentSchema, updateProfileSchema } from "../validators/student.validator.js"
+import { registerStudentSchema, loginStudentSchema, updateProfileSchema, changePasswordSchema } from "../validators/student.validator.js"
 import rateLimit from "express-rate-limit"
 
 const authLimiter = rateLimit({
@@ -35,5 +36,6 @@ router.route("/login").post(authLimiter, validate(loginStudentSchema), loginStud
 router.route("/logout").post(verifyStudent, logoutStudent)
 router.route("/profile").get(verifyStudent, getStudentProfile)
 router.route("/update-profile").post(verifyStudent, validate(updateProfileSchema), requestProfileUpdate)
+router.route("/change-password").post(verifyStudent, validate(changePasswordSchema), changePassword)
 
 export default router

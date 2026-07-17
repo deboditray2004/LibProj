@@ -19,14 +19,6 @@ const schema = z.object({
   rollNo: z.string().min(1, 'Roll No is required'),
   dob: z.string().min(1, 'Date of Birth is required'),
   addr: z.string().min(5, 'Address must be at least 5 characters'),
-  photo: z
-    .any()
-    .refine((files) => files?.length == 1, 'Photo is required.')
-    .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
-    .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      '.jpg, .jpeg, .png and .webp files are accepted.'
-    ),
   govtId: z
     .any()
     .refine((files) => files?.length == 1, 'Govt ID is required.')

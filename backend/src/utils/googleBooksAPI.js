@@ -11,11 +11,29 @@ export const searchGlobalBook = async (isbn) => {
         }
         
         const match = data.items[0]
+        
+        let foundIsbn = isbn
+        if (match.volumeInfo.industryIdentifiers) {
+            const isbn13 = match.volumeInfo.industryIdentifiers.find((i) => i.type === "ISBN_13")
+            const isbn10 = match.volumeInfo.industryIdentifiers.find((i) => i.type === "ISBN_10")
+            
+            const cleanInput = isbn.replace(/-/g, '').toUpperCase()
+            const hasIsbn13 = isbn13 && isbn13.identifier.toUpperCase() === cleanInput
+            const hasIsbn10 = isbn10 && isbn10.identifier.toUpperCase() === cleanInput
+
+            if (hasIsbn13) foundIsbn = isbn13.identifier
+            else if (hasIsbn10) foundIsbn = isbn10.identifier
+            else if (isbn13) foundIsbn = isbn13.identifier
+            else if (isbn10) foundIsbn = isbn10.identifier
+        }
+
+        const categories = match.volumeInfo.categories || ["General"]
+
         return {
-            globalBookId: match.id,
+            globalBookId: foundIsbn,
             orderTitle: match.volumeInfo.title,
             authors: match.volumeInfo.authors || [],
-            category: match.volumeInfo.categories || ["General"],
+            category: categories.slice(0, 3),
             coverImg: match.volumeInfo.imageLinks?.thumbnail?.replace("http:", "https:") || ""
         }
     } catch (error) {

@@ -5,7 +5,7 @@ import os from 'os'
 
 let transporter = null
 
-export const sendMail = async (to, subject, htmlContent) => {
+export const sendMail = async (to, subject, htmlContent, replyTo = null) => {
     try {
         if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
             console.log(`\n=== [MAILER MOCK] ===\nTo: ${to}\nSubject: ${subject}\n=====================\n`)
@@ -27,6 +27,7 @@ export const sendMail = async (to, subject, htmlContent) => {
         const info = await transporter.sendMail({
             from: `"Library Management System" <${process.env.SMTP_USER}>`,
             to,
+            ...(replyTo && { replyTo }),
             subject,
             html: htmlContent
         })

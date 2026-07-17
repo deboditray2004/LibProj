@@ -21,7 +21,12 @@ export const updateProfileSchema = z.object({
     addr: z.string().optional(),
     email: z.string().email("Invalid email address").optional(),
     dept: z.string().optional(),
-    rollNo: z.string().optional()
+    rollNo: z.union([z.string(), z.number()]).optional()
 }).refine(data => Object.keys(data).length > 0, {
     message: "At least one field must be provided for update"
+})
+
+export const changePasswordSchema = z.object({
+    oldPassword: z.string().min(1, "Old password is required"),
+    newPassword: z.string().min(6, "New password must be at least 6 characters")
 })

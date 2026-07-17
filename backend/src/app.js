@@ -32,6 +32,7 @@ import managementRouter from "./routes/management.routes.js"
 import bookRouter from "./routes/book.routes.js"
 import transactionRouter from "./routes/transaction.routes.js"
 import authRouter from "./routes/auth.routes.js"
+import supportRouter from "./routes/support.routes.js"
 
 //mount routes
 app.use("/api/students", studentRouter)
@@ -40,6 +41,7 @@ app.use("/api/management", managementRouter)
 app.use("/api/books", bookRouter)
 app.use("/api/transactions", transactionRouter)
 app.use("/api/auth", authRouter)
+app.use("/api/support", supportRouter)
 
 //global Error Handler
 app.use((err, req, res, next) => {

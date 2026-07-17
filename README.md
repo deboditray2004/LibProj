@@ -158,7 +158,7 @@ The project includes a command-line tool (`backend/src/testing_scripts/adminSetu
 - **Backend:** Node.js, Express.js
 - **Database:** MongoDB (Mongoose)
 - **Authentication:** JWT, bcrypt
-- **External Services:** Google Books API, Cloudinary (File Storage), Nodemailer (Emails), Tawk.to (Live Chat)
+- **External Services:** Google Books API, Cloudinary (File Storage), Nodemailer (Emails)
 
 ## 7. Deployment
 Deployment setup:

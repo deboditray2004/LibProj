@@ -2,7 +2,8 @@ import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { searchBooks, getCategories } from '../../api'
-import { ArrowLeft, MagnifyingGlass, BookOpen, WarningCircle, CaretLeft, CaretRight } from '@phosphor-icons/react'
+import { ArrowLeft, MagnifyingGlass, WarningCircle, CaretLeft, CaretRight } from '@phosphor-icons/react'
+import { BookCard } from '../../components/ui/BookCard'
 
 export default function CataloguePage() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -104,34 +105,11 @@ export default function CataloguePage() {
           ) : (
             <div className="w-full" style={styles.grid}>
               {books.map((book: any) => (
-                <div key={book._id} className="card" style={styles.bookCard}>
-                  {book.coverImg ? (
-                    <img src={book.coverImg} alt={book.title} style={styles.bookCover} />
-                  ) : (
-                    <div style={styles.bookCoverPlaceholder}>
-                      <BookOpen size={32} color="var(--color-text-muted)" weight="light" />
-                    </div>
-                  )}
-                  <div style={styles.bookInfo}>
-                    <h3 style={styles.bookTitle}>{book.title}</h3>
-                    <p style={styles.bookAuthors}>{book.authors?.join(', ')}</p>
-                    
-                    <div style={styles.bookMeta}>
-                      {book.category?.map((cat: string) => (
-                        <span key={cat} className="badge badge-muted">{cat}</span>
-                      ))}
-                    </div>
-
-                    <div style={styles.bookFooter}>
-                      {book.avl > 0 ? (
-                        <span className="badge badge-seafoam">Available</span>
-                      ) : (
-                        <span className="badge badge-rose">Out of Stock</span>
-                      )}
-                      <span style={styles.copiesText}>{book.avl} / {book.total} copies</span>
-                    </div>
-                  </div>
-                </div>
+                <BookCard 
+                  key={book._id || book.globalBookId} 
+                  book={book} 
+                  role="public" 
+                />
               ))}
             </div>
           )}
@@ -238,66 +216,5 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
     gap: '1.5rem',
-  },
-  bookCard: {
-    display: 'flex',
-    flexDirection: 'column',
-    padding: '0',
-    overflow: 'hidden',
-    height: '100%',
-  },
-  bookCover: {
-    width: '100%',
-    height: '160px',
-    objectFit: 'cover',
-    borderBottom: '1px solid var(--color-border)',
-  },
-  bookCoverPlaceholder: {
-    width: '100%',
-    height: '160px',
-    backgroundColor: 'var(--color-bg-surface)',
-    borderBottom: '1px solid var(--color-border)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  bookInfo: {
-    padding: '1.25rem',
-    display: 'flex',
-    flexDirection: 'column',
-    flex: 1,
-  },
-  bookTitle: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '16px',
-    fontWeight: 600,
-    color: 'var(--color-text-primary)',
-    margin: '0 0 0.25rem 0',
-    lineHeight: 1.4,
-  },
-  bookAuthors: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '13px',
-    color: 'var(--color-text-secondary)',
-    margin: '0 0 1rem 0',
-  },
-  bookMeta: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '0.5rem',
-    marginBottom: '1.5rem',
-  },
-  bookFooter: {
-    marginTop: 'auto',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingTop: '1rem',
-    borderTop: '1px solid var(--color-border)',
-  },
-  copiesText: {
-    fontFamily: 'var(--font-mono)',
-    fontSize: '11px',
-    color: 'var(--color-text-muted)',
   },
 }

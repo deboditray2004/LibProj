@@ -1,13 +1,13 @@
 import { z } from "zod"
 
 export const borrowBookSchema = z.object({
-    cardNo: z.string().min(1, "Card number is required"),
-    isbn: z.string().min(1, "ISBN is required")
+    cardNo: z.string().trim().min(1, "Card number is required"),
+    isbn: z.string().trim().min(1, "ISBN is required")
 })
 
 export const returnBookSchema = z.object({
-    cardNo: z.string().min(1, "Card number is required"),
-    isbn: z.string().min(1, "ISBN is required")
+    cardNo: z.string().trim().min(1, "Card number is required"),
+    isbn: z.string().trim().min(1, "ISBN is required")
 })
 
 export const renewBookSchema = z.object({

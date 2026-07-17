@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { loginEmployee, logoutEmployee } from "../controllers/employee.controller.js"
+import { loginEmployee, logoutEmployee, getEmployeeProfile } from "../controllers/employee.controller.js"
 import { verifyEmployee } from "../middlewares/auth.middleware.js"
 import { validate } from "../middlewares/validate.middleware.js"
 import { loginEmployeeSchema } from "../validators/employee.validator.js"
@@ -17,5 +17,6 @@ router.route("/login").post(authLimiter, validate(loginEmployeeSchema), loginEmp
 
 // Secured routes
 router.route("/logout").post(verifyEmployee, logoutEmployee)
+router.route("/profile").get(verifyEmployee, getEmployeeProfile)
 
 export default router

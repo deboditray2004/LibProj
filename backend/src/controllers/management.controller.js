@@ -5,7 +5,7 @@ import { Student } from "../models/student.model.js"
 import { sendMail } from "../utils/mailer.js"
 
 const getPendingStudents = asyncHandler(async (req, res) => {
-    const students = await Student.find({ status: "Pending" }).select("-password -refreshToken").limit(500)
+    const students = await Student.find({ status: "Pending" }).sort({ createdAt: -1 }).select("-password -refreshToken").limit(500)
     
     return res.status(200).json(
         new ApiResponse(200, students, "Pending students fetched successfully")
@@ -73,7 +73,7 @@ const rejectStudent = asyncHandler(async (req, res) => {
 
 const getPendingProfileEdits = asyncHandler(async (req, res) => {
 
-    const students = await Student.find({ pendingEdits: { $ne: null } }).select("-password -refreshToken").limit(500)
+    const students = await Student.find({ pendingEdits: { $ne: null } }).sort({ updatedAt: -1 }).select("-password -refreshToken").limit(500)
     
     return res.status(200).json(
         new ApiResponse(200, students, "Pending profile edits fetched successfully")

@@ -56,7 +56,7 @@ function IssueDesk() {
             <input 
               className="input"
               type="text" 
-              placeholder="e.g. LIB-STU-123"
+              placeholder="e.g. 1966"
               value={form.cardNo} 
               onChange={e => setForm({...form, cardNo: e.target.value})} 
             />
@@ -122,7 +122,7 @@ function ReturnDesk() {
             <input 
               className="input"
               type="text" 
-              placeholder="e.g. LIB-STU-123"
+              placeholder="e.g. 1966"
               value={form.cardNo} 
               onChange={e => setForm({...form, cardNo: e.target.value})} 
             />

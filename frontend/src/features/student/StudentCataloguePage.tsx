@@ -1,8 +1,9 @@
 import { useState, useRef } from 'react'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { searchBooks, getCategories, requestBook } from '../../api'
-import { MagnifyingGlass, BookOpen, WarningCircle, CaretLeft, CaretRight } from '@phosphor-icons/react'
+import { BookCard } from '../../components/ui/BookCard'
+import { MagnifyingGlass, CaretLeft, CaretRight, WarningCircle } from '@phosphor-icons/react'
 
 export default function StudentCataloguePage() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -15,6 +16,8 @@ export default function StudentCataloguePage() {
   }
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('')
+  const [extModalOpen, setExtModalOpen] = useState(false)
+  const [extIsbn, setExtIsbn] = useState('')
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['books', search, category],
@@ -30,11 +33,18 @@ export default function StudentCataloguePage() {
     mutationFn: (isbn: string) => requestBook({ isbn }),
     onSuccess: () => {
       toast.success('Book requested successfully!')
+      setExtModalOpen(false)
+      setExtIsbn('')
     },
     onError: (err: any) => {
       toast.error(err.response?.data?.message || 'Failed to request book.')
     }
   })
+
+  const submitExtOrder = () => {
+    if (!extIsbn) return
+    requestMutation.mutate(extIsbn)
+  }
 
   const books = data?.data || []
   const categoriesList = ['', ...(catData?.data?.filter((c: string) => c) || [])]
@@ -52,8 +62,12 @@ export default function StudentCataloguePage() {
         {/* Horizontal Filters Bar */}
         <div className="w-full flex flex-col md:flex-row items-center justify-between gap-4 border-b border-[var(--color-border)] pb-6">
           <div className="flex flex-row items-center gap-2 w-full md:w-auto flex-1 min-w-0 pb-2 md:pb-0">
-
-            
+            <button 
+              className="btn btn-primary flex-shrink-0 mr-4"
+              onClick={() => setExtModalOpen(true)}
+            >
+              New Book
+            </button>
             <button onClick={() => scroll('left')} className="p-1 hover:bg-[var(--color-bg-surface)] rounded-full text-[var(--color-text-secondary)] transition-colors flex-shrink-0">
               <CaretLeft size={20} weight="bold" />
             </button>
@@ -106,65 +120,45 @@ export default function StudentCataloguePage() {
             </div>
           ) : (
             <div className="w-full" style={styles.grid}>
-              {books.map((book: any) => {
-                const isOutOfStock = book.avl === 0
-                return (
-                  <div key={book._id} className="card" style={styles.bookCard}>
-                    {book.coverImg ? (
-                      <img src={book.coverImg} alt={book.title} style={styles.bookCover} />
-                    ) : (
-                      <div style={styles.bookCoverPlaceholder}>
-                        <BookOpen size={32} color="var(--color-text-muted)" weight="light" />
-                      </div>
-                    )}
-                    <div style={styles.bookInfo}>
-                      <h3 style={styles.bookTitle}>{book.title}</h3>
-                      <p style={styles.bookAuthors}>{book.authors?.join(', ')}</p>
-                      
-                      <div style={styles.bookMeta}>
-                        {book.category?.map((cat: string) => (
-                          <span key={cat} className="badge badge-muted">{cat}</span>
-                        ))}
-                      </div>
-
-                      <div style={styles.bookFooter}>
-                        <div>
-                          {isOutOfStock ? (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                              <span className="badge badge-rose">Out of Stock</span>
-                              {book.expectedReturnDate && (
-                                <span style={styles.copiesText}>
-                                  Expected Return: {new Date(book.expectedReturnDate).toLocaleDateString()}
-                                </span>
-                              )}
-                            </div>
-                          ) : (
-                            <span className="badge badge-seafoam">Available</span>
-                          )}
-                          <span style={styles.copiesText}>{book.avl} / {book.total} copies</span>
-                        </div>
-                        
-                        {isOutOfStock && (
-                          <button
-                            className="btn btn-primary"
-                            style={{ padding: '6px 12px', fontSize: '13px' }}
-                            onClick={() => requestMutation.mutate(book.globalBookId)}
-                            disabled={requestMutation.isPending && requestMutation.variables === book.globalBookId}
-                          >
-                            {(requestMutation.isPending && requestMutation.variables === book.globalBookId) ? 'Requesting...' : 'Request Book'}
-                          </button>
-                        )}
-                      </div>
-
-                      
-                    </div>
-                  </div>
-                )
-              })}
+              {books.map((book: any) => (
+                <BookCard 
+                  key={book._id || book.globalBookId} 
+                  book={book} 
+                  role="student" 
+                  onActionClick={() => requestMutation.mutate(book.globalBookId)} 
+                  isActionDisabled={requestMutation.isPending && requestMutation.variables === book.globalBookId}
+                  actionText={(requestMutation.isPending && requestMutation.variables === book.globalBookId) ? 'Requesting...' : 'Request Book'}
+                />
+              ))}
             </div>
           )}
         </section>
       </main>
+
+      {extModalOpen && (
+        <div className="modal-overlay" onClick={() => setExtModalOpen(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <h3 style={styles.modalTitle}>Request External Book</h3>
+            <p style={styles.modalDesc}>Enter the ISBN (e.g., Google Books ID) of the book you want the library to add.</p>
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>ISBN / Book ID</label>
+              <input 
+                className="input"
+                type="text" 
+                value={extIsbn}
+                onChange={e => setExtIsbn(e.target.value)}
+                placeholder="e.g., 9780132350884"
+              />
+            </div>
+            <div style={styles.modalActions}>
+              <button className="btn btn-secondary" onClick={() => setExtModalOpen(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={submitExtOrder} disabled={requestMutation.isPending || !extIsbn}>
+                {requestMutation.isPending ? 'Submitting...' : 'Submit Request'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -215,15 +209,6 @@ const styles: Record<string, React.CSSProperties> = {
     outline: 'none',
     transition: 'border-color 150ms ease',
   },
-
-  filterTitle: {
-    fontFamily: 'var(--font-mono)',
-    fontSize: '11px',
-    letterSpacing: '0.12em',
-    textTransform: 'uppercase',
-    color: 'var(--color-text-muted)',
-    marginBottom: '0.5rem',
-  },
   filterBtn: {
     background: 'none',
     border: 'none',
@@ -252,67 +237,24 @@ const styles: Record<string, React.CSSProperties> = {
     gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
     gap: '1.5rem',
   },
-  bookCard: {
-    display: 'flex',
-    flexDirection: 'column',
-    padding: '0',
-    overflow: 'hidden',
-    height: '100%',
-  },
-  bookCover: {
-    width: '100%',
-    height: '160px',
-    objectFit: 'cover',
-    borderBottom: '1px solid var(--color-border)',
-  },
-  bookCoverPlaceholder: {
-    width: '100%',
-    height: '160px',
-    backgroundColor: 'var(--color-bg-surface)',
-    borderBottom: '1px solid var(--color-border)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  bookInfo: {
-    padding: '1.25rem',
-    display: 'flex',
-    flexDirection: 'column',
-    flex: 1,
-  },
-  bookTitle: {
+  modalTitle: {
     fontFamily: 'var(--font-sans)',
-    fontSize: '16px',
+    fontSize: '20px',
     fontWeight: 600,
     color: 'var(--color-text-primary)',
-    margin: '0 0 0.25rem 0',
-    lineHeight: 1.4,
+    margin: '0 0 0.5rem 0'
   },
-  bookAuthors: {
+  modalDesc: {
     fontFamily: 'var(--font-sans)',
-    fontSize: '13px',
+    fontSize: '14px',
     color: 'var(--color-text-secondary)',
-    margin: '0 0 1rem 0',
+    margin: '0 0 1.5rem 0',
+    lineHeight: 1.5
   },
-  bookMeta: {
+  modalActions: {
     display: 'flex',
-    flexWrap: 'wrap',
-    gap: '0.5rem',
-    marginBottom: '1.5rem',
-  },
-  bookFooter: {
-    marginTop: 'auto',
-    display: 'flex',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: '1rem',
-    borderTop: '1px solid var(--color-border)',
-  },
-  copiesText: {
-    fontFamily: 'var(--font-mono)',
-    fontSize: '11px',
-    color: 'var(--color-text-muted)',
-    display: 'block',
-    marginTop: '4px',
-  },
+    gap: '1rem',
+    marginTop: '1.5rem'
+  }
 }

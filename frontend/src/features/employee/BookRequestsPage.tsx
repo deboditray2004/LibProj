@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
-import { getAggregatedRequests, placeOrder, rejectBookRequest } from '../../api'
+import { getAggregatedRequests, placeOrder, rejectBookRequest, rejectAllBookRequests } from '../../api'
 import { WarningCircle, BookOpen, X, ShoppingCart } from '@phosphor-icons/react'
 
 export default function BookRequestsPage() {
   const queryClient = useQueryClient()
   const [rejectModalOpen, setRejectModalOpen] = useState(false)
+  const [rejectAllModalOpen, setRejectAllModalOpen] = useState(false)
   const [orderModalOpen, setOrderModalOpen] = useState(false)
   
   const [selectedGroup, setSelectedGroup] = useState<any>(null)
@@ -41,6 +42,18 @@ export default function BookRequestsPage() {
     },
     onError: (err: any) => {
       toast.error(err.response?.data?.message || 'Failed to reject requests.')
+    }
+  })
+
+  const rejectAllMutation = useMutation({
+    mutationFn: rejectAllBookRequests,
+    onSuccess: () => {
+      toast.success('All requests rejected')
+      queryClient.invalidateQueries({ queryKey: ['aggregatedRequests'] })
+      setRejectAllModalOpen(false)
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Failed to reject all requests')
     }
   })
 
@@ -80,18 +93,33 @@ export default function BookRequestsPage() {
   return (
     <div style={styles.page}>
       <header style={styles.header}>
-        <h1 style={styles.title}>Book Requests</h1>
-        <p style={styles.subtitle}>Aggregated student requests for out-of-stock books.</p>
+        <div style={{ flex: 1 }}>
+          <h1 style={styles.title}>Book Requests</h1>
+          <p style={styles.subtitle}>Aggregated student requests for out-of-stock books.</p>
+        </div>
+        {requestGroups.length > 0 && (
+          <button 
+            className="btn btn-secondary" 
+            style={{ padding: '8px 16px', color: 'var(--color-accent-rose)', borderColor: 'var(--color-accent-rose)' }}
+            onClick={() => setRejectAllModalOpen(true)}
+            disabled={rejectAllMutation.isPending}
+          >
+            {rejectAllMutation.isPending ? 'Rejecting...' : 'Reject All'}
+          </button>
+        )}
       </header>
 
       {requestGroups.length === 0 ? (
         <div style={styles.emptyState}>No pending book requests at the moment.</div>
       ) : (
         <div style={styles.list}>
-          {requestGroups.map((group: any) => (
+          {requestGroups.map((group: any, index: number) => (
             <div key={group._id} className="card" style={styles.card}>
               <div style={styles.cardHeader}>
-                <div style={{...styles.iconBox, backgroundColor: 'rgba(168, 160, 200, 0.1)', color: 'var(--color-accent-lavender)'}}>
+                <div style={{...styles.iconBox, backgroundColor: 'rgba(168, 160, 200, 0.1)', color: 'var(--color-accent-lavender)', position: 'relative'}}>
+                  <span style={{ position: 'absolute', top: -8, left: -8, background: 'var(--color-accent-lavender)', color: 'white', borderRadius: '50%', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold' }}>
+                    {index + 1}
+                  </span>
                   <BookOpen size={32} />
                 </div>
                 <div style={styles.info}>
@@ -141,7 +169,23 @@ export default function BookRequestsPage() {
         </div>
       )}
 
-      
+      {/* Reject All Modal */}
+      {rejectAllModalOpen && (
+        <div className="modal-overlay" onClick={() => setRejectAllModalOpen(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <h3 style={styles.modalTitle}>Reject All Requests</h3>
+            <p style={styles.modalDesc}>Are you sure you want to dismiss ALL pending book requests? This action cannot be undone.</p>
+            <div style={styles.modalActions}>
+              <button className="btn btn-secondary" onClick={() => setRejectAllModalOpen(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={() => rejectAllMutation.mutate()} disabled={rejectAllMutation.isPending} style={{ backgroundColor: 'var(--color-accent-rose)', borderColor: 'var(--color-accent-rose)' }}>
+                {rejectAllMutation.isPending ? 'Rejecting...' : 'Yes, Reject All'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Order Modal */}
       {orderModalOpen && (
         <div className="modal-overlay" onClick={() => setOrderModalOpen(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>

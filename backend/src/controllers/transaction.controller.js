@@ -10,11 +10,28 @@ import { Student } from "../models/student.model.js"
 const borrowBook = asyncHandler(async (req, res) => {
     
     const {cardNo, isbn} = req.body
-    const student = await Student.findOne({ cardNo })
-    if (!student) throw new ApiError(404, "Student not found with this Card Number")
+    
+    console.log(`[DEBUG] Borrow attempt - cardNo: '${cardNo}', isbn: '${isbn}'`)
 
-    const book = await Book.findOne({ globalBookId: isbn })
-    if (!book || book.avl <= 0) throw new ApiError(404, "Book not available or not found")
+    const student = await Student.findOne({ cardNo })
+    if (!student) {
+        console.log(`[DEBUG] Borrow failed - Student not found for cardNo: '${cardNo}'`)
+        throw new ApiError(404, "Student not found with this Card Number")
+    }
+
+    // Make ISBN robust against copy-paste mistakes (case-insensitive, strip "ISBN:" and dashes)
+    const cleanIsbn = isbn.replace(/^ISBN:\s*/i, '').replace(/-/g, '').trim()
+    
+    // Search both exact and case-insensitive, and allow dashes vs no dashes
+    let book = await Book.findOne({ globalBookId: isbn })
+    if (!book) {
+        book = await Book.findOne({ globalBookId: { $regex: new RegExp(`^${cleanIsbn}$`, "i") } })
+    }
+    
+    if (!book || book.avl <= 0) {
+        console.log(`[DEBUG] Borrow failed - Book not found or avl<=0 for isbn: '${isbn}'. Book object:`, book)
+        throw new ApiError(404, "Book not available or not found")
+    }
 
     const activeTxn = await Transaction.findOne({
         s_id: student._id,
@@ -47,7 +64,11 @@ const returnBook = asyncHandler(async (req, res) => {
     const student = await Student.findOne({ cardNo })
     if (!student) throw new ApiError(404, "Student not found with this Card Number")
 
-    const book = await Book.findOne({ globalBookId: isbn })
+    const cleanIsbn = isbn.replace(/^ISBN:\s*/i, '').replace(/-/g, '').trim()
+    let book = await Book.findOne({ globalBookId: isbn })
+    if (!book) {
+        book = await Book.findOne({ globalBookId: { $regex: new RegExp(`^${cleanIsbn}$`, "i") } })
+    }
     if (!book) throw new ApiError(404, "Book not found with this ISBN")
 
     const transaction = await Transaction.findOne({
@@ -122,7 +143,7 @@ const payFine = asyncHandler(async (req, res) => {
         const transactions = await Transaction.find({
             s_id: req.student._id,
             frozenFine: { $gt: 0 }
-        }).limit(500)
+        }).sort({ createdAt: -1 }).limit(500)
         if (transactions.length === 0) {
             throw new ApiError(400, "No frozen fines pending to be paid.")
         }

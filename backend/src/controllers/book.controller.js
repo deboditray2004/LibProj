@@ -23,12 +23,28 @@ const requestBook = asyncHandler(async (req, res) => {
 })
 
 const getAggregatedRequests = asyncHandler(async (req, res) => {
-
     const requests = await BookRequest.find().sort({ requestCount: -1 }).limit(500)
     
-    const aggregatedRequests = requests.map(r => ({
-        _id: r.isbn,
-        requestCount: r.requestCount
+    const aggregatedRequests = await Promise.all(requests.map(async (r) => {
+        let bookDetails = null;
+        try {
+            const match = await searchGlobalBook(r.isbn)
+            if (match) {
+                bookDetails = {
+                    title: match.orderTitle,
+                    author: match.authors.join(", "),
+                    coverImg: match.coverImg
+                }
+            }
+        } catch (error) {
+            console.error(`Failed to fetch details for ISBN ${r.isbn}:`, error)
+        }
+
+        return {
+            _id: r.isbn,
+            count: r.requestCount,
+            bookDetails
+        }
     }))
 
     return res.status(200).json(
@@ -43,6 +59,13 @@ const rejectBookRequest = asyncHandler(async (req, res) => {
     await BookRequest.deleteOne({ isbn })
     return res.status(200).json(
         new ApiResponse(200, null, "Book request rejected successfully")
+    )
+})
+
+const rejectAllBookRequests = asyncHandler(async (req, res) => {
+    await BookRequest.deleteMany({})
+    return res.status(200).json(
+        new ApiResponse(200, null, "All book requests rejected successfully")
     )
 })
 
@@ -104,7 +127,7 @@ const receiveOrder = asyncHandler(async (req, res) => {
     const {orderId} = req.params
     if(!orderId)
     throw new ApiError(400, "Missing order ID")
-    const order = await Order.findById(orderId).populate("requesters", "email name")
+    const order = await Order.findById(orderId)
     if(!order)
     throw new ApiError(404, "Order not found")
     const existingBook = await Book.findOne({ globalBookId: order.globalBookId })
@@ -207,6 +230,7 @@ export {
     requestBook,
     getAggregatedRequests,
     rejectBookRequest,
+    rejectAllBookRequests,
     placeOrder,
     manualOrder,
     receiveOrder,

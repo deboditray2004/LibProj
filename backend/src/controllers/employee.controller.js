@@ -93,7 +93,14 @@ const logoutEmployee = asyncHandler(async(req,res) =>{
     )
 })
 
+const getEmployeeProfile = asyncHandler(async (req, res) => {
+    return res.status(200).json(
+        new ApiResponse(200, req.employee, "Employee profile fetched successfully")
+    )
+})
+
 export {
     loginEmployee,
-    logoutEmployee
+    logoutEmployee,
+    getEmployeeProfile
 }

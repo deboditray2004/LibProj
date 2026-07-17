@@ -17,6 +17,9 @@ export const registerStudent = (formData: FormData) =>
 export const requestProfileUpdate = (data: Record<string, string>) =>
   api.post('/students/update-profile', data).then((r) => r.data)
 
+export const changePassword = (data: Record<string, string>) =>
+  api.post('/students/change-password', data).then((r) => r.data)
+
 export const employeeLogin = (data: { empId: string; password: string }) =>
   api.post('/employees/login', data).then((r) => r.data)
 
@@ -68,6 +71,10 @@ export const rejectStudent = (data: { studentId: string; reason: string }) =>
 export const getPendingEdits = () =>
   api.get('/management/edits/pending').then((r) => r.data)
 
+// Support Endpoints
+export const sendSupportMessage = (data: { message: string }) =>
+  api.post('/support', data).then((r) => r.data)
+
 export const approveEdit = (data: { studentId: string }) =>
   api.post('/management/approve-edit', data).then((r) => r.data)
 
@@ -79,6 +86,9 @@ export const getAggregatedRequests = () =>
 
 export const rejectBookRequest = (data: { isbn: string }) =>
   api.post('/books/requests/reject', data).then((r) => r.data)
+
+export const rejectAllBookRequests = () =>
+  api.post('/books/requests/reject-all').then((r) => r.data)
 
 export const getAllOrders = () =>
   api.get('/books/orders').then((r) => r.data)

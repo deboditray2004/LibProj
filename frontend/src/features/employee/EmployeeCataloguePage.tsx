@@ -1,8 +1,9 @@
 import { useState, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
+import { BookCard } from '../../components/ui/BookCard'
 import { searchBooks, getCategories, manualOrder } from '../../api'
-import { MagnifyingGlass, BookOpen, WarningCircle, ShoppingCart, CaretLeft, CaretRight } from '@phosphor-icons/react'
+import { MagnifyingGlass, WarningCircle, CaretLeft, CaretRight } from '@phosphor-icons/react'
 
 export default function EmployeeCataloguePage() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -154,43 +155,12 @@ export default function EmployeeCataloguePage() {
           ) : (
             <div className="w-full" style={styles.grid}>
               {books.map((book: any) => (
-                <div key={book._id} className="card" style={styles.bookCard}>
-                  {book.coverImg ? (
-                    <img src={book.coverImg} alt={book.title} style={styles.bookCover} />
-                  ) : (
-                    <div style={styles.bookCoverPlaceholder}>
-                      <BookOpen size={32} color="var(--color-text-muted)" weight="light" />
-                    </div>
-                  )}
-                  <div style={styles.bookInfo}>
-                    <h3 style={styles.bookTitle}>{book.title}</h3>
-                    <p style={styles.bookAuthors}>{book.authors?.join(', ')}</p>
-                    
-                    <div style={styles.bookMeta}>
-                      {book.category?.map((cat: string) => (
-                        <span key={cat} className="badge badge-muted">{cat}</span>
-                      ))}
-                    </div>
-
-                    <div style={styles.bookFooter}>
-                      <div style={styles.statusGroup}>
-                        {book.avl > 0 ? (
-                          <span className="badge badge-seafoam">Available</span>
-                        ) : (
-                          <span className="badge badge-rose">Out of Stock</span>
-                        )}
-                        <span style={styles.copiesText}>{book.avl} / {book.total} copies</span>
-                      </div>
-                      <button 
-                        className="btn btn-secondary" 
-                        style={{ padding: '6px 12px', fontSize: '12px' }}
-                        onClick={() => handleOrderClick(book)}
-                      >
-                        <ShoppingCart size={14} /> Order
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <BookCard 
+                  key={book._id || book.globalBookId} 
+                  book={book} 
+                  role="employee" 
+                  onActionClick={handleOrderClick} 
+                />
               ))}
             </div>
           )}
@@ -352,64 +322,6 @@ const styles: Record<string, React.CSSProperties> = {
     overflow: 'hidden',
     height: '100%',
   },
-  bookCover: {
-    width: '100%',
-    height: '160px',
-    objectFit: 'cover',
-    borderBottom: '1px solid var(--color-border)',
-  },
-  bookCoverPlaceholder: {
-    width: '100%',
-    height: '160px',
-    backgroundColor: 'var(--color-bg-surface)',
-    borderBottom: '1px solid var(--color-border)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  bookInfo: {
-    padding: '1.25rem',
-    display: 'flex',
-    flexDirection: 'column',
-    flex: 1,
-  },
-  bookTitle: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '16px',
-    fontWeight: 600,
-    color: 'var(--color-text-primary)',
-    margin: '0 0 0.25rem 0',
-    lineHeight: 1.4,
-  },
-  bookAuthors: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '13px',
-    color: 'var(--color-text-secondary)',
-    margin: '0 0 1rem 0',
-  },
-  bookMeta: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '0.5rem',
-    marginBottom: '1.5rem',
-  },
-  bookFooter: {
-    marginTop: 'auto',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
-    paddingTop: '1rem',
-    borderTop: '1px solid var(--color-border)',
-  },
-  statusGroup: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  copiesText: {
-    fontFamily: 'var(--font-mono)',
-    fontSize: '11px',
-    color: 'var(--color-text-muted)',
   },
   modalTitle: {
     fontFamily: 'var(--font-sans)',

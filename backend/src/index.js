@@ -3,7 +3,8 @@ import connectDB from "./db/index.js"
 import { app } from "./app.js"
 
 dotenv.config({
-    path: './backend/.env'
+    path: './backend/.env',
+    override: true
 })
 
 connectDB()
