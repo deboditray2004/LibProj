@@ -2,11 +2,13 @@ import { useNavigate } from 'react-router-dom'
 import { House, Users, UserList, BookOpen, Receipt, ShoppingCart } from '@phosphor-icons/react'
 import { useAuth } from '../../context/AuthContext'
 import { employeeLogout } from '../../api'
+import { useQueryClient } from '@tanstack/react-query'
 import SidebarLayout from './SidebarLayout'
 
 export default function EmployeeLayout() {
   const { state, dispatch } = useAuth()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const handleLogout = async () => {
     try {
@@ -14,6 +16,7 @@ export default function EmployeeLayout() {
     } catch (err) {
       console.error(err)
     } finally {
+      queryClient.clear()
       dispatch({ type: 'LOGOUT' })
       navigate('/')
     }

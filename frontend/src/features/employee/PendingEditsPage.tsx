@@ -23,6 +23,7 @@ export default function PendingEditsPage() {
     },
     onError: (err: any) => {
       toast.error(err.response?.data?.message || 'Failed to approve edits.')
+      queryClient.invalidateQueries({ queryKey: ['pendingEdits'] })
     }
   })
 
@@ -36,6 +37,7 @@ export default function PendingEditsPage() {
     },
     onError: (err: any) => {
       toast.error(err.response?.data?.message || 'Failed to reject edits.')
+      queryClient.invalidateQueries({ queryKey: ['pendingEdits'] })
     }
   })
 
