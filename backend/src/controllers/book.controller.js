@@ -69,7 +69,7 @@ const rejectAllBookRequests = asyncHandler(async (req, res) => {
     )
 })
 
-const placeOrder = asyncHandler(async (req, res) => {
+const processOrder = asyncHandler(async (req, res) => {
 
     const { isbn, copiesOrdered } = req.body
     const match = await searchGlobalBook(isbn)
@@ -95,32 +95,8 @@ const placeOrder = asyncHandler(async (req, res) => {
     return res.status(201).json(new ApiResponse(201, orderResult, "Order placed successfully"))
 })
 
-const manualOrder = asyncHandler(async (req, res) => {
-    
-    const { isbn, copiesOrdered} = req.body
-    const match = await searchGlobalBook(isbn)
-    if (!match)
-    throw new ApiError(404, "Book not found in global catalogue")
-
-
-    const orderResult = await sessionWrapper(async (session) => {
-        const order = new Order({
-            globalBookId: match.globalBookId,
-            orderTitle: match.orderTitle,
-            authors: match.authors,
-            coverImg: match.coverImg,
-            category: match.category,
-            copiesOrdered
-        })
-        await order.save({ session })
-        
-        await BookRequest.deleteOne({ isbn }).session(session)
-        
-        return order
-    })
-    
-    return res.status(201).json(new ApiResponse(201, orderResult, "Order placed successfully"))
-})
+const placeOrder = processOrder
+const manualOrder = processOrder
 
 const receiveOrder = asyncHandler(async (req, res) => {
 

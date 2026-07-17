@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { searchBooks, getCategories } from '../../api'
 import { ArrowLeft, MagnifyingGlass, WarningCircle, CaretLeft, CaretRight } from '@phosphor-icons/react'
 import { BookCard } from '../../components/ui/BookCard'
+import { sharedStyles } from '../../styles/shared'
 
 export default function CataloguePage() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -120,23 +121,7 @@ export default function CataloguePage() {
 }
 
 const styles: Record<string, React.CSSProperties> = {
-  page: {
-    minHeight: '100vh',
-    backgroundColor: 'var(--color-bg-base)',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  header: {
-    height: '64px',
-    borderBottom: '1px solid var(--color-border)',
-    display: 'flex',
-    alignItems: 'center',
-    padding: '0 2rem',
-    backgroundColor: 'var(--color-bg-base)',
-    position: 'sticky',
-    top: 0,
-    zIndex: 10,
-  },
+  ...sharedStyles,
   headerLeft: {
     display: 'flex',
     alignItems: 'center',
@@ -201,16 +186,6 @@ const styles: Record<string, React.CSSProperties> = {
   },
   content: {
     flex: 1,
-  },
-  stateCenter: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '4rem 0',
-    fontFamily: 'var(--font-mono)',
-    fontSize: '12px',
-    color: 'var(--color-text-muted)',
   },
   grid: {
     display: 'grid',

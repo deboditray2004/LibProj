@@ -25,7 +25,7 @@ app.use(express.urlencoded({extended: true, limit: "16kb"}))
 app.use(express.static("public"))
 app.use(cookieParser())
 
-//import routes
+
 import studentRouter from "./routes/student.routes.js"
 import employeeRouter from "./routes/employee.routes.js"
 import managementRouter from "./routes/management.routes.js"
@@ -34,16 +34,16 @@ import transactionRouter from "./routes/transaction.routes.js"
 import authRouter from "./routes/auth.routes.js"
 import supportRouter from "./routes/support.routes.js"
 
-//mount routes
+app.use("/api/auth", authRouter)
 app.use("/api/students", studentRouter)
 app.use("/api/employees", employeeRouter)
 app.use("/api/management", managementRouter)
 app.use("/api/books", bookRouter)
 app.use("/api/transactions", transactionRouter)
-app.use("/api/auth", authRouter)
+
 app.use("/api/support", supportRouter)
 
-//global Error Handler
+
 app.use((err, req, res, next) => {
     
     // cleanup uploaded files on error

@@ -1,9 +1,10 @@
 import { useState, useRef } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { searchBooks, getCategories, requestBook } from '../../api'
 import { BookCard } from '../../components/ui/BookCard'
 import { MagnifyingGlass, CaretLeft, CaretRight, WarningCircle } from '@phosphor-icons/react'
+import { sharedStyles } from '../../styles/shared'
 
 export default function StudentCataloguePage() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -164,23 +165,7 @@ export default function StudentCataloguePage() {
 }
 
 const styles: Record<string, React.CSSProperties> = {
-  page: {
-    minHeight: '100vh',
-    backgroundColor: 'var(--color-bg-base)',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  header: {
-    height: '80px',
-    borderBottom: '2px solid var(--color-border)',
-    display: 'flex',
-    alignItems: 'center',
-    padding: '0 2rem',
-    backgroundColor: 'var(--color-bg-base)',
-    position: 'sticky',
-    top: 0,
-    zIndex: 10,
-  },
+  ...sharedStyles,
   headerLeft: {
     display: 'flex',
     alignItems: 'center',
@@ -222,39 +207,9 @@ const styles: Record<string, React.CSSProperties> = {
   content: {
     flex: 1,
   },
-  stateCenter: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '4rem 0',
-    fontFamily: 'var(--font-mono)',
-    fontSize: '12px',
-    color: 'var(--color-text-muted)',
-  },
   grid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
     gap: '1.5rem',
   },
-  modalTitle: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '20px',
-    fontWeight: 600,
-    color: 'var(--color-text-primary)',
-    margin: '0 0 0.5rem 0'
-  },
-  modalDesc: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '14px',
-    color: 'var(--color-text-secondary)',
-    margin: '0 0 1.5rem 0',
-    lineHeight: 1.5
-  },
-  modalActions: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    gap: '1rem',
-    marginTop: '1.5rem'
-  }
 }

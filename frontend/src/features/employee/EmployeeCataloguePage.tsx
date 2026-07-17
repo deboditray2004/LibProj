@@ -4,6 +4,8 @@ import toast from 'react-hot-toast'
 import { BookCard } from '../../components/ui/BookCard'
 import { searchBooks, getCategories, manualOrder } from '../../api'
 import { MagnifyingGlass, WarningCircle, CaretLeft, CaretRight } from '@phosphor-icons/react'
+import Modal from '../../components/ui/Modal'
+import { sharedStyles } from '../../styles/shared'
 
 export default function EmployeeCataloguePage() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -168,87 +170,63 @@ export default function EmployeeCataloguePage() {
       </main>
 
       
-      {extModalOpen && (
-        <div className="modal-overlay" onClick={() => setExtModalOpen(false)}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <h3 style={styles.modalTitle}>New Book</h3>
-            <p style={styles.modalDesc}>Enter the ISBN (e.g., Google Books ID) to procure a new book.</p>
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>ISBN / Book ID</label>
-              <input 
-                className="input"
-                type="text" 
-                value={extIsbn}
-                onChange={e => setExtIsbn(e.target.value)}
-                placeholder="e.g., 9780132350884"
-              />
-            </div>
-            <div style={{ marginBottom: '1.5rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Copies</label>
-              <input 
-                className="input"
-                type="number" 
-                min={1}
-                value={extCopies}
-                onChange={e => setExtCopies(parseInt(e.target.value) || 1)}
-              />
-            </div>
-            <div style={styles.modalActions}>
-              <button className="btn btn-secondary" onClick={() => setExtModalOpen(false)}>Cancel</button>
-              <button className="btn btn-primary" onClick={submitExtOrder} disabled={orderMutation.isPending || extCopies < 1 || !extIsbn}>
-                {orderMutation.isPending ? 'Ordering...' : 'Confirm Order'}
-              </button>
-            </div>
-          </div>
+      <Modal isOpen={extModalOpen} onClose={() => setExtModalOpen(false)}>
+        <h3 style={styles.modalTitle}>New Book</h3>
+        <p style={styles.modalDesc}>Enter the ISBN (e.g., Google Books ID) to procure a new book.</p>
+        <div style={{ marginBottom: '1rem' }}>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>ISBN / Book ID</label>
+          <input 
+            className="input"
+            type="text" 
+            value={extIsbn}
+            onChange={e => setExtIsbn(e.target.value)}
+            placeholder="e.g., 9780132350884"
+          />
         </div>
-      )}
+        <div style={{ marginBottom: '1.5rem' }}>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Copies</label>
+          <input 
+            className="input"
+            type="number" 
+            min={1}
+            value={extCopies}
+            onChange={e => setExtCopies(parseInt(e.target.value) || 1)}
+          />
+        </div>
+        <div style={styles.modalActions}>
+          <button className="btn btn-secondary" onClick={() => setExtModalOpen(false)}>Cancel</button>
+          <button className="btn btn-primary" onClick={submitExtOrder} disabled={orderMutation.isPending || extCopies < 1 || !extIsbn}>
+            {orderMutation.isPending ? 'Ordering...' : 'Confirm Order'}
+          </button>
+        </div>
+      </Modal>
 
-      {orderModalOpen && (
-        <div className="modal-overlay" onClick={() => setOrderModalOpen(false)}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <h3 style={styles.modalTitle}>Order Book</h3>
-            <p style={styles.modalDesc}>How many copies of <strong>{selectedBook?.title}</strong> would you like to order from the publisher?</p>
-            <div style={{ marginBottom: '1.5rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Copies</label>
-              <input 
-                className="input"
-                type="number" 
-                min={1}
-                value={copiesOrdered}
-                onChange={e => setCopiesOrdered(parseInt(e.target.value) || 1)}
-              />
-            </div>
-            <div style={styles.modalActions}>
-              <button className="btn btn-secondary" onClick={() => setOrderModalOpen(false)}>Cancel</button>
-              <button className="btn btn-primary" onClick={submitOrder} disabled={orderMutation.isPending || copiesOrdered < 1}>
-                {orderMutation.isPending ? 'Ordering...' : 'Confirm Order'}
-              </button>
-            </div>
-          </div>
+      <Modal isOpen={orderModalOpen} onClose={() => setOrderModalOpen(false)}>
+        <h3 style={styles.modalTitle}>Order Book</h3>
+        <p style={styles.modalDesc}>How many copies of <strong>{selectedBook?.title}</strong> would you like to order from the publisher?</p>
+        <div style={{ marginBottom: '1.5rem' }}>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Copies</label>
+          <input 
+            className="input"
+            type="number" 
+            min={1}
+            value={copiesOrdered}
+            onChange={e => setCopiesOrdered(parseInt(e.target.value) || 1)}
+          />
         </div>
-      )}
+        <div style={styles.modalActions}>
+          <button className="btn btn-secondary" onClick={() => setOrderModalOpen(false)}>Cancel</button>
+          <button className="btn btn-primary" onClick={submitOrder} disabled={orderMutation.isPending || copiesOrdered < 1}>
+            {orderMutation.isPending ? 'Ordering...' : 'Confirm Order'}
+          </button>
+        </div>
+      </Modal>
     </div>
   )
 }
 
 const styles: Record<string, React.CSSProperties> = {
-  page: {
-    minHeight: '100vh',
-    backgroundColor: 'var(--color-bg-base)',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  header: {
-    height: '80px',
-    borderBottom: '2px solid var(--color-border)',
-    display: 'flex',
-    alignItems: 'center',
-    padding: '0 2rem',
-    backgroundColor: 'var(--color-bg-base)',
-    position: 'sticky',
-    top: 0,
-    zIndex: 10,
-  },
+  ...sharedStyles,
   headerLeft: {
     display: 'flex',
     alignItems: 'center',
@@ -300,47 +278,11 @@ const styles: Record<string, React.CSSProperties> = {
   content: {
     flex: 1,
   },
-  stateCenter: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '4rem 0',
-    fontFamily: 'var(--font-mono)',
-    fontSize: '12px',
-    color: 'var(--color-text-muted)',
-  },
   grid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
     gap: '1.5rem',
   },
-  bookCard: {
-    display: 'flex',
-    flexDirection: 'column',
-    padding: '0',
-    overflow: 'hidden',
-    height: '100%',
-  },
-  },
-  modalTitle: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '18px',
-    fontWeight: 600,
-    color: 'var(--color-text-primary)',
-    margin: '0 0 0.5rem 0',
-  },
-  modalDesc: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '13px',
-    color: 'var(--color-text-secondary)',
-    margin: '0 0 1.5rem 0',
-    lineHeight: 1.4,
-  },
+
   /* Removed unused input styles */
-  modalActions: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    gap: '0.75rem',
-  }
 }

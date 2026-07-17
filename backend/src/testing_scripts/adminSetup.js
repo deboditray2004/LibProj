@@ -9,7 +9,6 @@ import { Student } from '../models/student.model.js';
 import { Transaction } from '../models/transaction.model.js';
 import { BookRequest } from '../models/bookRequest.model.js';
 import { Order } from '../models/order.model.js';
-import { Notification } from '../models/notification.model.js';
 import { seed } from './seed.js';
 import { bulkSeed } from './bulkSeed.js';
 
@@ -33,7 +32,6 @@ async function flushDatabase() {
   await Transaction.deleteMany({});
   await BookRequest.deleteMany({});
   await Order.deleteMany({});
-  await Notification.deleteMany({});
   console.log('Database flushed successfully.');
 }
 

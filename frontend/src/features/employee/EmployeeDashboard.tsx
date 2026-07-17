@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { borrowBook, returnBook } from '../../api'
 import { BookBookmark, ArrowUUpLeft } from '@phosphor-icons/react'
+import { sharedStyles } from '../../styles/shared'
 
 export default function EmployeeDashboard() {
   return (
@@ -153,34 +154,11 @@ function ReturnDesk() {
 }
 
 const styles: Record<string, React.CSSProperties> = {
-  page: {
-    padding: '2rem',
-    maxWidth: '1000px',
-    margin: '0 auto',
-  },
-  header: {
-    marginBottom: '2rem',
-  },
-  title: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '24px',
-    fontWeight: 600,
-    color: 'var(--color-text-primary)',
-    margin: '0 0 0.5rem 0',
-  },
-  subtitle: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '14px',
-    color: 'var(--color-text-secondary)',
-    margin: 0,
-  },
+  ...sharedStyles,
   grid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
     gap: '2rem',
-  },
-  card: {
-    padding: '1.5rem',
   },
   cardHeader: {
     borderBottom: '1px solid var(--color-border)',
@@ -210,29 +188,5 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     flexDirection: 'column',
     gap: '1.25rem',
-  },
-  errorAlert: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    padding: '0.75rem',
-    backgroundColor: 'rgba(212, 160, 160, 0.1)',
-    border: '1px solid var(--color-accent-rose)',
-    borderRadius: 'var(--radius-sm)',
-    color: 'var(--color-accent-rose)',
-    fontSize: '13px',
-    fontFamily: 'var(--font-sans)',
-  },
-  successAlert: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    padding: '0.75rem',
-    backgroundColor: 'rgba(143, 191, 176, 0.1)',
-    border: '1px solid var(--color-accent-seafoam)',
-    borderRadius: 'var(--radius-sm)',
-    color: 'var(--color-accent-seafoam)',
-    fontSize: '13px',
-    fontFamily: 'var(--font-sans)',
   },
 }

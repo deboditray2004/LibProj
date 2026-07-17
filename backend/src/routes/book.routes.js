@@ -18,15 +18,15 @@ import { requestBookSchema, rejectRequestSchema, placeOrderSchema, manualOrderSc
 
 const router = Router()
 
-// Public Routes
+
 router.route("/search").get(getAllBooks)
 router.route("/categories").get(getAllCategories)
 
 
-// Student Routes
+
 router.route("/request").post(verifyStudent, validate(requestBookSchema), requestBook)
 
-// Employee Routes
+
 router.route("/requests/aggregated").get(verifyEmployee, getAggregatedRequests)
 router.route("/requests/reject").post(verifyEmployee, validate(rejectRequestSchema), rejectBookRequest)
 router.route("/requests/reject-all").post(verifyEmployee, rejectAllBookRequests)

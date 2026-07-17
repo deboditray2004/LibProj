@@ -7,6 +7,7 @@ import toast from 'react-hot-toast'
 import { useMutation } from '@tanstack/react-query'
 import { forgotPassword } from '../../api'
 import { ArrowLeft, CheckCircle } from '@phosphor-icons/react'
+import { sharedStyles } from '../../styles/shared'
 
 const schema = z.object({
   email: z.string().email('Valid email is required'),
@@ -139,16 +140,7 @@ export default function ForgotPasswordPage() {
 }
 
 const styles: Record<string, React.CSSProperties> = {
-  page: {
-    minHeight: '100vh',
-    backgroundColor: 'var(--color-bg-base)',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '2rem',
-    position: 'relative',
-  },
+  ...sharedStyles,
   backRow: {
     position: 'absolute',
     top: '1.5rem',
@@ -165,14 +157,6 @@ const styles: Record<string, React.CSSProperties> = {
     letterSpacing: '0.04em',
     transition: 'color 150ms ease',
   },
-  card: {
-    width: '100%',
-    maxWidth: '420px',
-    backgroundColor: 'var(--color-bg-card)',
-    border: '2px solid var(--color-border)',
-    boxShadow: '4px 4px 0px 0px #111111',
-    padding: '2.5rem',
-  },
   cardHeader: {
     marginBottom: '2rem',
   },
@@ -183,21 +167,6 @@ const styles: Record<string, React.CSSProperties> = {
     textTransform: 'uppercase' as const,
     color: 'var(--color-text-muted)',
     margin: '0 0 0.75rem 0',
-  },
-  title: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '1.75rem',
-    fontWeight: 600,
-    letterSpacing: '-0.02em',
-    color: 'var(--color-text-primary)',
-    margin: '0 0 0.5rem 0',
-  },
-  subtitle: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '13px',
-    color: 'var(--color-text-secondary)',
-    margin: 0,
-    lineHeight: 1.6,
   },
   form: {
     display: 'flex',
@@ -223,18 +192,7 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: 'pointer',
     transition: 'all 200ms ease',
   },
-  apiError: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    backgroundColor: 'var(--color-accent-rose-dim)',
-    border: '1px solid var(--color-accent-rose)',
-    borderRadius: 'var(--radius-sm)',
-    padding: '10px 14px',
-    fontFamily: 'var(--font-mono)',
-    fontSize: '12px',
-    color: 'var(--color-accent-rose)',
-  },
+
   successState: {
     display: 'flex',
     flexDirection: 'column',

@@ -32,7 +32,7 @@ router.route("/register").post(
 
 router.route("/login").post(authLimiter, validate(loginStudentSchema), loginStudent)
 
-// Secured routes
+
 router.route("/logout").post(verifyStudent, logoutStudent)
 router.route("/profile").get(verifyStudent, getStudentProfile)
 router.route("/update-profile").post(verifyStudent, validate(updateProfileSchema), requestProfileUpdate)

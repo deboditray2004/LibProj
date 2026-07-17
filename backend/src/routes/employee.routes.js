@@ -15,7 +15,7 @@ const router = Router()
 
 router.route("/login").post(authLimiter, validate(loginEmployeeSchema), loginEmployee)
 
-// Secured routes
+
 router.route("/logout").post(verifyEmployee, logoutEmployee)
 router.route("/profile").get(verifyEmployee, getEmployeeProfile)
 

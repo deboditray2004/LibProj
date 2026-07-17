@@ -13,12 +13,12 @@ import { borrowBookSchema, returnBookSchema, renewBookSchema, payFineSchema } fr
 
 const router = Router()
 
-// Employee Routes
+
 router.route("/borrow").post(verifyEmployee, validate(borrowBookSchema), borrowBook)
 router.route("/return").post(verifyEmployee, validate(returnBookSchema), returnBook)
 router.route("/waive-fine").post(verifyEmployee, waiveFine)
 
-// Student Routes
+
 router.route("/renew").post(verifyStudent, validate(renewBookSchema), renewBook)
 router.route("/history").get(verifyStudent, getTransactionHistory)
 router.route("/pay-fine").post(verifyStudent, validate(payFineSchema), payFine)

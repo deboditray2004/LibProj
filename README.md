@@ -18,7 +18,7 @@ A Library Management System built with the MERN stack (MongoDB, Express, React, 
 - **Dual Portals:** Separate interfaces for Students and Library Staff.
 - **Fine Tracking:** Calculates late fees automatically based on due dates.
 - **Inventory Management:** Track book availability and manage waitlists.
-- **Email Notifications:** Alerts for registrations and book availability.
+- **Email Notifications & Support:** Automated alerts for registrations/edits, and a native in-app Support Mailer that routes student queries directly to the management inbox.
 - **Administrative CLI:** CLI scripts for seeding the database.
 
 ## 3. Entity-Relationship Diagram
@@ -123,7 +123,6 @@ SMTP_PASS=your_app_password
 Create a `.env` file in the **frontend**:
 ```env
 VITE_API_URL=http://localhost:8000/api
-VITE_TAWKTO_PROPERTY_ID=your_property_id
 ```
 
 ### Installation & Running

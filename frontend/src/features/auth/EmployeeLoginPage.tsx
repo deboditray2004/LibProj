@@ -8,6 +8,7 @@ import { motion } from 'framer-motion'
 import { useAuth } from '../../context/AuthContext'
 import { employeeLogin } from '../../api'
 import { ArrowLeft } from '@phosphor-icons/react'
+import { sharedStyles } from '../../styles/shared'
 
 const schema = z.object({
   empId: z.string().min(1, 'Employee ID is required'),
@@ -120,16 +121,7 @@ export default function EmployeeLoginPage() {
 }
 
 const styles: Record<string, React.CSSProperties> = {
-  page: {
-    minHeight: '100vh',
-    backgroundColor: 'var(--color-bg-base)',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '2rem',
-    position: 'relative',
-  },
+  ...sharedStyles,
   backRow: {
     position: 'absolute',
     top: '1.5rem',
@@ -145,14 +137,6 @@ const styles: Record<string, React.CSSProperties> = {
     textDecoration: 'none',
     letterSpacing: '0.04em',
   },
-  card: {
-    width: '100%',
-    maxWidth: '400px',
-    backgroundColor: 'var(--color-bg-card)',
-    border: '2px solid var(--color-border)',
-    boxShadow: '4px 4px 0px 0px #111111',
-    padding: '2.5rem',
-  },
   cardHeader: {
     marginBottom: '2rem',
   },
@@ -164,21 +148,6 @@ const styles: Record<string, React.CSSProperties> = {
     color: 'var(--color-accent-seafoam)',
     margin: '0 0 0.75rem 0',
   },
-  title: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '1.75rem',
-    fontWeight: 600,
-    letterSpacing: '-0.02em',
-    color: 'var(--color-text-primary)',
-    margin: '0 0 0.5rem 0',
-  },
-  subtitle: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '13px',
-    color: 'var(--color-text-secondary)',
-    margin: 0,
-    lineHeight: 1.6,
-  },
   form: {
     display: 'flex',
     flexDirection: 'column',
@@ -188,18 +157,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     flexDirection: 'column',
   },
-  apiError: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    backgroundColor: 'var(--color-accent-rose-dim)',
-    border: '1px solid var(--color-accent-rose)',
-    borderRadius: 'var(--radius-sm)',
-    padding: '10px 14px',
-    fontFamily: 'var(--font-mono)',
-    fontSize: '12px',
-    color: 'var(--color-accent-rose)',
-  },
+
   footerLinks: {
     display: 'flex',
     justifyContent: 'center',

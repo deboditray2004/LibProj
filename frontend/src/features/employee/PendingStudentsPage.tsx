@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { getPendingStudents, approveStudent, rejectStudent } from '../../api'
 import { WarningCircle, UserCircle, IdentificationCard, X, Check } from '@phosphor-icons/react'
+import { sharedStyles } from '../../styles/shared'
 
 export default function PendingStudentsPage() {
   const queryClient = useQueryClient()
@@ -138,56 +139,11 @@ export default function PendingStudentsPage() {
 }
 
 const styles: Record<string, React.CSSProperties> = {
-  page: {
-    padding: '2rem 8rem 2rem 3rem',
-    width: '100%',
-  },
-  center: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: 'var(--color-text-muted)',
-    fontFamily: 'var(--font-mono)',
-  },
-  header: {
-    marginBottom: '2rem',
-  },
-  title: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '24px',
-    fontWeight: 600,
-    color: 'var(--color-text-primary)',
-    margin: '0 0 0.5rem 0',
-  },
-  subtitle: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '14px',
-    color: 'var(--color-text-secondary)',
-    margin: 0,
-  },
-  emptyState: {
-    fontFamily: 'var(--font-mono)',
-    fontSize: '13px',
-    color: 'var(--color-text-muted)',
-    padding: '3rem',
-    textAlign: 'center',
-    backgroundColor: 'var(--color-bg-surface)',
-    borderRadius: 'var(--radius-md)',
-    border: '1px dashed var(--color-border)',
-  },
+  ...sharedStyles,
   grid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
     gap: '1.5rem',
-  },
-  card: {
-    backgroundColor: 'var(--color-bg-card)',
-    border: '2px solid var(--color-border)',
-    boxShadow: '4px 4px 0px 0px #111111',
-    display: 'flex',
-    flexDirection: 'column',
   },
   cardHeader: {
     display: 'flex',
@@ -248,16 +204,4 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '1.5rem',
     borderTop: '1px solid var(--color-border)',
   },
-  modalTitle: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '18px',
-    fontWeight: 600,
-    color: 'var(--color-text-primary)',
-    margin: '0 0 0.5rem 0',
-  },
-  modalActions: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    gap: '0.75rem',
-  }
 }

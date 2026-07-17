@@ -10,6 +10,7 @@ interface AuthState {
 type AuthAction =
   | { type: 'LOGIN'; payload: AuthUser }
   | { type: 'LOGOUT' }
+  | { type: 'SET_LOADING'; payload: boolean }
 
 function authReducer(state: AuthState, action: AuthAction): AuthState {
   switch (action.type) {
@@ -18,7 +19,7 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
     case 'LOGOUT':
       return { user: null, isAuthenticated: false, isLoading: false }
     case 'SET_LOADING':
-      return { ...state, isLoading: (action as any).payload }
+      return { ...state, isLoading: action.payload }
     default:
       return state
   }
@@ -75,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
       } finally {
-        dispatch({ type: 'SET_LOADING', payload: false } as any)
+        dispatch({ type: 'SET_LOADING', payload: false })
       }
     }
     

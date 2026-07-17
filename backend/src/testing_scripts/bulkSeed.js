@@ -17,8 +17,6 @@ import { Employee } from '../models/employee.model.js'
 import { Transaction } from '../models/transaction.model.js'
 import { BookRequest } from '../models/bookRequest.model.js'
 import { Order } from '../models/order.model.js'
-import { Notification } from '../models/notification.model.js'
-
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 dotenv.config({ path: path.resolve(__dirname, '../../.env') })
@@ -228,6 +226,7 @@ async function seedStudents() {
   console.log('\n🎓 Seeding students...')
 
   let added = 0
+  const hashedPwd = await bcrypt.hash('password123', 10)
 
   const makeStudentData = (rollNo, opts = {}) => {
     const first = pick(firstNames)
@@ -244,7 +243,7 @@ async function seedStudents() {
       govtId: `https://res.cloudinary.com/demo/image/upload/sample.jpg`,
       dept: pick(depts),
       rollNo,
-      password: 'password123',
+      password: hashedPwd,
       status: opts.status || 'Approved',
       cardNo: opts.status === 'Pending' ? undefined : rand(1000, 9999),
       pendingEdits: opts.pendingEdits || null,
@@ -282,7 +281,6 @@ async function seedStudents() {
     }))
   }
 
-  // Long unicode name edge case
   const edgeLong = await Student.findOne({ rollNo: 9999 })
   if (!edgeLong) {
     studentsToInsert.push({
@@ -567,57 +565,6 @@ async function seedOrders(approvedStudents) {
   console.log(`   ✅ Orders: ${ordersToInsert.length} added`)
 }
 
-// ─── Phase 1 — NOTIFICATIONS ────────────────────────────────────────────────
-
-async function seedNotifications(approvedStudents) {
-  console.log('\n🔔 Seeding notifications...')
-
-  const existingCount = await Notification.countDocuments({})
-  if (existingCount > 100) {
-    console.log(`   ⏭️  Notifications already seeded (${existingCount} found), skipping`)
-    return
-  }
-
-  const messages = [
-    'Your library registration has been approved. Welcome!',
-    'Your book request has been fulfilled. Visit the library to borrow it.',
-    'Your profile update request has been approved.',
-    'Your fine has been waived by the library staff.',
-    'Reminder: You have an overdue book. Please return or renew it.',
-    'Your account has been successfully created.',
-    'A book you requested is now available at the library.',
-    'Your profile update has been declined. Please contact admin.',
-    'Your borrowed book is due in 2 days. Please renew or return.',
-    'New books added to the library. Check the catalogue!',
-    'Library will be closed on the upcoming national holiday.',
-    'Your fine payment was successful.',
-    'Book renewal approved. Due date extended by 7 days.',
-    'Maximum renewals reached. Please return the book.',
-  ]
-
-  const pool = approvedStudents.slice(0, 200)
-  const notifications = []
-
-  for (const s of pool) {
-    const n = rand(0, 3)
-    for (let i = 0; i < n; i++) {
-      notifications.push({
-        s_id: s._id,
-        msg: pick(messages),
-        status: Math.random() > 0.4 ? 'Unread' : 'Read'
-      })
-    }
-  }
-
-  if (notifications.length > 0) {
-    await Notification.insertMany(notifications, { ordered: false }).catch(e => {
-      if (e.code !== 11000) throw e
-    })
-  }
-
-  console.log(`   ✅ Notifications: ${notifications.length} added`)
-}
-
 // ─── MAIN ────────────────────────────────────────────────────────────────────
 
 export async function bulkSeed() {
@@ -631,7 +578,6 @@ export async function bulkSeed() {
   await seedTransactions(approvedStudents, books)
   await seedBookRequests(approvedStudents)
   await seedOrders(approvedStudents)
-  await seedNotifications(approvedStudents)
 
   console.log('\n📊 Final collection counts:')
   console.log(`   Books:         ${await Book.countDocuments({})}`)
@@ -640,7 +586,6 @@ export async function bulkSeed() {
   console.log(`   Transactions:  ${await Transaction.countDocuments({})}`)
   console.log(`   BookRequests:  ${await BookRequest.countDocuments({})}`)
   console.log(`   Orders:        ${await Order.countDocuments({})}`)
-  console.log(`   Notifications: ${await Notification.countDocuments({})}`)
 
   console.log('\n✅ BulkSeed completed successfully.')
 }

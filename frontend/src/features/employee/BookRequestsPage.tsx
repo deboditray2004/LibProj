@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { getAggregatedRequests, placeOrder, rejectBookRequest, rejectAllBookRequests } from '../../api'
 import { WarningCircle, BookOpen, X, ShoppingCart } from '@phosphor-icons/react'
+import { sharedStyles } from '../../styles/shared'
 
 export default function BookRequestsPage() {
   const queryClient = useQueryClient()
@@ -215,56 +216,11 @@ export default function BookRequestsPage() {
 }
 
 const styles: Record<string, React.CSSProperties> = {
-  page: {
-    padding: '2rem 8rem 2rem 3rem',
-    width: '100%',
-  },
-  center: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: 'var(--color-text-muted)',
-    fontFamily: 'var(--font-mono)',
-  },
-  header: {
-    marginBottom: '2rem',
-  },
-  title: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '24px',
-    fontWeight: 600,
-    color: 'var(--color-text-primary)',
-    margin: '0 0 0.5rem 0',
-  },
-  subtitle: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '14px',
-    color: 'var(--color-text-secondary)',
-    margin: 0,
-  },
-  emptyState: {
-    fontFamily: 'var(--font-mono)',
-    fontSize: '13px',
-    color: 'var(--color-text-muted)',
-    padding: '3rem',
-    textAlign: 'center',
-    backgroundColor: 'var(--color-bg-surface)',
-    borderRadius: 'var(--radius-md)',
-    border: '1px dashed var(--color-border)',
-  },
+  ...sharedStyles,
   list: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
     gap: '1.5rem',
-  },
-  card: {
-    backgroundColor: 'var(--color-bg-card)',
-    border: '2px solid var(--color-border)',
-    boxShadow: '4px 4px 0px 0px #111111',
-    display: 'flex',
-    flexDirection: 'column',
   },
   cardHeader: {
     display: 'flex',
@@ -338,23 +294,5 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '0.75rem',
     padding: '1.5rem',
   },
-  modalTitle: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '18px',
-    fontWeight: 600,
-    color: 'var(--color-text-primary)',
-    margin: '0 0 0.5rem 0',
-  },
-  modalDesc: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '13px',
-    color: 'var(--color-text-secondary)',
-    margin: '0 0 1.5rem 0',
-    lineHeight: 1.4,
-  },
-  modalActions: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    gap: '0.75rem',
-  }
+
 }

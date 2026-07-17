@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { getTransactionHistory } from '../../api'
 import { WarningCircle } from '@phosphor-icons/react'
+import { sharedStyles } from '../../styles/shared'
 
 export default function StudentHistoryPage() {
 
@@ -84,42 +85,7 @@ export default function StudentHistoryPage() {
 }
 
 const styles: Record<string, React.CSSProperties> = {
-  page: {
-    padding: '2rem 8rem 2rem 3rem',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '2.5rem',
-    width: '100%',
-  },
-  header: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.25rem',
-  },
-  title: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '28px',
-    fontWeight: 600,
-    color: 'var(--color-text-primary)',
-    margin: 0,
-    letterSpacing: '-0.02em',
-  },
-  subtitle: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '15px',
-    color: 'var(--color-text-secondary)',
-    margin: 0,
-  },
-  stateCenter: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '4rem 0',
-    fontFamily: 'var(--font-mono)',
-    fontSize: '12px',
-    color: 'var(--color-text-muted)',
-  },
+  ...sharedStyles,
   tableContainer: {
     backgroundColor: 'var(--color-bg-surface)',
     border: '1px solid var(--color-border)',
@@ -154,27 +120,5 @@ const styles: Record<string, React.CSSProperties> = {
   bookTitle: {
     color: 'var(--color-text-primary)',
     fontWeight: 500,
-  },
-  errorAlert: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    padding: '1rem',
-    backgroundColor: 'rgba(239, 137, 137, 0.1)',
-    color: 'var(--color-accent-rose)',
-    borderRadius: 'var(--radius-sm)',
-    fontFamily: 'var(--font-sans)',
-    fontSize: '14px',
-  },
-  successAlert: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    padding: '1rem',
-    backgroundColor: 'rgba(163, 230, 210, 0.1)',
-    color: 'var(--color-accent-seafoam)',
-    borderRadius: 'var(--radius-sm)',
-    fontFamily: 'var(--font-sans)',
-    fontSize: '14px',
   },
 }
