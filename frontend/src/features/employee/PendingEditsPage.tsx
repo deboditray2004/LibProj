@@ -73,10 +73,10 @@ export default function PendingEditsPage() {
           {students.map((student: any) => {
             const edits = student.pendingEdits
             const changes = [
-              { field: 'Name', old: student.name, new: edits.name },
-              { field: 'Email', old: student.email, new: edits.email },
-              { field: 'Address', old: student.addr, new: edits.addr },
-            ].filter(c => c.old !== c.new)
+              { field: 'Name', old: student.name, new: edits?.name },
+              { field: 'Email', old: student.email, new: edits?.email },
+              { field: 'Address', old: student.addr, new: edits?.addr },
+            ].filter(c => c.new !== undefined && c.old !== c.new)
 
             return (
               <div key={student._id} className="card" style={styles.card}>
@@ -268,6 +268,7 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 500,
     color: 'var(--color-text-primary)',
     width: '100px',
+    flexShrink: 0,
   },
   diffValues: {
     display: 'flex',
@@ -282,12 +283,14 @@ const styles: Record<string, React.CSSProperties> = {
     textDecoration: 'line-through',
     flex: 1,
     textAlign: 'right',
+    wordBreak: 'break-word',
   },
   newValue: {
     fontFamily: 'var(--font-mono)',
     fontSize: '13px',
     color: 'var(--color-accent-seafoam)',
     flex: 1,
+    wordBreak: 'break-word',
   },
   actions: {
     display: 'flex',
