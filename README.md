@@ -158,3 +158,13 @@ Deployment setup:
 - **Frontend:** Hosted on Vercel.
 - **Backend:** Hosted on Render.
 - **Database:** MongoDB Atlas cluster.
+
+## 8. Security & Edge Case Handling
+This project has been heavily audited and refactored for enterprise-grade resilience:
+- **NoSQL Injection Prevention**: Edit payloads are explicitly whitelisted.
+- **Resource Leak Protection**: If Cloudinary upload succeeds but Mongoose fails, the orphaned image is instantly deleted. Temporary Multer files on the local disk are aggressively cleaned up during API failures.
+- **Race Condition Throttling**: Password reset flows are throttled to prevent spam and token overwrites.
+- **Denial of Service (DoS) Mitigation**: All list endpoints enforce a hard `.limit(500)` cap, protecting the backend from memory heap crashes.
+- **Collection Scan Prevention**: Robust B-Tree indexes exist on the `Transaction` schema (`dueDate`, `s_id`, etc.) to instantly query overdue ledgers without paralyzing the cluster.
+- **Frontend Error Boundaries**: Lazy-loaded route failures are caught by a global React ErrorBoundary, displaying a resilient fallback UI instead of crashing the browser.
+- **Data Synchronization**: Complex calculations like `tot_fine` are perfectly synchronized via Mongoose `post` hooks utilizing `$group` aggregations.

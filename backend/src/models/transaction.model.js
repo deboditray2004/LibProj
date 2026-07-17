@@ -41,13 +41,18 @@ const transactionSchema= new Schema({
     optimisticConcurrency: true
 })
 
+transactionSchema.index({ dueDate: 1 })
+transactionSchema.index({ s_id: 1 })
+transactionSchema.index({ rtrnDate: 1 })
+transactionSchema.index({ s_id: 1, rtrnDate: 1 })
+
 transactionSchema.post(['save', 'findOneAndUpdate', 'findOneAndDelete'], async function (doc) {
     if (!doc) return
     const s_id = doc.s_id
     const Student = mongoose.model("Student")
     
     // Sum up all frozen fines for this student
-    const result = await this.constructor.aggregate([
+    const result = await mongoose.model("Transaction").aggregate([
         { $match: { s_id: new mongoose.Types.ObjectId(s_id) } },
         { $group: { _id: null, totalFine: { $sum: "$frozenFine" } } }
     ])

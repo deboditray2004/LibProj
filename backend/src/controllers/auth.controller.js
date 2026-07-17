@@ -16,6 +16,10 @@ export const forgotPassword = asyncHandler(async (req, res) => {
         throw new ApiError(404, "User with this email does not exist")
     }
 
+    if (user.forgotPasswordToken && user.forgotPasswordExpiry > Date.now()) {
+        throw new ApiError(429, "A reset link was already sent. Please check your email or wait 15 minutes before requesting a new one.")
+    }
+
     const resetToken = user.createPasswordResetToken()
     
     await user.save({ validateBeforeSave: false })
