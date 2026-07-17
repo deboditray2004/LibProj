@@ -1,24 +1,17 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { BookCard } from '../../components/ui/BookCard'
+import { CategoryDropdown } from '../../components/ui/CategoryDropdown'
 import { searchBooks, getCategories, manualOrder } from '../../api'
-import { MagnifyingGlass, WarningCircle, CaretLeft, CaretRight } from '@phosphor-icons/react'
+import { MagnifyingGlass, WarningCircle } from '@phosphor-icons/react'
 import Modal from '../../components/ui/Modal'
 import { sharedStyles } from '../../styles/shared'
 
 export default function EmployeeCataloguePage() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
-  
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = 200
-      scrollContainerRef.current.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' })
-    }
-  }
   const queryClient = useQueryClient()
   const [search, setSearch] = useState('')
-  const [category, setCategory] = useState('')
+  const [categories, setCategories] = useState<string[]>([])
   
   const [orderModalOpen, setOrderModalOpen] = useState(false)
   const [selectedBook, setSelectedBook] = useState<any>(null)
@@ -29,8 +22,8 @@ export default function EmployeeCataloguePage() {
   const [extCopies, setExtCopies] = useState(1)
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['books', search, category],
-    queryFn: () => searchBooks({ search, category }),
+    queryKey: ['books', search, categories],
+    queryFn: () => searchBooks({ search, category: categories.join(',') }),
   })
 
   const { data: catData } = useQuery({
@@ -52,7 +45,7 @@ export default function EmployeeCataloguePage() {
   })
 
   const books = data?.data || []
-  const categoriesList = ['', ...(catData?.data?.filter((c: string) => c) || [])]
+  const categoriesList = catData?.data?.filter((c: string) => c) || []
 
   const handleOrderClick = (book: any) => {
     setSelectedBook(book)
@@ -95,43 +88,18 @@ export default function EmployeeCataloguePage() {
         
         {/* Horizontal Filters Bar */}
         <div className="w-full flex flex-col md:flex-row items-center justify-between gap-4 border-b border-[var(--color-border)] pb-6">
-          <div className="flex flex-row items-center gap-2 w-full md:w-auto flex-1 min-w-0 pb-2 md:pb-0">
+          <div className="flex flex-row items-center gap-4 w-full md:w-auto flex-1 pb-2 md:pb-0">
             <button 
-              className="btn btn-primary flex-shrink-0 mr-4"
+              className="btn btn-primary flex-shrink-0"
               onClick={() => setExtModalOpen(true)}
             >
               New Book
             </button>
-
-            
-            <button onClick={() => scroll('left')} className="p-1 hover:bg-[var(--color-bg-surface)] rounded-full text-[var(--color-text-secondary)] transition-colors flex-shrink-0">
-              <CaretLeft size={20} weight="bold" />
-            </button>
-            
-            <div ref={scrollContainerRef} className="flex flex-row overflow-x-auto gap-2 items-center flex-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-              {categoriesList.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setCategory(cat)}
-                style={{
-                  ...styles.filterBtn,
-                  padding: '6px 16px',
-                  borderRadius: '999px',
-                  backgroundColor: category === cat ? 'var(--color-bg-surface)' : 'transparent',
-                  color: category === cat ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
-                  fontWeight: category === cat ? 600 : 400,
-                  whiteSpace: 'nowrap',
-                  border: category === cat ? '1px solid var(--color-text-primary)' : '1px solid var(--color-border)'
-                }}
-              >
-                {cat === '' ? 'All' : cat}
-              </button>
-              ))}
-            </div>
-
-            <button onClick={() => scroll('right')} className="p-1 hover:bg-[var(--color-bg-surface)] rounded-full text-[var(--color-text-secondary)] transition-colors flex-shrink-0">
-              <CaretRight size={20} weight="bold" />
-            </button>
+            <CategoryDropdown 
+              categoriesList={categoriesList}
+              selectedCategories={categories}
+              onChange={setCategories}
+            />
           </div>
 
           <div style={{ ...styles.searchBox, marginBottom: 0 }} className="w-full md:w-[300px] flex-shrink-0">

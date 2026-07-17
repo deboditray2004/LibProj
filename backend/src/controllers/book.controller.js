@@ -106,6 +106,9 @@ const receiveOrder = asyncHandler(async (req, res) => {
     const order = await Order.findById(orderId)
     if(!order)
     throw new ApiError(404, "Order not found")
+
+    if(order.status === "Received")
+    throw new ApiError(400, "This order has already been received and processed")
     const existingBook = await Book.findOne({ globalBookId: order.globalBookId })
     
     await sessionWrapper(async (session) => {
@@ -149,8 +152,12 @@ const getAllBooks = asyncHandler(async (req, res) => {
         ]
     }
     
-    if (category)
-    query.category = { $regex: category, $options: "i" }
+    if (category) {
+        const catArray = category.split(',').map(c => c.trim()).filter(c => c)
+        if (catArray.length > 0) {
+            query.category = { $in: catArray.map(c => new RegExp(`^${c}$`, "i")) }
+        }
+    }
     let books = await Book.find(query).limit(500).lean()
     if (!books || books.length === 0) {
         throw new ApiError(404, "No books found matching your criteria")

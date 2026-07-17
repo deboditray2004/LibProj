@@ -38,9 +38,12 @@ export function BookCard({ book, role, onActionClick, isActionDisabled, actionTe
         <p style={styles.bookAuthors}>{book.authors?.join(', ')}</p>
         
         <div style={styles.bookMeta}>
-          {book.category?.map((cat: string) => (
+          {book.category?.slice(0, 2).map((cat: string) => (
             <span key={cat} className="badge badge-muted">{cat}</span>
           ))}
+          {book.category && book.category.length > 2 && (
+            <span className="badge badge-muted">+{book.category.length - 2}</span>
+          )}
         </div>
 
         <div style={styles.bookFooter}>

@@ -19,6 +19,7 @@ export default function OrdersPage() {
     },
     onError: (err: any) => {
       toast.error(err.response?.data?.message || 'Failed to receive order.')
+      queryClient.invalidateQueries({ queryKey: ['orders'] })
     }
   })
 
