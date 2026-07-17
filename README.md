@@ -82,29 +82,35 @@ erDiagram
         number frozenFine
         number amountCollected
     }
-    FEEDBACK {
-        ObjectId _id
-        ObjectId s_id
-        string msg
-        string status
-        string reply
-    }
-    NOTIFICATION {
-        ObjectId _id
-        ObjectId s_id
-        string msg
-        string status
-    }
-
     STUDENT ||--o{ TRANSACTION : "has"
-    STUDENT ||--o{ FEEDBACK : "submits"
-    STUDENT ||--o{ NOTIFICATION : "receives"
     STUDENT ||--o{ BOOKREQUEST : "requests"
     BOOK ||--o{ TRANSACTION : "involved in"
     ORDER }o--|| BOOK : "supplies"
 ```
 
-## 4. Setup & Usage
+## 4. Folder Structure
+
+```text
+├── backend
+│   ├── src
+│   │   ├── controllers    # Request handlers
+│   │   ├── db             # Database connection & seed data
+│   │   ├── middlewares    # Auth, multer, and validation
+│   │   ├── models         # Mongoose schemas (Book, Employee, Order, Student, Transaction)
+│   │   ├── routes         # API endpoints
+│   │   ├── testing_scripts# CLI tools for DB setup
+│   │   ├── utils          # Helpers (mailer, isbn, cloudinary, Error wrappers)
+│   │   └── validators     # Zod input validation schemas
+├── frontend
+│   ├── src
+│   │   ├── api            # Axios API wrappers
+│   │   ├── components     # Reusable UI (Modal, BookCard, Layouts)
+│   │   ├── context        # React Context (Auth)
+│   │   ├── features       # Domain-specific pages (auth, employee, public, student)
+│   │   └── styles         # Shared CSS-in-JS definitions
+```
+
+## 5. Setup & Usage
 
 ### Environment Configuration
 Create a `.env` file in the **backend**:
