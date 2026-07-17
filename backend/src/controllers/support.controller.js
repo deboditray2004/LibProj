@@ -39,7 +39,8 @@ export const sendSupportMessage = asyncHandler(async (req, res) => {
     const mailResult = await sendMail(managementEmail, subject, htmlContent, student.email)
 
     if (!mailResult.success) {
-        throw new ApiError(500, "Failed to send message to management. Please try again later.")
+        const errorDetail = mailResult.error?.message || mailResult.error?.code || 'Unknown SMTP Error'
+        throw new ApiError(500, `Failed to send message: ${errorDetail}`)
     }
 
     return res.status(200).json(new ApiResponse(200, {}, "Message sent successfully"))
