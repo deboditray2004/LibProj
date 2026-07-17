@@ -26,6 +26,7 @@ app.use(express.static("public"))
 app.use(cookieParser())
 
 app.get('/api/health', (req, res) => {
+    console.log(`[${new Date().toISOString()}] Health check pinged!`)
     res.status(200).json({ status: 'ok', timestamp: new Date() })
 })
 
