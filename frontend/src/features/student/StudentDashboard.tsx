@@ -3,7 +3,6 @@ import toast from 'react-hot-toast'
 import { getStudentProfile, getTransactionHistory, payFine, renewBook } from '../../api'
 import { User, Receipt, Books, BookOpen } from '@phosphor-icons/react'
 import { useState } from 'react'
-import { sharedStyles } from '../../styles/shared'
 
 export default function StudentDashboard() {
   const queryClient = useQueryClient()
@@ -344,7 +343,13 @@ export default function StudentDashboard() {
 }
 
 const styles: Record<string, React.CSSProperties> = {
-  ...sharedStyles,
+  page: {
+    padding: '2rem 8rem 2rem 3rem',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '2.5rem',
+    width: '100%',
+  },
   loadingState: {
     display: 'flex',
     alignItems: 'center',
@@ -354,11 +359,40 @@ const styles: Record<string, React.CSSProperties> = {
     color: 'var(--color-text-muted)',
     fontSize: '13px',
   },
+  header: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.25rem',
+  },
+  title: {
+    fontFamily: 'var(--font-sans)',
+    fontSize: '28px',
+    fontWeight: 600,
+    color: 'var(--color-text-primary)',
+    margin: 0,
+    letterSpacing: '-0.02em',
+  },
+  subtitle: {
+    fontFamily: 'var(--font-sans)',
+    fontSize: '15px',
+    color: 'var(--color-text-secondary)',
+    margin: 0,
+  },
   grid: {
     display: 'flex',
     flexWrap: 'wrap',
     gap: '1.5rem',
     alignItems: 'flex-start',
+  },
+  card: {
+    flex: '1 1 400px',
+    backgroundColor: 'var(--color-bg-card)',
+    border: '2px solid var(--color-border)',
+    boxShadow: '4px 4px 0px 0px #111111',
+    display: 'flex',
+    flexDirection: 'column',
+    padding: '1.5rem',
+    gap: '1.5rem',
   },
   cardHeader: {
     display: 'flex',
@@ -398,6 +432,14 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '14px',
     color: 'var(--color-text-primary)',
     fontWeight: 500,
+  },
+  emptyState: {
+    fontFamily: 'var(--font-mono)',
+    fontSize: '13px',
+    color: 'var(--color-text-muted)',
+    margin: 0,
+    textAlign: 'center',
+    padding: '2rem 0',
   },
   bookList: {
     display: 'flex',
@@ -485,5 +527,28 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '11px',
     color: 'var(--color-accent-rose)',
   },
-
+  errorAlert: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    padding: '0.75rem',
+    backgroundColor: 'rgba(239, 137, 137, 0.1)',
+    color: 'var(--color-accent-rose)',
+    borderRadius: 'var(--radius-sm)',
+    fontFamily: 'var(--font-sans)',
+    fontSize: '13px',
+    marginTop: '1rem',
+  },
+  successAlert: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    padding: '0.75rem',
+    backgroundColor: 'rgba(163, 230, 210, 0.1)',
+    color: 'var(--color-accent-seafoam)',
+    borderRadius: 'var(--radius-sm)',
+    fontFamily: 'var(--font-sans)',
+    fontSize: '13px',
+    marginTop: '1rem',
+  },
 }
