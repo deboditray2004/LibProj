@@ -10,6 +10,7 @@ async function test() {
                 user: 'libraryproj.mgmt@gmail.com',
                 pass: 'jiymgsnfqfruzihs'
             },
+            family: 4,
             connectionTimeout: 10000, 
             greetingTimeout: 10000,
             socketTimeout: 15000 
