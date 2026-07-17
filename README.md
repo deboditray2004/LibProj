@@ -6,6 +6,14 @@ A Library Management System built with the MERN stack (MongoDB, Express, React, 
 **Live Demo:**
 - [https://library-eight-steel.vercel.app](https://library-eight-steel.vercel.app)
 
+## Screenshots
+<div align="center">
+  <img src="./screenshots/dashboard.png" alt="Dashboard View" width="45%">
+  &nbsp;
+  <img src="./screenshots/catalogue.png" alt="Catalogue View" width="45%">
+</div>
+<br/>
+
 
 ## 2. Core Features
 - **Dual Portals:** Separate interfaces for Students and Library Staff.
