@@ -1,48 +1,60 @@
-import nodemailer from 'nodemailer'
 import fs from 'fs'
 import path from 'path'
 import os from 'os'
-
-let transporter = null
+import { google } from 'googleapis'
 
 export const sendMail = async (to, subject, htmlContent, replyTo = null) => {
     try {
-        if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+        if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !process.env.GOOGLE_REFRESH_TOKEN) {
             console.log(`\n=== [MAILER MOCK] ===\nTo: ${to}\nSubject: ${subject}\n=====================\n`)
-            return { success: true, message: "Mock email sent (Missing SMTP Credentials)" }
+            return { success: true, message: "Mock email sent (Missing Google API Credentials)" }
         }
 
-        if (!transporter) {
-            const port = parseInt(process.env.SMTP_PORT || '587', 10)
-            
-            transporter = nodemailer.createTransport({
-                host: process.env.SMTP_HOST || 'smtp.gmail.com',
-                port: port,
-                secure: port === 465, 
-                auth: {
-                    user: process.env.SMTP_USER,
-                    pass: process.env.SMTP_PASS
-                },
-                connectionTimeout: 10000, 
-                greetingTimeout: 10000,
-                socketTimeout: 15000 
-            })
-        }
+        const oauth2Client = new google.auth.OAuth2(
+            process.env.GOOGLE_CLIENT_ID,
+            process.env.GOOGLE_CLIENT_SECRET,
+            "https://developers.google.com/oauthplayground"
+        )
+        oauth2Client.setCredentials({ refresh_token: process.env.GOOGLE_REFRESH_TOKEN })
 
-        const info = await transporter.sendMail({
-            from: `"Library Management System" <${process.env.SMTP_USER}>`,
-            to,
-            ...(replyTo && { replyTo }),
-            subject,
-            html: htmlContent
+        const gmail = google.gmail({ version: 'v1', auth: oauth2Client })
+
+        const utf8Subject = `=?utf-8?B?${Buffer.from(subject).toString('base64')}?=`
+        
+        let messageParts = [
+            `To: ${to}`,
+            `Subject: ${utf8Subject}`,
+            `Content-Type: text/html; charset=utf-8`,
+            `MIME-Version: 1.0`
+        ]
+        
+        if (replyTo) {
+            messageParts.push(`Reply-To: ${replyTo}`)
+        }
+        
+        messageParts.push('')
+        messageParts.push(htmlContent)
+
+        const messageStr = messageParts.join('\r\n')
+        const encodedMessage = Buffer.from(messageStr).toString('base64')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=+$/, '')
+
+        const res = await gmail.users.messages.send({
+            userId: 'me',
+            requestBody: {
+                raw: encodedMessage
+            }
         })
+
         const logFile = path.resolve(os.tmpdir(), 'mail_log.json')
-        fs.appendFileSync(logFile, JSON.stringify({ to, success: true, messageId: info.messageId }) + '\n')
-        return { success: true, messageId: info.messageId }
+        fs.appendFileSync(logFile, JSON.stringify({ to, success: true, messageId: res.data.id }) + '\n')
+        return { success: true, messageId: res.data.id }
     } catch (error) {
         const logFile = path.resolve(os.tmpdir(), 'mail_log.json')
         fs.appendFileSync(logFile, JSON.stringify({ to, success: false, error: error.message }) + '\n')
-        console.error("Error sending email:", error)
+        console.error("Error sending email via Gmail API:", error)
         return { success: false, error }
     }
 }
