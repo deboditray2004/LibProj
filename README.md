@@ -16,6 +16,7 @@ A Library Management System built with the MERN stack (MongoDB, Express, React, 
 
 ## 2. Core Features
 - **Dual Portals:** Separate interfaces for Students and Library Staff.
+- **Real-Time Dashboards:** Dashboards utilize TanStack Query's background short-polling (every 1000ms) paired with Gzip compression to provide an ultra-responsive, real-time feel across multiple connected employee screens without the massive overhead of WebSockets.
 - **Fine Tracking:** Calculates late fees automatically based on due dates.
 - **Inventory Management:** Track book availability and manage waitlists. Features a multi-select category filtering system that seamlessly synchronizes with the Google Books API.
 - **Email Notifications & Support:** Automated alerts for registrations/edits, and a native in-app Support Mailer that uses the Gmail REST API (bypassing strict SMTP port blocking) to route student queries directly to the management inbox.
@@ -158,8 +159,8 @@ The project includes a command-line tool (`backend/src/testing_scripts/adminSetu
 - **Icons:** Phosphor Icons.
 
 ## 6. Technology Stack
-- **Frontend:** React 18, Vite, TypeScript, Tailwind CSS, Framer Motion
-- **Backend:** Node.js, Express.js
+- **Frontend:** React 18, Vite, TypeScript, Tailwind CSS, Framer Motion, TanStack Query (React Query)
+- **Backend:** Node.js, Express.js (with Gzip Compression)
 - **Database:** MongoDB (Mongoose)
 - **Authentication:** JWT, bcrypt
 - **External Services:** Google Books API, Cloudinary (File Storage), Nodemailer (Emails)

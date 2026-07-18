@@ -13,6 +13,7 @@ export default function PendingEditsPage() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['pendingEdits'],
     queryFn: getPendingEdits,
+    refetchInterval: 1000,
   })
 
   const approveMutation = useMutation({

@@ -18,6 +18,7 @@ export default function BookRequestsPage() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['aggregatedRequests'],
     queryFn: getAggregatedRequests,
+    refetchInterval: 1000,
   })
 
   const orderMutation = useMutation({

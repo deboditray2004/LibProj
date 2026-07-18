@@ -13,6 +13,7 @@ export default function PendingStudentsPage() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['pendingStudents'],
     queryFn: getPendingStudents,
+    refetchInterval: 1000,
   })
 
   const approveMutation = useMutation({

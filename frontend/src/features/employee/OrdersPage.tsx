@@ -9,6 +9,7 @@ export default function OrdersPage() {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['orders'],
     queryFn: getAllOrders,
+    refetchInterval: 1000,
   })
 
   const receiveMutation = useMutation({
