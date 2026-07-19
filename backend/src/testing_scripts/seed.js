@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
-import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -9,100 +8,131 @@ import { Book } from '../models/book.model.js';
 import { Student } from '../models/student.model.js';
 import { Employee } from '../models/employee.model.js';
 import { Transaction } from '../models/transaction.model.js';
+import { Order } from '../models/order.model.js';
+import { BookRequest } from '../models/bookRequest.model.js';
+import { flushDatabase } from './flush.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
-
-
-async function loadJSON(filename) {
-  const filePath = path.join(__dirname, '..', 'db', 'data', filename);
-  if (!fs.existsSync(filePath)) return [];
-  const data = fs.readFileSync(filePath, 'utf-8');
-  return JSON.parse(data);
-}
+const DUMMY_IMAGE = 'http://localhost:8000/dummy.png';
 
 export async function seed() {
-  try {
-    if (mongoose.connection.readyState === 0) {
-      await mongoose.connect(process.env.MONGODB_URI);
-      console.log('Connected to MongoDB for seeding...');
-    }
-
-    // 1. Seed Employees (Append Only)
-    const employeesData = await loadJSON('employees.json');
-    for (const empData of employeesData) {
-      const exists = await Employee.findOne({ empId: empData.empId });
-      if (!exists) {
-        const hashedPassword = await bcrypt.hash(empData.password, 10);
-        await Employee.create({ ...empData, password: hashedPassword });
-        console.log(`Appended Employee: ${empData.empId}`);
-      }
-    }
-
-    // 2. Seed Students (Append Only)
-    const studentsData = await loadJSON('students.json');
-    for (const stuData of studentsData) {
-      const exists = await Student.findOne({ rollNo: stuData.rollNo });
-      if (!exists) {
-        const hashedPassword = await bcrypt.hash(stuData.password, 10);
-        await Student.create({ ...stuData, password: hashedPassword });
-        console.log(`Appended Student: ${stuData.rollNo}`);
-      }
-    }
-
-    // 3. Seed Books (Append Only)
-    const booksData = await loadJSON('books.json');
-    for (const bookData of booksData) {
-      const exists = await Book.findOne({ globalBookId: bookData.globalBookId });
-      if (!exists) {
-        await Book.create(bookData);
-        console.log(`Appended Book: ${bookData.globalBookId}`);
-      }
-    }
-
-    // 4. Seed Transactions (Append Only, Mapping refs)
-    const txnsData = await loadJSON('transactions.json');
-    for (const txnData of txnsData) {
-      const student = await Student.findOne({ rollNo: txnData.studentRollNo });
-      const book = await Book.findOne({ globalBookId: txnData.globalBookId });
-
-      if (student && book) {
-        // Prevent duplicate seed transactions by checking if one exists for this student+book
-        const exists = await Transaction.findOne({ s_id: student._id, b_id: book._id });
-        if (!exists) {
-          const now = Date.now();
-          const newTxn = new Transaction({
-            s_id: student._id,
-            b_id: book._id,
-            brwDate: new Date(now + txnData.borrowDateOffsetDays * 86400000),
-            dueDate: new Date(now + txnData.dueDateOffsetDays * 86400000),
-            status: txnData.status,
-            renewalCnt: txnData.renewalCnt
-          });
-
-          if (txnData.rtrnDateOffsetDays) {
-            newTxn.rtrnDate = new Date(now + txnData.rtrnDateOffsetDays * 86400000);
-            newTxn.frozenFine = txnData.fine || 0;
-          }
-
-          await newTxn.save();
-          // Decrease availability
-          book.avl = Math.max(0, book.avl - 1);
-          await book.save();
-          console.log(`Appended Transaction for Student: ${txnData.studentRollNo}`);
+    try {
+        if (mongoose.connection.readyState === 0) {
+            await mongoose.connect(process.env.MONGODB_URI);
+            console.log('Connected to MongoDB.');
         }
-      }
+
+        // Flush DB (which securely handles backup first)
+        await flushDatabase();
+
+        // 1. Employees
+        const admin = await Employee.create({
+            empId: 1001,
+            name: "Admin User",
+            email: "admin@library.com",
+            password: 'password'
+        });
+        
+        const emp2 = await Employee.create({
+            empId: 1002,
+            name: "Jane Smith",
+            email: "jane.smith@library.com",
+            password: 'password'
+        });
+        console.log('Employees created.');
+
+        // 2. Students
+        const s1 = await Student.create({
+            cardNo: 2001,
+            name: "John Doe",
+            dob: new Date("2000-05-15"),
+            addr: "123 Main St, Mumbai",
+            email: "johndoe@student.edu",
+            govtId: "AADHAAR12345",
+            dept: "Computer Science",
+            rollNo: 2001,
+            password: 'password',
+            tot_fine: 0,
+            status: "Approved"
+        });
+
+        const s2 = await Student.create({
+            cardNo: 2002,
+            name: "Alice Johnson",
+            dob: new Date("2001-08-22"),
+            addr: "456 Park Avenue, Delhi",
+            email: "alicej@student.edu",
+            govtId: "PAN987654",
+            dept: "Electronics",
+            rollNo: 2002,
+            password: 'password',
+            tot_fine: 50,
+            status: "Approved"
+        });
+        console.log('Students created.');
+
+        // 3. Books
+        const b1 = await Book.create({
+            globalBookId: "9780132350884", // Clean Code
+            title: "Clean Code: A Handbook of Agile Software Craftsmanship",
+            authors: ["Robert C. Martin"],
+            category: ["Programming", "Software Engineering"],
+            coverImg: DUMMY_IMAGE,
+            total: 10,
+            avl: 9
+        });
+
+        const b2 = await Book.create({
+            globalBookId: "9780201616224", // Pragmatic Programmer
+            title: "The Pragmatic Programmer: Your Journey To Mastery",
+            authors: ["David Thomas", "Andrew Hunt"],
+            category: ["Programming"],
+            coverImg: DUMMY_IMAGE,
+            total: 5,
+            avl: 4
+        });
+        
+        const b3 = await Book.create({
+            globalBookId: "9780262033848", // Intro to Algorithms
+            title: "Introduction to Algorithms",
+            authors: ["Thomas H. Cormen", "Charles E. Leiserson"],
+            category: ["Computer Science", "Algorithms"],
+            coverImg: DUMMY_IMAGE,
+            total: 8,
+            avl: 8
+        });
+        console.log('Books created.');
+
+        // 4. Transactions
+        const now = Date.now();
+        await Transaction.create({
+            s_id: s1._id,
+            b_id: b1._id,
+            brwDate: new Date(now - 5 * 86400000), // 5 days ago
+            dueDate: new Date(now + 10 * 86400000), // due in 10 days
+            status: "Issued",
+            renewalCnt: 0
+        });
+
+        await Transaction.create({
+            s_id: s2._id,
+            b_id: b2._id,
+            brwDate: new Date(now - 20 * 86400000), // 20 days ago
+            dueDate: new Date(now - 5 * 86400000), // overdue by 5 days
+            rtrnDate: new Date(now - 1 * 86400000), // returned yesterday
+            status: "Returned",
+            renewalCnt: 1,
+            frozenFine: 50,
+            amountCollected: 0
+        });
+        console.log('Transactions created.');
+
+        console.log('Baseline seeding completed successfully.');
+    } catch (error) {
+        console.error('Seeding failed:', error);
+        throw error;
     }
-
-    console.log('Seed process completed successfully (Append-Only mode).');
-  } catch (error) {
-    console.error('Seed error:', error);
-  }
-}
-
-// Execute if run directly
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  seed().then(() => process.exit(0)).catch(() => process.exit(1));
 }

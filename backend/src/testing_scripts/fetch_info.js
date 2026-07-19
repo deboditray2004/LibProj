@@ -14,11 +14,11 @@ async function fetchInfo() {
     
     const emp = await Employee.find({});
     console.log("=== EMPLOYEES ===");
-    emp.forEach(e => console.log(`ID (empId): ${e.empId} | Email: ${e.email} | Name: ${e.name} | Password: password`));
+    emp.forEach(e => console.log(`Mongo _id: ${e._id} | ID (empId): ${e.empId} | Email: ${e.email} | Name: ${e.name} | Password: password`));
 
     const stds = await Student.find({}).limit(10);
     console.log("\n=== FIRST 10 STUDENTS ===");
-    stds.forEach(s => console.log(`Card/Roll No: ${s.rollNo} | Email: ${s.email} | Name: ${s.name} | Password: password`));
+    stds.forEach(s => console.log(`Mongo _id: ${s._id} | Card/Roll No: ${s.rollNo} | Email: ${s.email} | Name: ${s.name} | Password: password`));
 
     process.exit(0);
 }

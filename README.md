@@ -3,6 +3,12 @@
 ## 1. Overview
 A Library Management System built with the MERN stack (MongoDB, Express, React, Node.js). Features include portals for Students and Library Staff, fine tracking, inventory management, and email notifications.
 
+### Beginner Info
+If you are new to the project, this is a full-stack web application designed for a college library. 
+- **The Backend (Node.js/Express):** Handles the database (MongoDB), user authentication, and business logic (like calculating fines or processing book orders). It runs on `http://localhost:8000`.
+- **The Frontend (React/Vite):** The user interface where Students can request books and Employees can approve them. It runs on `http://localhost:5173`.
+To get started, clone the repository, run `npm install` in both folders, populate the `.env` files, run the bulk-seed command to generate fake data, and launch both servers!
+
 **Live Demo:**
 - [https://library-eight-steel.vercel.app](https://library-eight-steel.vercel.app)
 
@@ -145,14 +151,18 @@ VITE_API_URL=http://localhost:8000/api
    cd frontend && npm run dev
    ```
 
-### Administrative CLI
-The project includes a command-line tool (`backend/src/testing_scripts/adminSetup.js`) to help you manage the database during development:
+### Administrative CLI (Database Management)
+The project includes a robust command-line tool (`backend/src/testing_scripts/adminSetup.js`) to help you manage the database safely during development:
 
 - `node adminSetup.js --seed` : Populates the database with initial baseline data.
 - `node adminSetup.js --bulk-seed` : Loads a massive dataset for stress testing.
-- `node adminSetup.js --add-employee '<json>'` : Creates a new employee.
-- `node adminSetup.js --remove-employee <id>` : Removes an employee.
+- `node adminSetup.js --add-employee '<json>'` : Injects a new employee via CLI.
+- `node adminSetup.js --remove-employee <id>` : Removes an employee using their MongoDB `_id`.
+- `node adminSetup.js --add-student '<json>'` : Injects a new student via CLI.
+- `node adminSetup.js --remove-student <id>` : Removes a student using their MongoDB `_id`.
 - `node adminSetup.js --flush` : Wipes the entire database clean.
+
+> **Data Safety Guarantee:** Any command that wipes data (`--flush`, `--seed`, `--bulk-seed`) automatically triggers an invisible backup script first. Your entire database is dumped to local JSON files in `backend/src/db/data_backup/` before the flush executes, ensuring you never accidentally lose data!
 
 ## 5. Design & UI
 - **Typography:** Plus Jakarta Sans for body text, Roboto Mono for metadata.

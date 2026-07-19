@@ -11,6 +11,7 @@ import { BookRequest } from '../models/bookRequest.model.js';
 import { Order } from '../models/order.model.js';
 import { seed } from './seed.js';
 import { bulkSeed } from './bulkSeed.js';
+import { flushDatabase } from './flush.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,17 +24,7 @@ async function connectDB() {
   }
 }
 
-async function flushDatabase() {
-  await connectDB();
-  console.warn('⚠️ WARNING: Flushing entire database...');
-  await Book.deleteMany({});
-  await Student.deleteMany({});
-  await Employee.deleteMany({});
-  await Transaction.deleteMany({});
-  await BookRequest.deleteMany({});
-  await Order.deleteMany({});
-  console.log('Database flushed successfully.');
-}
+// Flush database is now handled centrally by flush.js
 
 async function main() {
   const args = process.argv.slice(2);
@@ -44,6 +35,8 @@ Usage:
   node adminSetup.js --bulk-seed
   node adminSetup.js --add-employee '<json_data>'
   node adminSetup.js --remove-employee <id>
+  node adminSetup.js --add-student '<json_data>'
+  node adminSetup.js --remove-student <id>
   node adminSetup.js --flush
     `);
     process.exit(0);
@@ -74,11 +67,28 @@ Usage:
       case '--remove-employee':
         if (args.length < 2) throw new Error('Missing ID argument for --remove-employee');
         await connectDB();
-        const removed = await Employee.findByIdAndDelete(args[1]);
-        if (removed) {
+        const removedEmp = await Employee.findByIdAndDelete(args[1]);
+        if (removedEmp) {
           console.log(`Successfully removed employee with ID: ${args[1]}`);
         } else {
           console.log(`Employee with ID ${args[1]} not found.`);
+        }
+        break;
+      case '--add-student':
+        if (args.length < 2) throw new Error('Missing JSON argument for --add-student');
+        await connectDB();
+        const studentData = JSON.parse(args[1]);
+        const addedStudent = await Student.create(studentData);
+        console.log(`Successfully added student:`, addedStudent._id);
+        break;
+      case '--remove-student':
+        if (args.length < 2) throw new Error('Missing ID argument for --remove-student');
+        await connectDB();
+        const removedStudent = await Student.findByIdAndDelete(args[1]);
+        if (removedStudent) {
+          console.log(`Successfully removed student with ID: ${args[1]}`);
+        } else {
+          console.log(`Student with ID ${args[1]} not found.`);
         }
         break;
       default:

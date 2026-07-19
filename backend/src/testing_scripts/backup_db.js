@@ -17,7 +17,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const backupDir = path.join(__dirname, '..', 'db', 'data_backup');
 
-async function backup() {
+export async function backupDB() {
     try {
         await mongoose.connect(process.env.MONGODB_URI);
         console.log('Connected to MongoDB for backup...');
@@ -42,11 +42,8 @@ async function backup() {
         }
 
         console.log('Backup completed successfully.');
-        process.exit(0);
     } catch (error) {
         console.error('Backup failed:', error);
-        process.exit(1);
+        throw error;
     }
 }
-
-backup();
