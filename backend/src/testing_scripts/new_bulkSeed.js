@@ -71,7 +71,19 @@ async function bulkSeed() {
             email: "admin@library.com",
             password: adminPassword
         });
-        console.log('Created Admin Employee.');
+        await Employee.create({
+            empId: 1002,
+            name: "Librarian Alice",
+            email: "alice@library.com",
+            password: adminPassword
+        });
+        await Employee.create({
+            empId: 1003,
+            name: "Assistant Bob",
+            email: "bob@library.com",
+            password: adminPassword
+        });
+        console.log('Created 3 Employees (1001, 1002, 1003).');
 
         // 2. Books (Use the 15 real books)
         const createdBooks = [];
