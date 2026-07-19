@@ -16,11 +16,13 @@ export default function StudentDashboard() {
   const { data: profileData, isLoading: profileLoading } = useQuery({
     queryKey: ['studentProfile'],
     queryFn: getStudentProfile,
+    refetchInterval: 1000,
   })
 
   const { data: historyData, isLoading: historyLoading } = useQuery({
     queryKey: ['studentTransactions'],
     queryFn: getTransactionHistory,
+    refetchInterval: 1000,
   })
 
   const renewMutation = useMutation({

@@ -16,7 +16,7 @@ export default function StudentCataloguePage() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['books', search, categories],
     queryFn: () => searchBooks({ search, category: categories.join(',') }),
-    refetchInterval: 2000,
+    refetchInterval: 1000,
   })
 
   const { data: catData } = useQuery({

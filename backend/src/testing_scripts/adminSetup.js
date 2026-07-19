@@ -9,7 +9,6 @@ import { Student } from '../models/student.model.js';
 import { Transaction } from '../models/transaction.model.js';
 import { BookRequest } from '../models/bookRequest.model.js';
 import { Order } from '../models/order.model.js';
-import { seed } from './seed.js';
 import { bulkSeed } from './bulkSeed.js';
 import { flushDatabase } from './flush.js';
 
@@ -32,11 +31,8 @@ async function main() {
     console.log(`
 Usage:
   node adminSetup.js --seed
-  node adminSetup.js --bulk-seed
   node adminSetup.js --add-employee '<json_data>'
   node adminSetup.js --remove-employee <id>
-  node adminSetup.js --add-student '<json_data>'
-  node adminSetup.js --remove-student <id>
   node adminSetup.js --flush
     `);
     process.exit(0);
@@ -47,10 +43,6 @@ Usage:
   try {
     switch (command) {
       case '--seed':
-        await connectDB();
-        await seed();
-        break;
-      case '--bulk-seed':
         await connectDB();
         await bulkSeed();
         break;
@@ -72,23 +64,6 @@ Usage:
           console.log(`Successfully removed employee with ID: ${args[1]}`);
         } else {
           console.log(`Employee with ID ${args[1]} not found.`);
-        }
-        break;
-      case '--add-student':
-        if (args.length < 2) throw new Error('Missing JSON argument for --add-student');
-        await connectDB();
-        const studentData = JSON.parse(args[1]);
-        const addedStudent = await Student.create(studentData);
-        console.log(`Successfully added student:`, addedStudent._id);
-        break;
-      case '--remove-student':
-        if (args.length < 2) throw new Error('Missing ID argument for --remove-student');
-        await connectDB();
-        const removedStudent = await Student.findByIdAndDelete(args[1]);
-        if (removedStudent) {
-          console.log(`Successfully removed student with ID: ${args[1]}`);
-        } else {
-          console.log(`Student with ID ${args[1]} not found.`);
         }
         break;
       default:

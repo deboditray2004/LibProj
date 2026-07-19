@@ -66,6 +66,10 @@ erDiagram
     BOOKREQUEST {
         ObjectId _id
         string isbn
+        string title
+        array authors
+        array category
+        string coverImg
         number requestCount
     }
     ORDER {
@@ -154,15 +158,12 @@ VITE_API_URL=http://localhost:8000/api
 ### Administrative CLI (Database Management)
 The project includes a robust command-line tool (`backend/src/testing_scripts/adminSetup.js`) to help you manage the database safely during development:
 
-- `node adminSetup.js --seed` : Populates the database with initial baseline data.
-- `node adminSetup.js --bulk-seed` : Loads a massive dataset for stress testing.
+- `node adminSetup.js --seed` : Populates the database with a massive generated dataset for stress testing.
 - `node adminSetup.js --add-employee '<json>'` : Injects a new employee via CLI.
 - `node adminSetup.js --remove-employee <id>` : Removes an employee using their MongoDB `_id`.
-- `node adminSetup.js --add-student '<json>'` : Injects a new student via CLI.
-- `node adminSetup.js --remove-student <id>` : Removes a student using their MongoDB `_id`.
 - `node adminSetup.js --flush` : Wipes the entire database clean.
 
-> **Data Safety Guarantee:** Any command that wipes data (`--flush`, `--seed`, `--bulk-seed`) automatically triggers an invisible backup script first. Your entire database is dumped to local JSON files in `backend/src/db/data_backup/` before the flush executes, ensuring you never accidentally lose data!
+> **Data Safety Guarantee:** Any command that wipes data (`--flush`, `--seed`) automatically triggers an invisible backup script first. Your entire database is dumped to local JSON files in `backend/src/db/data_backup/` before the flush executes, ensuring you never accidentally lose data!
 
 ## 5. Design & UI
 - **Typography:** Plus Jakarta Sans for body text, Roboto Mono for metadata.
