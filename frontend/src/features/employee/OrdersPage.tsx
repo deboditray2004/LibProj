@@ -17,6 +17,7 @@ export default function OrdersPage() {
     onSuccess: () => {
       toast.success('Order marked as received!')
       queryClient.invalidateQueries({ queryKey: ['orders'] })
+      queryClient.invalidateQueries({ queryKey: ['books'] })
     },
     onError: (err: any) => {
       toast.error(err.response?.data?.message || 'Failed to receive order.')
