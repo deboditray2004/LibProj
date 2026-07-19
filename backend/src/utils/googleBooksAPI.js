@@ -1,7 +1,8 @@
 import { ApiError } from "./ApiError.js"
 export const searchGlobalBook = async (isbn) => {
     try {
-        const queryStr = `isbn:${encodeURIComponent(isbn)}`
+        const cleanIsbn = isbn.replace(/-/g, '').trim()
+        const queryStr = `isbn:${encodeURIComponent(cleanIsbn)}`
         const apiKey = process.env.GOOGLE_BOOKS_API_KEY
         const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${queryStr}&maxResults=1&key=${apiKey}`)
         if (!response.ok) throw new Error("Failed to search Google Books")

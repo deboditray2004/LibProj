@@ -14,36 +14,42 @@ const requestBook = asyncHandler(async (req, res) => {
 
     const { isbn } = req.body
 
-    const bookRequest = await BookRequest.findOneAndUpdate(
-        { isbn },
-        { $inc: { requestCount: 1 } },
-        { upsert: true, new: true }
-    )
-    return res.status(201).json(new ApiResponse(201, bookRequest, "Book request placed successfully"))
+    let existingRequest = await BookRequest.findOne({ isbn })
+    
+    if (existingRequest) {
+        existingRequest.requestCount += 1;
+        await existingRequest.save();
+        return res.status(201).json(new ApiResponse(201, existingRequest, "Book request incremented successfully"))
+    }
+
+    const match = await searchGlobalBook(isbn)
+    if (!match) {
+        throw new ApiError(400, "Invalid ISBN. Book not found in global catalogue.")
+    }
+
+    const newRequest = await BookRequest.create({
+        isbn,
+        requestCount: 1,
+        title: match.orderTitle || "Unknown Title",
+        authors: match.authors && match.authors.length > 0 ? match.authors : ["Unknown Author"],
+        category: match.category && match.category.length > 0 ? match.category : ["General"],
+        coverImg: match.coverImg || ""
+    })
+
+    return res.status(201).json(new ApiResponse(201, newRequest, "Book request placed successfully"))
 })
 
 const getAggregatedRequests = asyncHandler(async (req, res) => {
     const requests = await BookRequest.find().sort({ requestCount: -1 }).limit(500)
     
-    const aggregatedRequests = await Promise.all(requests.map(async (r) => {
-        let bookDetails = null;
-        try {
-            const match = await searchGlobalBook(r.isbn)
-            if (match) {
-                bookDetails = {
-                    title: match.orderTitle,
-                    author: match.authors.join(", "),
-                    coverImg: match.coverImg
-                }
-            }
-        } catch (error) {
-            console.error(`Failed to fetch details for ISBN ${r.isbn}:`, error)
-        }
-
-        return {
-            _id: r.isbn,
-            count: r.requestCount,
-            bookDetails
+    const aggregatedRequests = requests.map(r => ({
+        _id: r.isbn,
+        count: r.requestCount,
+        bookDetails: {
+            title: r.title,
+            author: r.authors ? r.authors.join(", ") : "Unknown Author",
+            category: r.category,
+            coverImg: r.coverImg
         }
     }))
 

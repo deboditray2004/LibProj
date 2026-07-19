@@ -64,24 +64,23 @@ async function bulkSeed() {
         console.log('Database flushed for bulk seed.');
 
         // 1. Employee
-        const adminPassword = await bcrypt.hash('password', 10);
         await Employee.create({
             empId: 1001,
             name: "Admin User",
             email: "admin@library.com",
-            password: adminPassword
+            password: 'password'
         });
         await Employee.create({
             empId: 1002,
             name: "Librarian Alice",
             email: "alice@library.com",
-            password: adminPassword
+            password: 'password'
         });
         await Employee.create({
             empId: 1003,
             name: "Assistant Bob",
             email: "bob@library.com",
-            password: adminPassword
+            password: 'password'
         });
         console.log('Created 3 Employees (1001, 1002, 1003).');
 
@@ -114,7 +113,7 @@ async function bulkSeed() {
                 govtId: `UID${rand(10000000, 99999999)}`,
                 dept: pick(depts),
                 rollNo: roll,
-                password: adminPassword,
+                password: 'password',
                 tot_fine: 0,
                 status: "Approved"
             });

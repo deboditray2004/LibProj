@@ -34,24 +34,22 @@ async function seed() {
         console.log('Database flushed.');
 
         // 1. Employees
-        const adminPassword = await bcrypt.hash('password', 10);
         const admin = await Employee.create({
             empId: 1001,
             name: "Admin User",
             email: "admin@library.com",
-            password: adminPassword
+            password: 'password'
         });
         
         const emp2 = await Employee.create({
             empId: 1002,
             name: "Jane Smith",
             email: "jane.smith@library.com",
-            password: adminPassword
+            password: 'password'
         });
         console.log('Employees created.');
 
         // 2. Students
-        const studentPassword = await bcrypt.hash('password', 10);
         const s1 = await Student.create({
             cardNo: 2001,
             name: "John Doe",
@@ -61,7 +59,7 @@ async function seed() {
             govtId: "AADHAAR12345",
             dept: "Computer Science",
             rollNo: 2001,
-            password: studentPassword,
+            password: 'password',
             tot_fine: 0,
             status: "Approved"
         });
@@ -75,7 +73,7 @@ async function seed() {
             govtId: "PAN987654",
             dept: "Electronics",
             rollNo: 2002,
-            password: studentPassword,
+            password: 'password',
             tot_fine: 50,
             status: "Approved"
         });
