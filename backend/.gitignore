@@ -7,3 +7,6 @@ yarn-error.log
 *.log
 public/temp/*
 !public/temp/.gitkeep
+
+# DB Backups
+src/db/data_backup/
