@@ -74,7 +74,7 @@ export default function StudentLoginPage() {
             <input
               id="cardNo"
               type="text"
-              placeholder="e.g. 4821"
+              placeholder="e.g. 2000"
               className={`input ${errors.cardNo ? 'input-error' : ''}`}
               {...register('cardNo')}
             />

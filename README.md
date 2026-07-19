@@ -9,6 +9,10 @@ If you are new to the project, this is a full-stack web application designed for
 - **The Frontend (React/Vite):** The user interface where Students can request books and Employees can approve them. It runs on `http://localhost:5173`.
 To get started, clone the repository, run `npm install` in both folders, populate the `.env` files, run the bulk-seed command to generate fake data, and launch both servers!
 
+**Default Logins (Password is always `password`):**
+- Employees: `1001` (Admin) or `1002` (Librarian)
+- Students: `2000` or `2001`
+
 **Live Demo:**
 - [https://library-eight-steel.vercel.app](https://library-eight-steel.vercel.app)
 
