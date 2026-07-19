@@ -112,7 +112,7 @@ erDiagram
 │   │   ├── middlewares    # Auth, multer, and validation
 │   │   ├── models         # Mongoose schemas (Book, Employee, Order, Student, Transaction)
 │   │   ├── routes         # API endpoints
-│   │   ├── testing_scripts# CLI tools for DB setup
+│   │   ├── scripts        # DB scripts (tools, backup, initial)
 │   │   ├── utils          # Helpers (mailer, isbn, cloudinary, Error wrappers)
 │   │   └── validators     # Zod input validation schemas
 ├── frontend
@@ -160,14 +160,15 @@ VITE_API_URL=http://localhost:8000/api
    ```
 
 ### Administrative CLI (Database Management)
-The project includes a robust command-line tool (`backend/src/testing_scripts/adminSetup.js`) to help you manage the database safely during development:
+The project includes standalone tools (`backend/src/scripts/tools/`) to safely manage the database during development. They can be invoked individually via node.
 
-- `node adminSetup.js --seed` : Populates the database with a massive generated dataset for stress testing.
-- `node adminSetup.js --add-employee '<json>'` : Injects a new employee via CLI.
-- `node adminSetup.js --remove-employee <id>` : Removes an employee using their MongoDB `_id`.
-- `node adminSetup.js --flush` : Wipes the entire database clean.
+- `node src/scripts/tools/push.js src/scripts/initial/seed.json` : Seeds the database with the initial massive dataset.
+- `node src/scripts/tools/push.js src/scripts/backup/backup_1.json` : Restores a specific backup.
+- `node src/scripts/tools/flush.js` : Wipes the entire database clean.
+- `node src/scripts/tools/addEmployee.js '<json>'` : Injects a new employee via CLI.
+- `node src/scripts/tools/removeEmployee.js <id>` : Removes an employee using their MongoDB `_id`.
 
-> **Data Safety Guarantee:** Any command that wipes data (`--flush`, `--seed`) automatically triggers an invisible backup script first. Your entire database is dumped to local JSON files in `backend/src/db/data_backup/` before the flush executes, ensuring you never accidentally lose data!
+> **Data Safety Guarantee:** Any tool that wipes data (`flush.js` or `push.js`) automatically triggers an invisible backup script first. Your entire database is dumped as a single JSON file into `backend/src/scripts/backup/` before execution, ensuring you never accidentally lose data!
 
 ## 5. Design & UI
 - **Typography:** Plus Jakarta Sans for body text, Roboto Mono for metadata.
